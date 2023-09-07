@@ -1,6 +1,6 @@
 # Simple Netflix (Angular + ASP.NET API)
 
-![Preview](https://github.com/meofiscoding/meofiscoding/blob/main/assets/SQL(preview_landing.png)
+![Preview](https://github.com/meofiscoding/meofiscoding/blob/main/assets/preview_landing.png)
 
 ## Table of Contents
 
