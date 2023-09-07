@@ -72,35 +72,43 @@
       </section>
       <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner" style="position: relative; overflow: visible;">
-          <div *ngFor="let movie of movies; let isFirst = first" [ngClass]="{'carousel-item': true, 'active': isFirst}" data-bs-interval="1000">
+          <div *ngFor="let movie of movies; let isFirst = first" [ngClass]="{'carousel-item': true, 'active': isFirst}"
+            data-bs-interval="3000">
             <section class="d-flex">
               <div class="card" *ngFor="let item of movie">
                 <img src={{item.posterPath}} class="card-img-top" alt="...">
                 <div class="card-body">
                   <section class="d-flex justify-content-between">
-                      <span class="text-white"> {{item.title}} </span>
-                      <div>
-                        <i class="bi bi-play-circle-fill card-icon" style="margin-right: 5px;"></i>
-                        <i class="bi bi-plus-circle card-icon"></i>
-                      </div>
+                    <span class="text-white"> {{item.title}} </span>
+                    <div>
+                      <i class="bi bi-play-circle-fill card-icon" style="margin-right: 5px;"></i>
+                      <i class="bi bi-plus-circle card-icon"></i>
+                    </div>
                   </section>
                   <section class="d-flex align-items-center justify-content-between">
-                    <p class="netflix-card-text m-0" style="color: rgb(0, 186, 0);">97% match</p>
-                    <span class="m-2 netflix-card-text text-white">Limited Series</span> <span
+                    <span class="netflix-card-text text-white truncate-3-lines ">{{item.overview}}</span> <span
                       class="border netflix-card-text p-1 text-white">HD</span>
 
                   </section>
-                  <span class="netflix-card-text text-white">Provocative • Psychological • Thriller</span>
+                  <span class="netflix-card-text text-white">
+                    <strong class="text-white">Genres: </strong>
+                    <ng-container *ngFor="let genre of item.genres; let last = last">
+                      {{ genre }}
+                      <ng-container *ngIf="!last"> • </ng-container>
+                    </ng-container>
+                  </span>
                 </div>
               </div>
             </section>
           </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval"
+          data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval"
+          data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Next</span>
         </button>

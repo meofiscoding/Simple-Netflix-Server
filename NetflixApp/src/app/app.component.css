@@ -215,6 +215,14 @@ i{
     width: 30px !important;
 }
 
+.truncate-3-lines {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
 
 .margin-right{
     margin-right: 100px;
