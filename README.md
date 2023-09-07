@@ -42,5 +42,5 @@ Before you begin, ensure you have met the following requirements:
 - (Other prerequisites as needed)
 
 ### Lisence
-This project is licensed under the MIT License - see the [LICENSE](https://chat.openai.com/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/meofiscoding/Simple-Angular/blob/main/LICENSE) file for details.
 
