@@ -1,4 +1,5 @@
 ﻿using MongoConnector;
+using SimpleServer.src.Movie;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddSwaggerGen();
 
 // Config MongoDB 
 builder.Services.AddSingleton<MongoDbService>();
+
+// Server services register
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 
 var app = builder.Build();
