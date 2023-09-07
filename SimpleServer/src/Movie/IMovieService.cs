@@ -5,7 +5,7 @@ namespace SimpleServer.src.Movie
 {
 	public interface IMovieService
 	{
-		public Task<List<Movies>> GetAllMoviesAsync();
+		public Task<List<List<Movies>>> GetAllMoviesAsync();
 	}
 }
 

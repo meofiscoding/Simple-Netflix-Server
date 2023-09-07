@@ -19,7 +19,7 @@ namespace SimpleServer.src.Movie
         }
         // GET: api/values
         [HttpGet]
-        public async Task<List<Movies>> GetAllMoviesAsync()
+        public async Task<List<List<Movies>>> GetAllMoviesAsync()
         {
             return await _movieService.GetAllMoviesAsync();
         }

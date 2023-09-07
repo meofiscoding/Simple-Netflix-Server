@@ -14,9 +14,23 @@ namespace SimpleServer.src.Movie
         }
 
         // get all movies from the database
-        public async Task<List<Movies>> GetAllMoviesAsync()
+        public async Task<List<List<Movies>>> GetAllMoviesAsync()
         {
-            return (await _mongoService.Movies.FindAsync(movie => true)).ToList();
+            var movies = (await _mongoService.Movies.FindAsync(_ => true)).ToList().Take(30).ToList();
+            var result = new List<List<Movies>>();
+            int chunkSize = 5;
+
+            for (int i = 0; i < movies.Count; i += chunkSize)
+            {
+                List<Movies> chunk = movies
+                    .Skip(i)
+                    .Take(chunkSize)
+                    .ToList();
+
+                result.Add(chunk);
+            }
+
+            return result;
         }
     }
 }

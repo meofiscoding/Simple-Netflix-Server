@@ -16,6 +16,16 @@ builder.Services.AddSingleton<MongoDbService>();
 // Server services register
 builder.Services.AddScoped<IMovieService, MovieService>();
 
+// add CORS rule
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularClient", builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -33,6 +43,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("AngularClient");
 
 app.Run();
 

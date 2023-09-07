@@ -210,14 +210,6 @@ i{
     /* height: max-content !important; */
 }
 
-.carousel-control-prev{
-    display: none;
-}
-
-.carousel-control-next{
-    display: none;
-}
-
 .tab-change-btn{
     border: none;
     width: 30px !important;
