@@ -175,13 +175,13 @@ i{
     background-color: #141414;
     border-radius: 4px;
     transition: 0.2s linear;
-    margin: 3px;
+    margin: 25px;
     position: relative;
 }
 
 
 .card:hover{
-    transform: scaleX(1.4) scaleY(1.4);
+    transform: scaleX(1.2) scaleY(1.2);
     z-index: 10;
 }
 
@@ -192,7 +192,7 @@ i{
     padding: 10px 15px;
     position: absolute;
     background-color: #141414;
-    top: 120px;
+    top: 68%;
     width: 100%;
 }
 
@@ -248,7 +248,7 @@ i{
 
 
 .footer{
-    margin-top: 150px;
+    margin-top: 250px;
 }
 
 ul{
