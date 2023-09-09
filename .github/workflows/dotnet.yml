@@ -26,13 +26,13 @@ jobs:
           ls   # This command lists the contents of the current directory
     - name: Restore dependencies
       run: |
-        cd Simple-Angular/SimpleServer
+        cd SimpleServer
         dotnet restore
     - name: Build
       run: |
-        cd Simple-Angular/SimpleServer
+        cd SimpleServer
         dotnet build --no-restore
     - name: Test
       run: |
-        cd Simple-Angular/SimpleServer
+        cd SimpleServer
         dotnet test --no-build --verbosity normal
