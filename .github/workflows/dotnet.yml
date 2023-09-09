@@ -20,6 +20,10 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+    - name: Print Current Directory
+      run: |
+          pwd  # This command prints the current working directory
+          ls   # This command lists the contents of the current directory
     - name: Restore dependencies
       run: |
         cd Simple-Angular/SimpleServer
