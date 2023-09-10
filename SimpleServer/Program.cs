@@ -1,4 +1,7 @@
-﻿using MongoConnector;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using MongoConnector;
 using SimpleServer.src.Movie;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +32,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-await SeedData(app);
+await SeedData(app).ConfigureAwait(false);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -48,12 +51,11 @@ app.UseCors("AngularClient");
 
 app.Run();
 
-
 static async Task SeedData(WebApplication app)
 {
     using var scope = app.Services.CreateAsyncScope();
 
     var mongoDBService = scope.ServiceProvider.GetRequiredService<MongoDbService>();
-    await mongoDBService.SeedMovieData();
+    await mongoDBService.SeedMovieData().ConfigureAwait(false);
 }
 
