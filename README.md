@@ -1,6 +1,6 @@
 # Simple Netflix (Angular + ASP.NET API)
 
-[![.NET](https://github.com/meofiscoding/Simple-Angular/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Angular/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/meofiscoding/Simple-Angular/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Angular/actions/workflows/pipeline.yml)
 
 ![Preview](https://github.com/meofiscoding/Simple-Angular/blob/main/assets/preview_landing2.png)
 
