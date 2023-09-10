@@ -28,7 +28,7 @@ jobs:
           pwd  # This command prints the current working directory
           ls   # This command lists the contents of the current directory
     - name: Lint code
-      run: dotnet format 'SimpleServer/SimpleServer.csproj' --folder --check --verbosity diagnostic
+      run: dotnet format 'SimpleServer/SimpleServer.csproj' -v diag 
     - name: Restore dependencies
       run: |
         cd SimpleServer
