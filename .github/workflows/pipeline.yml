@@ -25,9 +25,7 @@ jobs:
           pwd  # This command prints the current working directory
           ls   # This command lists the contents of the current directory
     - name: Lint code
-      run: |
-        cd SimpleServer
-        dotnet format
+      run: dotnet format SimpleServer 
     - name: Restore dependencies
       run: |
         cd SimpleServer
