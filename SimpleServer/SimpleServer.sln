@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleServer", "SimpleServe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoConnector", "..\MongoConnector\MongoConnector.csproj", "{7F6642B3-100C-491D-9116-FBC01A6C8CDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTest", "..\ServerTest\ServerTest.csproj", "{C1CDDF04-57A8-495A-A4D8-709E86733DC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleServer.Test", "..\ServerTest\SimpleServer.Test.csproj", "{C1CDDF04-57A8-495A-A4D8-709E86733DC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

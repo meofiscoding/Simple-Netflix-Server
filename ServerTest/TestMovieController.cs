@@ -1,6 +1,6 @@
 ﻿namespace ServerTest;
 
-public class Tests
+public class TestMovieController
 {
     [SetUp]
     public void Setup()
