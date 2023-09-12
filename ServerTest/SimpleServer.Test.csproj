@@ -18,4 +18,8 @@
     <PackageReference Include="FakeItEasy" Version="7.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleServer\SimpleServer.csproj" />
+    <ProjectReference Include="..\MongoConnector\MongoConnector.csproj" />
+  </ItemGroup>
 </Project>
