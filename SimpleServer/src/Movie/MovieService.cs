@@ -10,15 +10,19 @@ namespace SimpleServer.src.Movie;
 public class MovieService : IMovieService
 {
     private readonly MongoDbService _mongoService;
-    public MovieService(MongoDbService mongoService)
+    private readonly IMongoCollection<Movies> _movieCollection;
+
+    public MovieService(MongoDbService mongoService, IMongoCollection<Movies> moviesCollection)
     {
         _mongoService = mongoService;
+        _movieCollection = moviesCollection;
     }
 
     // get all movies from the database
     public async Task<List<List<Movies>>> GetAllMoviesAsync()
     {
-        var movies = (await _mongoService.Movies.FindAsync(_ => true).ConfigureAwait(false)).ToList().Take(30).ToList();
+        var cursor = await _movieCollection.FindAsync(_ => true);
+        var movies = await cursor.ToListAsync();
         var result = new List<List<Movies>>();
         int chunkSize = 5;
 
