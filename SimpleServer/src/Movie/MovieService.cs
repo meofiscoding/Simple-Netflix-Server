@@ -18,7 +18,7 @@ public class MovieService : IMovieService
     // get all movies from the database
     public async Task<List<List<Movies>>> GetAllMoviesAsync()
     {
-        var movies = (await _mongoService.Movies.FindAsync(_ => true).ConfigureAwait(false)).ToList().Take(30).ToList();
+        var movies = (await _mongoService.Movies.FindAsync(_ => true).ConfigureAwait(false)).ToList();
         var result = new List<List<Movies>>();
         int chunkSize = 5;
 
