@@ -23,6 +23,7 @@ public class MovieService : IMovieService
     {
         var cursor = await _movieCollection.FindAsync(_ => true);
         var movies = await cursor.ToListAsync();
+
         var result = new List<List<Movies>>();
         int chunkSize = 5;
 
