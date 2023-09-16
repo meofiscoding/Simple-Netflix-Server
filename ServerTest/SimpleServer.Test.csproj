@@ -12,15 +12,32 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
     <PackageReference Include="coverlet.collector" Version="3.2.0" />
     <PackageReference Include="FakeItEasy" Version="7.4.0" />
     <PackageReference Include="AutoFixture" Version="4.18.0" />
+    <PackageReference Include="NunitXml.TestLogger" Version="3.1.15" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.7.2" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="ReportGenerator" Version="5.1.25" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleServer\SimpleServer.csproj" />
     <ProjectReference Include="..\MongoConnector\MongoConnector.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="System\" />
+    <None Remove="Helper\" />
+    <None Remove="System\Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="System\" />
+    <Folder Include="Helper\" />
+    <Folder Include="System\Services\" />
   </ItemGroup>
 </Project>

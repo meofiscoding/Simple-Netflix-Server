@@ -39,5 +39,23 @@ jobs:
         dotnet build --no-restore
     - name: Test
       run: |
-        cd SimpleServer
-        dotnet test --no-build --verbosity normal
+        cd ServerTest
+        dotnet test --logger "trx;LogFileName=TestResults.trx" \
+            --logger "nunit;LogFileName=TestResults.xml" \
+            --results-directory ./Coverage \
+            /p:CollectCoverage=true \
+            /p:CoverletOutput=Coverage/ \
+            /p:CoverletOutputFormat=cobertura \
+            /p:Exclude="[nunit.*]*"
+    - name: Generate code coverage report
+      run: |
+        cd ServerTest
+        dotnet ~/.nuget/packages/reportgenerator/5.1.25/tools/net7.0/ReportGenerator.dll \
+        "-reports:Coverage/coverage.cobertura.xml" \
+        "-targetdir:Coverage" \
+        -reporttypes:HTML
+    - name: Upload code coverage artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-coverage
+        path: ServerTest/Coverage

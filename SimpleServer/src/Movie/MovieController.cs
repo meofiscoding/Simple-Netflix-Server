@@ -18,9 +18,9 @@ public class MovieController : Controller
     }
     // GET: api/values
     [HttpGet]
-    public async Task<List<List<Movies>>> GetAllMoviesAsync()
+    public async Task<ActionResult<List<List<Movies>>>> GetAllMoviesAsync()
     {
-        return await _movieService.GetAllMoviesAsync().ConfigureAwait(false);
+        return Ok(await _movieService.GetAllMoviesAsync());
     }
 }
 

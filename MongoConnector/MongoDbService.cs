@@ -8,7 +8,7 @@ namespace MongoConnector
 {
     public class MongoDbService
     {
-        private MongoClient MongoClient { get; }
+        private IMongoClient MongoClient { get; }
 
         public IMongoDatabase MongoDatabase { get; }
 

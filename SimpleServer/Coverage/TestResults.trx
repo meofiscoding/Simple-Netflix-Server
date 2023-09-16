@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="10d38168-fc40-4db6-8f85-2083843057dc" name="@MBP-cua-Tra 2023-09-15 23:23:58" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2023-09-15T23:23:58.6234420+07:00" queuing="2023-09-15T23:23:58.6234420+07:00" start="2023-09-15T23:23:56.6008440+07:00" finish="2023-09-15T23:23:58.6501500+07:00" />
+  <TestSettings name="default" id="348f3943-64a2-4aa4-880a-064b2094db59">
+    <Deployment runDeploymentRoot="_MBP-cua-Tra_2023-09-15_23_23_58" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9734c32e-2b66-4dd6-ba1e-d55bac19123d" testId="b61175b5-9322-bab2-a381-01ad93514484" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(11,3)" computerName="MBP-cua-Tra" duration="00:00:00.0005580" startTime="2023-09-15T23:23:58.4153890+07:00" endTime="2023-09-15T23:23:58.4159470+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9734c32e-2b66-4dd6-ba1e-d55bac19123d" />
+    <UnitTestResult executionId="884ae463-4d57-4aad-b42f-0c24e826b0ad" testId="03e7122d-6df3-25a3-ad69-c576a9c28089" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(6,2)" computerName="MBP-cua-Tra" duration="00:00:00.0007890" startTime="2023-09-15T23:23:58.4139270+07:00" endTime="2023-09-15T23:23:58.4147150+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="884ae463-4d57-4aad-b42f-0c24e826b0ad" />
+    <UnitTestResult executionId="e445aacc-7aa7-45c3-a836-8d361182392c" testId="ea81286f-6063-f7e3-2a8f-a8cb2baa2042" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(3,1)" computerName="MBP-cua-Tra" duration="00:00:00.0124680" startTime="2023-09-15T23:23:58.3999530+07:00" endTime="2023-09-15T23:23:58.4124200+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e445aacc-7aa7-45c3-a836-8d361182392c" />
+    <UnitTestResult executionId="e47a0fb5-c156-4398-96af-f9cb48d0b23f" testId="1dcdbe6d-621e-9329-e2db-97d6920cf260" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(0,0)" computerName="MBP-cua-Tra" duration="00:00:00.5157820" startTime="2023-09-15T23:23:57.8817400+07:00" endTime="2023-09-15T23:23:58.3974190+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e47a0fb5-c156-4398-96af-f9cb48d0b23f" />
+    <UnitTestResult executionId="26a34ca8-8ecb-43ca-823a-93e2f401bf18" testId="eed11d85-0ce4-8508-2890-5c13b545371c" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(5,1)" computerName="MBP-cua-Tra" duration="00:00:00.0014009" startTime="2023-09-15T23:23:58.4124870+07:00" endTime="2023-09-15T23:23:58.4138880+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26a34ca8-8ecb-43ca-823a-93e2f401bf18" />
+    <UnitTestResult executionId="059a4226-4c5b-422e-9ab2-685be5fe909d" testId="4823a0d6-e392-203a-db26-b2b23a3e9202" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(10,2)" computerName="MBP-cua-Tra" duration="00:00:00.0006410" startTime="2023-09-15T23:23:58.4147310+07:00" endTime="2023-09-15T23:23:58.4153720+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="059a4226-4c5b-422e-9ab2-685be5fe909d" />
+    <UnitTestResult executionId="705d3184-e0c6-4f6f-ba48-19a090bbbfd7" testId="b0e10d14-b9f2-ce45-f2f9-37a143d27d21" testName="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(1000,200)" computerName="MBP-cua-Tra" duration="00:00:00.0139160" startTime="2023-09-15T23:23:58.4159610+07:00" endTime="2023-09-15T23:23:58.4298760+07:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="705d3184-e0c6-4f6f-ba48-19a090bbbfd7" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(0,0)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="1dcdbe6d-621e-9329-e2db-97d6920cf260">
+      <Execution id="e47a0fb5-c156-4398-96af-f9cb48d0b23f" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(0,0)" />
+    </UnitTest>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(5,1)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="eed11d85-0ce4-8508-2890-5c13b545371c">
+      <Execution id="26a34ca8-8ecb-43ca-823a-93e2f401bf18" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(5,1)" />
+    </UnitTest>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(1000,200)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="b0e10d14-b9f2-ce45-f2f9-37a143d27d21">
+      <Execution id="705d3184-e0c6-4f6f-ba48-19a090bbbfd7" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(1000,200)" />
+    </UnitTest>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(3,1)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="ea81286f-6063-f7e3-2a8f-a8cb2baa2042">
+      <Execution id="e445aacc-7aa7-45c3-a836-8d361182392c" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(3,1)" />
+    </UnitTest>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(6,2)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="03e7122d-6df3-25a3-ad69-c576a9c28089">
+      <Execution id="884ae463-4d57-4aad-b42f-0c24e826b0ad" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(6,2)" />
+    </UnitTest>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(10,2)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="4823a0d6-e392-203a-db26-b2b23a3e9202">
+      <Execution id="059a4226-4c5b-422e-9ab2-685be5fe909d" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(10,2)" />
+    </UnitTest>
+    <UnitTest name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(11,3)" storage="/users/admin/downloads/simpleangular/simple-angular/servertest/bin/debug/net7.0/simpleserver.test.dll" id="b61175b5-9322-bab2-a381-01ad93514484">
+      <Execution id="9734c32e-2b66-4dd6-ba1e-d55bac19123d" />
+      <TestMethod codeBase="/Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll" adapterTypeName="executor://nunit3testexecutor/" className="SimpleServer.Test.TestMovieService" name="GetAllMoviesAsync_WithDifferenceMoviesCount_ReturnsCorrectChunkSize(11,3)" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b61175b5-9322-bab2-a381-01ad93514484" executionId="9734c32e-2b66-4dd6-ba1e-d55bac19123d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03e7122d-6df3-25a3-ad69-c576a9c28089" executionId="884ae463-4d57-4aad-b42f-0c24e826b0ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea81286f-6063-f7e3-2a8f-a8cb2baa2042" executionId="e445aacc-7aa7-45c3-a836-8d361182392c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1dcdbe6d-621e-9329-e2db-97d6920cf260" executionId="e47a0fb5-c156-4398-96af-f9cb48d0b23f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eed11d85-0ce4-8508-2890-5c13b545371c" executionId="26a34ca8-8ecb-43ca-823a-93e2f401bf18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4823a0d6-e392-203a-db26-b2b23a3e9202" executionId="059a4226-4c5b-422e-9ab2-685be5fe909d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0e10d14-b9f2-ce45-f2f9-37a143d27d21" executionId="705d3184-e0c6-4f6f-ba48-19a090bbbfd7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.5.0.0: Test execution started
+Running all tests in /Users/admin/Downloads/SimpleAngular/Simple-Angular/ServerTest/bin/Debug/net7.0/SimpleServer.Test.dll
+   NUnit3TestExecutor discovered 7 of 7 NUnit test cases using Current Discovery mode, Non-Explicit run
+NUnit Adapter 4.5.0.0: Test execution complete
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
