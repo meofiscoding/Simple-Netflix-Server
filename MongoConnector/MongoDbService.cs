@@ -58,7 +58,7 @@ namespace MongoConnector
             }
         }
 
-        public IMongoCollection<Movies> Movies
+        public virtual IMongoCollection<Movies> Movies
         {
             get
             {
