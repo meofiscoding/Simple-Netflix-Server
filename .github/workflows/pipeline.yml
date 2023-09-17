@@ -57,7 +57,13 @@ jobs:
       - name: Test
         run: |
           cd ServerTest
-          dotnet test 
+          dotnet test --logger "trx;LogFileName=TestResults.trx" \
+              --logger "nunit;LogFileName=TestResults.xml" \
+              --results-directory ./Coverage \
+              /p:CollectCoverage=true \
+              /p:CoverletOutput=Coverage/ \
+              /p:CoverletOutputFormat=cobertura \
+              /p:Exclude="[nunit.*]*"
 
       - name: Generate code coverage report
         run: |
