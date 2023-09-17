@@ -52,7 +52,7 @@ namespace MongoConnector
             var moviesData = await this.Movies.Find(_ => true).ToListAsync();
             if (moviesData.Count == 0)
             {
-                var data = File.ReadAllText("../MongoConnector/movies.json");
+                var data = File.ReadAllText("movies.json");
                 var movies = JsonConvert.DeserializeObject<List<Movies>>(data);
                 await this.Movies.InsertManyAsync(movies);
             }
