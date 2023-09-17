@@ -64,6 +64,7 @@ jobs:
               /p:CoverletOutput=Coverage/ \
               /p:CoverletOutputFormat=cobertura \
               /p:Exclude="[nunit.*]*"
+          dotnet test  -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal 
 
       - name: Generate code coverage report
         run: |
@@ -72,6 +73,17 @@ jobs:
           "-reports:Coverage/coverage.cobertura.xml" \
           "-targetdir:Coverage" \
           -reporttypes:HTML
+
+      - name: Create Test Coverage Badge
+        uses: simon-k/dotnet-code-coverage-badge@v1.0.0
+        id: create_coverage_badge
+        with:
+          label: Test Coverage
+          color: brightgreen
+          path: ServerTest/Coverage/coverage.cobertura.xml
+          gist-filename: code-coverage.json
+          gist-id: 963b7585a91835492e8df1d4a7d6c356
+          gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }}       
 
       - name: Upload code coverage artifacts
         uses: actions/upload-artifact@v2
