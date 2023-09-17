@@ -17,6 +17,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: >-
+            --health-cmd mongo
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -25,10 +35,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-      
-      - name: Setup MongoDB
-        run: docker-compose -f docker-compose.yml up 
-     
+
       - name: Print Current Directory
         run: |
           pwd  # This command prints the current working directory
@@ -62,7 +69,7 @@ jobs:
               /p:CoverletOutput=Coverage/ \
               /p:CoverletOutputFormat=cobertura \
               /p:Exclude="[nunit.*]*"
-              
+
       - name: Generate code coverage report
         run: |
           cd ServerTest
@@ -71,9 +78,6 @@ jobs:
           "-targetdir:Coverage" \
           -reporttypes:HTML
 
-      - name: Stop MongoDB
-        run: docker-compose -f docker-compose.yml down
-  
       - name: Upload code coverage artifacts
         uses: actions/upload-artifact@v2
         with:
