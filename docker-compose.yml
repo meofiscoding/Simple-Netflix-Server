@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    restart: always
+    logging:
+      options:
+        max-size: '1g'
+  
+  # web:
+  #   build: .
+  #   ports:
+  #     - "8000:80"
+  #     - "44348:443"
+  #   depends_on:
+  #     - mongodb
+  #   links:
+  #     - mongodb

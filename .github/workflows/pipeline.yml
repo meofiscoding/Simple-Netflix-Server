@@ -2,60 +2,84 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
 name: pipeline
+env:
+  APP_SETTINGS_JSON: ${{ secrets.APP_SETTINGS_JSON }}
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    paths:
-      - "**.cs"
-      - ".editorconfig"
-    branches: [ "main" ]
+    # paths:
+    #   - "**.cs"
+    #   - ".editorconfig"
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: >-
+            --health-cmd mongo
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-    - name: Print Current Directory
-      run: |
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Print Current Directory
+        run: |
           pwd  # This command prints the current working directory
           ls   # This command lists the contents of the current directory
-    - name: Lint code
-      run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
-    - name: Restore dependencies
-      run: |
-        cd SimpleServer
-        dotnet restore
-    - name: Build
-      run: |
-        cd SimpleServer
-        dotnet build --no-restore
-    - name: Test
-      run: |
-        cd ServerTest
-        dotnet test --logger "trx;LogFileName=TestResults.trx" \
-            --logger "nunit;LogFileName=TestResults.xml" \
-            --results-directory ./Coverage \
-            /p:CollectCoverage=true \
-            /p:CoverletOutput=Coverage/ \
-            /p:CoverletOutputFormat=cobertura \
-            /p:Exclude="[nunit.*]*"
-    - name: Generate code coverage report
-      run: |
-        cd ServerTest
-        dotnet ~/.nuget/packages/reportgenerator/5.1.25/tools/net7.0/ReportGenerator.dll \
-        "-reports:Coverage/coverage.cobertura.xml" \
-        "-targetdir:Coverage" \
-        -reporttypes:HTML
-    - name: Upload code coverage artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: code-coverage
-        path: ServerTest/Coverage
+
+      - name: Lint code
+        run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
+
+      - name: Restore dependencies
+        run: |
+          cd SimpleServer
+          dotnet restore
+
+      - name: Create appsettings.json
+        run: |
+          cd SimpleServer
+          echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
+
+      - name: Build
+        run: |
+          cd SimpleServer
+          dotnet build --no-restore
+
+      - name: Test
+        run: |
+          cd ServerTest
+          dotnet test --logger "trx;LogFileName=TestResults.trx" \
+              --logger "nunit;LogFileName=TestResults.xml" \
+              --results-directory ./Coverage \
+              /p:CollectCoverage=true \
+              /p:CoverletOutput=Coverage/ \
+              /p:CoverletOutputFormat=cobertura \
+              /p:Exclude="[nunit.*]*"
+
+      - name: Generate code coverage report
+        run: |
+          cd ServerTest
+          dotnet ~/.nuget/packages/reportgenerator/5.1.25/tools/net7.0/ReportGenerator.dll \
+          "-reports:Coverage/coverage.cobertura.xml" \
+          "-targetdir:Coverage" \
+          -reporttypes:HTML
+
+      - name: Upload code coverage artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage
+          path: ServerTest/Coverage
