@@ -1,7 +1,7 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: pipeline
+name: "CI/CD pipeline"
 env:
   APP_SETTINGS_JSON: ${{ secrets.APP_SETTINGS_JSON }}
 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongodb:
-        image: mongo
+        image: mongo:latest
         ports:
           - 27017:27017
         options: >-
