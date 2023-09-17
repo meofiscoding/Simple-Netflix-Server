@@ -20,28 +20,38 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
+      
+      - name: Setup MongoDB
+        run: docker-compose -f docker-compose.yml up 
+     
       - name: Print Current Directory
         run: |
           pwd  # This command prints the current working directory
           ls   # This command lists the contents of the current directory
+
       - name: Lint code
         run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
+
       - name: Restore dependencies
         run: |
           cd SimpleServer
           dotnet restore
+
       - name: Create appsettings.json
         run: |
           cd SimpleServer
           echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
+
       - name: Build
         run: |
           cd SimpleServer
           dotnet build --no-restore
+
       - name: Test
         run: |
           cd ServerTest
@@ -52,6 +62,7 @@ jobs:
               /p:CoverletOutput=Coverage/ \
               /p:CoverletOutputFormat=cobertura \
               /p:Exclude="[nunit.*]*"
+              
       - name: Generate code coverage report
         run: |
           cd ServerTest
@@ -59,6 +70,10 @@ jobs:
           "-reports:Coverage/coverage.cobertura.xml" \
           "-targetdir:Coverage" \
           -reporttypes:HTML
+
+      - name: Stop MongoDB
+        run: docker-compose -f docker-compose.yml down
+  
       - name: Upload code coverage artifacts
         uses: actions/upload-artifact@v2
         with:
