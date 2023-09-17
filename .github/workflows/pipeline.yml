@@ -37,7 +37,7 @@ jobs:
       - name: Create appsettings.json
         run: |
           cd SimpleServer
-          echo "${{ env.APP_SETTINGS_JSON }}" > appsettings.json
+          echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
       - name: Build
         run: |
           cd SimpleServer
