@@ -13,6 +13,5 @@ RUN dotnet publish -c release -o out
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /App
-COPY --from=build /App/out .
+COPY --from=build /App/SimpleServer/out .
 ENTRYPOINT ["dotnet", "SimpleServer.dll"]
