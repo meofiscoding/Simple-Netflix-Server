@@ -10,12 +10,12 @@ services:
       options:
         max-size: '1g'
   
-  web:
-    build: .
-    ports:
-      - "8000:80"
-      - "44348:443"
-    depends_on:
-      - mongodb
-    links:
-      - mongodb
+  # web:
+  #   build: .
+  #   ports:
+  #     - "8000:80"
+  #     - "44348:443"
+  #   depends_on:
+  #     - mongodb
+  #   links:
+  #     - mongodb
