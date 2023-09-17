@@ -3,13 +3,16 @@ services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
+    volumes:
+      - data: /data
     ports:
       - '27017:27017'
     restart: always
     logging:
       options:
         max-size: '1g'
-  
+volumes:
+  data:
   # web:
   #   build: .
   #   ports:
