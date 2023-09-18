@@ -18,43 +18,6 @@ jobs:
   lint:
     name: Lint and unit tests
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
-      - name: Print Current Directory
-        run: |
-          pwd  # This command prints the current working directory
-          ls   # This command lists the contents of the current directory
-      - name: Create appsettings.json
-        run: |
-          cd SimpleServer
-          echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
-      - name: Restore dependencies
-        run: |
-          dotnet restore "SimpleServer/SimpleServer.csproj"
-      - name: Build
-        run: |
-          dotnet build "SimpleServer/SimpleServer.csproj" 
-
-  lint:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6.0.x
-
-      - name: Lint code
-        run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
-
-  test:
-    runs-on: ubuntu-latest
-    needs: [setup, lint]
     services:
       mongodb:
         image: mongo
@@ -62,6 +25,36 @@ jobs:
           - 27017:27017
 
     steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Print Current Directory
+        run: |
+          pwd  # This command prints the current working directory
+          ls   # This command lists the contents of the current directory
+
+      - name: Lint code
+        run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
+
+      - name: Restore dependencies
+        run: |
+          cd SimpleServer
+          dotnet restore "./SimpleServer.csproj"
+
+      - name: Create appsettings.json
+        run: |
+          cd SimpleServer
+          echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
+
+      - name: Build
+        run: |
+          cd SimpleServer
+          dotnet build "./SimpleServer.csproj" --no-restore
+
       - name: Test
         run: |
           cd ServerTest
@@ -72,7 +65,7 @@ jobs:
               /p:CoverletOutput=Coverage/ \
               /p:CoverletOutputFormat=cobertura \
               /p:Exclude="[nunit.*]*"
-          dotnet test  -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal
+          dotnet test  -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal 
 
       - name: Generate code coverage report
         run: |
@@ -91,7 +84,7 @@ jobs:
           path: ServerTest/TestResults/coverage.opencover.xml
           gist-filename: code-coverage.json
           gist-id: 963b7585a91835492e8df1d4a7d6c356
-          gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }}
+          gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }}       
 
       - name: Upload code coverage artifacts
         uses: actions/upload-artifact@v2
