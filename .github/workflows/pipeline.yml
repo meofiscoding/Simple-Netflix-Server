@@ -42,7 +42,7 @@ jobs:
       - name: Restore dependencies
         run: |
           cd SimpleServer
-          dotnet restore
+          dotnet restore "./SimpleServer.csproj"
 
       - name: Create appsettings.json
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Build
         run: |
           cd SimpleServer
-          dotnet build --no-restore
+          dotnet build "./SimpleServer.csproj" --no-restore
 
       - name: Test
         run: |
