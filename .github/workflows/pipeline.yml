@@ -91,3 +91,26 @@ jobs:
         with:
           name: code-coverage
           path: ServerTest/Coverage
+  
+  build_image:
+    name: Build Docker image and push to Azure Container Registry
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Container Registry Login
+        uses: Azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push Angular App
+        working-directory: NetflixApp
+        run: |
+          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
+      - name: Build and Push Server App
+        working-directory: SimpleServer
+        run: |
+          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+
