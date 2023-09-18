@@ -42,6 +42,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Print Current Directory
+        run: |
+          pwd  # This command prints the current working directory
+          ls   # This command lists the contents of the current directory
+
       - name: Lint code
         run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
 
