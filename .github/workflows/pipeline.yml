@@ -33,10 +33,10 @@ jobs:
           echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
       - name: Restore dependencies
         run: |
-          dotnet restore "./SimpleServer.csproj"
+          dotnet restore "SimpleServer.csproj"
       - name: Build
         run: |
-          dotnet build "./SimpleServer.csproj" --no-restore
+          dotnet build "SimpleServer.csproj" --no-restore
 
   lint:
     runs-on: ubuntu-latest
