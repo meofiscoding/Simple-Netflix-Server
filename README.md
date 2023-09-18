@@ -1,4 +1,4 @@
-# Simple Netflix (Angular + ASP.NET API)
+# Simple Netflix (AngularJS + ASP.NET API)
 
 [![.NET](https://github.com/meofiscoding/Simple-Angular/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Angular/actions/workflows/pipeline.yml) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
 
