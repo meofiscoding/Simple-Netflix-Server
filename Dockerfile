@@ -7,11 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["SimpleServer.csproj", "."]
-COPY ["../MongoConnector/MongoConnector.csproj", "../MongoConnector/"]
-RUN dotnet restore "./SimpleServer.csproj"
+
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/SimpleServer"
+RUN dotnet restore "SimpleServer.csproj"
 RUN dotnet build "SimpleServer.csproj" -c Release -o /app/build
 
 FROM build AS publish

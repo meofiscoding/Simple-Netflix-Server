@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoConnector", "..\MongoC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleServer.Test", "..\ServerTest\SimpleServer.Test.csproj", "{C1CDDF04-57A8-495A-A4D8-709E86733DC0}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D35EDC6E-5F77-4B55-BF0C-B22FB4C875C6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{C1CDDF04-57A8-495A-A4D8-709E86733DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1CDDF04-57A8-495A-A4D8-709E86733DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1CDDF04-57A8-495A-A4D8-709E86733DC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D35EDC6E-5F77-4B55-BF0C-B22FB4C875C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D35EDC6E-5F77-4B55-BF0C-B22FB4C875C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D35EDC6E-5F77-4B55-BF0C-B22FB4C875C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D35EDC6E-5F77-4B55-BF0C-B22FB4C875C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
