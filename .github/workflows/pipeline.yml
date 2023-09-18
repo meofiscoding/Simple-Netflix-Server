@@ -33,10 +33,10 @@ jobs:
           echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
       - name: Restore dependencies
         run: |
-          dotnet restore "SimpleServer.csproj"
+          dotnet restore "SimpleServer/SimpleServer.csproj"
       - name: Build
         run: |
-          dotnet build "SimpleServer.csproj" --no-restore
+          dotnet build "SimpleServer/SimpleServer.csproj" --no-restore
 
   lint:
     runs-on: ubuntu-latest
@@ -69,6 +69,7 @@ jobs:
 
       - name: Generate code coverage report
         run: |
+          cd ServerTest
           dotnet ~/.nuget/packages/reportgenerator/5.1.25/tools/net7.0/ReportGenerator.dll \
           "-reports:Coverage/coverage.cobertura.xml" \
           "-targetdir:Coverage" \
