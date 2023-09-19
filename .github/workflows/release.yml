@@ -5,7 +5,8 @@ name: "CD to Staging"
 on:
   push:
     branches: "release/*"
-
+  branch_protection_rule:
+        types: [created]
 jobs:
   build_image:
     name: Build Docker image and push to Azure Container Registry
