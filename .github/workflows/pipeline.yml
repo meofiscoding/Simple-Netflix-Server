@@ -15,8 +15,12 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  lint:
+    name: Lint and unit tests
     runs-on: ubuntu-latest
+    env:
+      MongoDB_DatabaseName: ${{ secrets.MongoDB_DatabaseName }}
+      MongoDB_ConnectionURI: ${{ secrets.MongoDB_ConnectionURI }}
     services:
       mongodb:
         image: mongo
@@ -42,17 +46,12 @@ jobs:
       - name: Restore dependencies
         run: |
           cd SimpleServer
-          dotnet restore
-
-      - name: Create appsettings.json
-        run: |
-          cd SimpleServer
-          echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
+          dotnet restore "./SimpleServer.csproj"
 
       - name: Build
         run: |
           cd SimpleServer
-          dotnet build --no-restore
+          dotnet build "./SimpleServer.csproj" --no-restore
 
       - name: Test
         run: |
@@ -90,3 +89,28 @@ jobs:
         with:
           name: code-coverage
           path: ServerTest/Coverage
+  
+  build_image:
+    name: Build Docker image and push to Azure Container Registry
+    needs: [lint]
+    runs-on: ubuntu-latest
+    env:
+      CONNECTION_STRING: ${{ secrets.PRODUCTION_DB_CONNECTION }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Azure Container Registry Login
+        uses: Azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push Angular App
+        working-directory: NetflixApp
+        run: |
+          docker build --build-arg CONNECTION_STRING=$CONNECTION_STRING -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }} .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
+      - name: Build and Push Server App
+        run: |
+          docker build --build-arg CONNECTION_STRING=$CONNECTION_STRING -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+
