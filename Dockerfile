@@ -1,9 +1,6 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+# https://docs.docker.com/language/dotnet/build-images/
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
 
 ARG CONNECTION_STRING
 ARG DATABASE_NAME
@@ -11,18 +8,19 @@ ARG DATABASE_NAME
 ENV MongoDB_ConnectionURI=$CONNECTION_STRING
 ENV MongoDB_DatabaseName=$DATABASE_NAME
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
+COPY ["MongoConnector/*.csproj", "MongoConnector/"]
+RUN dotnet restore "MongoConnector/MongoConnector.csproj"
+COPY ["ServerTest/*.csproj", "ServerTest/"]
+RUN dotnet restore "ServerTest/ServerTest.csproj"
+COPY ["SimpleServer/*.csproj", "SimpleServer/"]
+RUN dotnet restore "SimpleServer/SimpleServer.csproj"
 
 COPY . .
-WORKDIR "/src/SimpleServer"
-RUN dotnet restore "SimpleServer.csproj"
-RUN dotnet build "SimpleServer.csproj" -c Release -o /app/build
+RUN dotnet publish "SimpleServer/SimpleServer.csproj" -c Release -o /publish
 
-FROM build AS publish
-RUN dotnet publish "SimpleServer.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
+WORKDIR /publish
+COPY --from=build-env /publish .
+EXPOSE 80
 ENTRYPOINT ["dotnet", "SimpleServer.dll"]
