@@ -14,14 +14,9 @@ namespace MongoConnector
 
         public MongoDbService()
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+            var databaseURI = Environment.GetEnvironmentVariable("MongoDB_ConnectionURI");
+            var databaseName = Environment.GetEnvironmentVariable("MongoDB_DatabaseName");
 
-            var config = builder.Build();
-
-            var databaseURI = config.GetSection("MongoDB:ConnectionURI").Value;
-            var databaseName = config.GetSection("MongoDB:DatabaseName").Value;
             if (databaseURI == null || databaseName == null)
             {
                 throw new Exception("Cannot read MongoDB settings in appsettings");

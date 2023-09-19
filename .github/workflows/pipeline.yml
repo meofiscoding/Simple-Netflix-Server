@@ -18,6 +18,9 @@ jobs:
   lint:
     name: Lint and unit tests
     runs-on: ubuntu-latest
+    env:
+      MongoDB_DatabaseName: ${{ secrets.MongoDB_DatabaseName }}
+      MongoDB_ConnectionURI: ${{ secrets.MongoDB_ConnectionURI }}
     services:
       mongodb:
         image: mongo
@@ -44,11 +47,6 @@ jobs:
         run: |
           cd SimpleServer
           dotnet restore "./SimpleServer.csproj"
-
-      - name: Create appsettings.json
-        run: |
-          cd SimpleServer
-          echo '${{ env.APP_SETTINGS_JSON }}' > appsettings.json
 
       - name: Build
         run: |
