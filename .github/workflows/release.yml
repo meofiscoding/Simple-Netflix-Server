@@ -29,7 +29,7 @@ jobs:
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
       - name: Build and Push Server App
         run: |
-          docker build --build-arg CONNECTION_STRING=$MongoDB_ConnectionURI --build-arg DATABASE_NAME=$MongoDB_DatabaseName -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} .
+          docker build --build-arg CONNECTION_STRING=${{ env.MongoDB_ConnectionURI }} --build-arg DATABASE_NAME=${{ env.MongoDB_DatabaseName }} -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
   
   test_image:
