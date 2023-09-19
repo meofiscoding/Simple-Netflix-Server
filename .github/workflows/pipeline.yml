@@ -94,6 +94,8 @@ jobs:
     name: Build Docker image and push to Azure Container Registry
     needs: [lint]
     runs-on: ubuntu-latest
+    env:
+      CONNECTION_STRING: ${{ secrets.PRODUCTION_DB_CONNECTION }}
     steps:
       - uses: actions/checkout@v3
       - name: Azure Container Registry Login
@@ -105,10 +107,10 @@ jobs:
       - name: Build and Push Angular App
         working-directory: NetflixApp
         run: |
-          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
+          docker build --build-arg CONNECTION_STRING=$CONNECTION_STRING -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }} .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
       - name: Build and Push Server App
         run: |
-          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+          docker build --build-arg CONNECTION_STRING=$CONNECTION_STRING -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
 
