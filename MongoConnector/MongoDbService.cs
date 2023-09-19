@@ -26,6 +26,10 @@ namespace MongoConnector
             mongoDbSettings.ServerApi = new ServerApi(ServerApiVersion.V1);
             mongoDbSettings.LinqProvider = MongoDB.Driver.Linq.LinqProvider.V3;
 
+            // Configure SSL options
+            mongoDbSettings.UseTls = true; // Enable TLS/SSL
+            mongoDbSettings.AllowInsecureTls = false;
+
             MongoClient = new MongoClient(mongoDbSettings);
             MongoDatabase = MongoClient.GetDatabase(databaseName);
         }
