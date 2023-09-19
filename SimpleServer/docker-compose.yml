@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  simpleserver:
+    image: ${DOCKER_REGISTRY-}simpleserver
+    build:
+      context: .
+      dockerfile: ./Dockerfile
