@@ -12,7 +12,7 @@ WORKDIR /src
 COPY ["MongoConnector/*.csproj", "MongoConnector/"]
 RUN dotnet restore "MongoConnector/MongoConnector.csproj"
 COPY ["ServerTest/*.csproj", "ServerTest/"]
-RUN dotnet restore "ServerTest/ServerTest.csproj"
+RUN dotnet restore "ServerTest/SimpleServer.Test.csproj"
 COPY ["SimpleServer/*.csproj", "SimpleServer/"]
 RUN dotnet restore "SimpleServer/SimpleServer.csproj"
 
