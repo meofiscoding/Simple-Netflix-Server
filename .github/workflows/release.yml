@@ -1,0 +1,64 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: "CD to Staging"
+on:
+  push:
+    branches: "release/*"
+
+jobs:
+  build_image:
+    name: Build Docker image and push to Azure Container Registry
+    runs-on: ubuntu-latest
+    env:
+      CONNECTION_STRING: ${{ secrets.MongoDB_ConnectionURI }}
+      DATABASE_NAME: netflix-staging
+    steps:
+      - uses: actions/checkout@v3
+      - name: Azure Container Registry Login
+        uses: Azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push Angular App
+        working-directory: NetflixApp
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }} .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-app:${{ github.sha }}
+      - name: Build and Push Server App
+        run: |
+          docker build --build-arg CONNECTION_STRING=$CONNECTION_STRING --build-arg DATABASE_NAME=$DATABASE_NAME -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+  
+  test_image:
+    needs: build_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: ACR login
+        uses: Azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Run tests in container
+        run: |
+          docker pull ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+          docker run ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} dotnet test "ServerTest/SimpleServer.Test.csproj"
+  
+  deploy_to_staging:
+    needs: [test_image]
+    runs-on: ubuntu-latest
+    steps:
+      - name: ACR login
+        uses: Azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Deploy to Staging
+        run: |
+          az webapp deployment source config --name simpleNetflix --resource-group myresourcegroup01 --slot staging --docker-custom-image-name ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
+          
+
+  
