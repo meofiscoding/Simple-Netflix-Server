@@ -1,0 +1,76 @@
+name: "CI pipeline"
+on:
+    pull_request:
+        branches: ["dev"]
+    push:
+        branches: ["dev"]
+jobs:
+    build:
+        name: Lint, build and unit tests
+        runs-on: ubuntu-latest
+        env:
+            MongoDB_DatabaseName: netflix-test
+            MongoDB_ConnectionURI: ${{ secrets.MongoDB_ConnectionURI }}
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                dotnet-version: 6.0.x
+            
+            - name: Print Current Directory
+              run: |
+                pwd  # This command prints the current working directory
+                ls   # This command lists the contents of the current directory
+      
+            - name: Lint code
+              run: dotnet format 'SimpleServer/SimpleServer.csproj' --verify-no-changes
+      
+            - name: Restore dependencies
+              run: |
+                cd SimpleServer
+                dotnet restore "./SimpleServer.csproj"
+      
+            - name: Build
+              run: |
+                cd SimpleServer
+                dotnet build "./SimpleServer.csproj" --no-restore
+      
+            - name: Test
+              run: |
+                cd ServerTest
+                dotnet test --logger "trx;LogFileName=TestResults.trx" \
+                    --logger "nunit;LogFileName=TestResults.xml" \
+                    --results-directory ./Coverage \
+                    /p:CollectCoverage=true \
+                    /p:CoverletOutput=Coverage/ \
+                    /p:CoverletOutputFormat=cobertura \
+                    /p:Exclude="[nunit.*]*"
+                dotnet test  -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal 
+      
+            - name: Generate code coverage report
+              run: |
+                cd ServerTest
+                dotnet ~/.nuget/packages/reportgenerator/5.1.25/tools/net7.0/ReportGenerator.dll \
+                "-reports:Coverage/coverage.cobertura.xml" \
+                "-targetdir:Coverage" \
+                -reporttypes:HTML
+      
+            - name: Create Test Coverage Badge
+              uses: simon-k/dotnet-code-coverage-badge@v1.0.0
+              id: create_coverage_badge
+              with:
+                label: Server Test Coverage
+                color: brightgreen
+                path: ServerTest/TestResults/coverage.opencover.xml
+                gist-filename: code-coverage.json
+                gist-id: 963b7585a91835492e8df1d4a7d6c356
+                gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }}       
+      
+            - name: Upload code coverage artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                name: code-coverage
+                path: ServerTest/Coverage

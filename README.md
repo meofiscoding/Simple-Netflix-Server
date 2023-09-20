@@ -1,6 +1,6 @@
 # Simple Netflix Server (ASP.NET API)
 
-[![.NET](https://github.com/meofiscoding/Simple-Angular/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Angular/actions/workflows/pipeline.yml) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
+[![.NET](https://github.com/meofiscoding/Simple-Angular/actions/workflows/main_prodNetflixAPI.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Angular/actions/workflows/main_prodNetflixAPI.yml) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -26,5 +26,5 @@ Welcome to the Simple Netflix Server repository! This project serves as the back
 - **MongoDB:** A NoSQL database for storing and retrieving data.
 
 ### Lisence
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/meofiscoding/Simple-Angular/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/meofiscoding/Simple-Netflix-Server/blob/main/LICENSE) file for details.
 

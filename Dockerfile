@@ -1,17 +1,44 @@
-# https://hub.docker.com/_/microsoft-dotnet
-# Reference : https://learn.microsoft.com/vi-vn/aspnet/core/host-and-deploy/docker/building-net-docker-images?view=aspnetcore-7.0
-# https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /App
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# https://docs.docker.com/language/dotnet/build-images/
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
 
-# copy all file and folder to current directory
+WORKDIR /src
+COPY ["MongoConnector/*.csproj", "MongoConnector/"]
+RUN dotnet restore "MongoConnector/MongoConnector.csproj"
+COPY ["ServerTest/*.csproj", "ServerTest/"]
+RUN dotnet restore "ServerTest/SimpleServer.Test.csproj"
+COPY ["SimpleServer/*.csproj", "SimpleServer/"]
+RUN dotnet restore "SimpleServer/SimpleServer.csproj"
+
 COPY . .
-# set current directory to SimpleServer
-WORKDIR /App/SimpleServer
-RUN dotnet restore
-RUN dotnet publish -c release -o out
+RUN dotnet build "SimpleServer/SimpleServer.csproj" 
 
-# final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-COPY --from=build /App/SimpleServer/out .
+FROM build-env AS testrunner
+WORKDIR /src/ServerTest
+CMD [ "dotnet", "test", "--logger:trx" ]
+
+FROM build-env AS test 
+WORKDIR /src
+ARG CONNECTION_STRING
+ARG DATABASE_NAME
+
+ENV MongoDB_ConnectionURI=$CONNECTION_STRING
+ENV MongoDB_DatabaseName=$DATABASE_NAME
+RUN dotnet test "ServerTest/SimpleServer.Test.csproj" --logger:trx
+
+# publish
+FROM build-env AS publish
+WORKDIR /src
+RUN dotnet publish "SimpleServer/SimpleServer.csproj" -c Release -o /publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
+WORKDIR /publish
+COPY --from=publish /publish .
+EXPOSE 80
+
+ARG CONNECTION_STRING
+ARG DATABASE_NAME
+
+ENV MongoDB_ConnectionURI=$CONNECTION_STRING
+ENV MongoDB_DatabaseName=$DATABASE_NAME
 ENTRYPOINT ["dotnet", "SimpleServer.dll"]
