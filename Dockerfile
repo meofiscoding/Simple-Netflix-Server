@@ -18,13 +18,12 @@ WORKDIR /src/ServerTest
 CMD [ "dotnet", "test", "--logger:trx" ]
 
 FROM build-env AS test 
-WORKDIR /src/ServerTest
 ARG CONNECTION_STRING
 ARG DATABASE_NAME
 
 ENV MongoDB_ConnectionURI=$CONNECTION_STRING
 ENV MongoDB_DatabaseName=$DATABASE_NAME
-RUN dotnet test --logger:trx
+RUN dotnet test "ServerTest/SimpleServer.Test.csproj" --logger:trx
 
 RUN dotnet publish "SimpleServer/SimpleServer.csproj" -c Release -o /publish
 
