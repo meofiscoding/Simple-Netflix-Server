@@ -2,12 +2,6 @@
 # https://docs.docker.com/language/dotnet/build-images/
 FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
 
-ARG CONNECTION_STRING
-ARG DATABASE_NAME
-
-ENV MongoDB_ConnectionURI=$CONNECTION_STRING
-ENV MongoDB_DatabaseName=$DATABASE_NAME
-
 WORKDIR /src
 COPY ["MongoConnector/*.csproj", "MongoConnector/"]
 RUN dotnet restore "MongoConnector/MongoConnector.csproj"
@@ -23,4 +17,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
 WORKDIR /publish
 COPY --from=build-env /publish .
 EXPOSE 80
+
+ARG CONNECTION_STRING
+ARG DATABASE_NAME
+
+ENV MongoDB_ConnectionURI=$CONNECTION_STRING
+ENV MongoDB_DatabaseName=$DATABASE_NAME
 ENTRYPOINT ["dotnet", "SimpleServer.dll"]
