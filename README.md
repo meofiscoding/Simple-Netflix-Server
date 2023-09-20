@@ -1,6 +1,9 @@
 # Simple Netflix Server (ASP.NET API)
 
-[![.NET](https://github.com/meofiscoding/Simple-Angular/actions/workflows/main_prodNetflixAPI.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Angular/actions/workflows/main_prodNetflixAPI.yml) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
+[![.NET](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/dev.yml/badge.svg?branch=dev)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/dev.yml) 
+[![.NET](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/main.yml) 
+
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
 ## Table of Contents
 
 - [Introduction](#introduction)
