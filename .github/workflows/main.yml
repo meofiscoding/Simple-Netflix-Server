@@ -1,0 +1,31 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: "CD to Production"
+on:
+  push:
+    branches: "main"
+jobs:
+  build_image:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    env:
+      Tag: prod
+      MongoDB_ConnectionURI: ${{ secrets.MongoDB_ConnectionURI }}
+      MongoDB_DatabaseName: netflix-prod
+    steps:
+      - uses: actions/checkout@v3
+      - name: Azure Container Registry Login
+        uses: Azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build and Push Server API
+        run: |
+          docker build --build-arg CONNECTION_STRING=${{ env.MongoDB_ConnectionURI }} --build-arg DATABASE_NAME=${{ env.MongoDB_DatabaseName }} -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ env.Tag }} .
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ env.Tag }}
+
+          
+
+  
