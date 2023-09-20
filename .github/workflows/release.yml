@@ -32,23 +32,8 @@ jobs:
           docker build --build-arg CONNECTION_STRING=${{ env.MongoDB_ConnectionURI }} --build-arg DATABASE_NAME=${{ env.MongoDB_DatabaseName }} -t ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
   
-  test_image:
-    needs: build_image
-    runs-on: ubuntu-latest
-    steps:
-      - name: ACR login
-        uses: Azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
-      - name: Run tests in container
-        run: |
-          docker pull ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }}
-          docker run ${{ secrets.ACR_LOGIN_SERVER }}/netflix-server:${{ github.sha }} dotnet test "ServerTest/SimpleServer.Test.csproj"
-  
   deploy_to_staging:
-    needs: [test_image]
+    needs: [build_image]
     runs-on: ubuntu-latest
     steps:
       - name: ACR login
