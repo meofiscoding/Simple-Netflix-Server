@@ -11,6 +11,21 @@ COPY ["SimpleServer/*.csproj", "SimpleServer/"]
 RUN dotnet restore "SimpleServer/SimpleServer.csproj"
 
 COPY . .
+RUN dotnet build "SimpleServer/SimpleServer.csproj" 
+
+FROM build-env AS testrunner
+WORKDIR /src/ServerTest
+CMD [ "dotnet", "test", "--logger:trx" ]
+
+FROM build-env AS test 
+WORKDIR /src/ServerTest
+ARG CONNECTION_STRING
+ARG DATABASE_NAME
+
+ENV MongoDB_ConnectionURI=$CONNECTION_STRING
+ENV MongoDB_DatabaseName=$DATABASE_NAME
+RUN dotnet test --logger:trx
+
 RUN dotnet publish "SimpleServer/SimpleServer.csproj" -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
