@@ -26,11 +26,14 @@ ENV MongoDB_ConnectionURI=$CONNECTION_STRING
 ENV MongoDB_DatabaseName=$DATABASE_NAME
 RUN dotnet test "ServerTest/SimpleServer.Test.csproj" --logger:trx
 
+# publish
+FROM build-env AS publish
+WORKDIR /src
 RUN dotnet publish "SimpleServer/SimpleServer.csproj" -c Release -o /publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
 WORKDIR /publish
-COPY --from=build-env /publish .
+COPY --from=publish /publish .
 EXPOSE 80
 
 ARG CONNECTION_STRING
