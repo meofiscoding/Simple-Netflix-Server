@@ -18,6 +18,7 @@ WORKDIR /src/ServerTest
 CMD [ "dotnet", "test", "--logger:trx" ]
 
 FROM build-env AS test 
+WORKDIR /src
 ARG CONNECTION_STRING
 ARG DATABASE_NAME
 
