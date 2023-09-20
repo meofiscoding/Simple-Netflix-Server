@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Welcome to the Netflix Clone project! This project is a simplified Netflix-inspired platform built to help you learn TypeScript, Angular, MongoDB, and ASP.NET Web API. In this README, you'll find information on setting up and running the project, as well as an overview of its features and technologies used.
+Welcome to the Simple Netflix Server repository! This project serves as the backend for the Simple Netflix Front-end, which is built using Angular. This server is implemented using **ASP.NET Web API** and utilizes **MongoDB** as its database to provide a set of APIs for the front-end application to interact with.
 
 ## Features
 
