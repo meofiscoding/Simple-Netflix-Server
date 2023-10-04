@@ -5,6 +5,8 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using MongoConnector.Models;
+using Newtonsoft.Json;
+using RestSharp;
 using SimpleServer.Configuration;
 using SimpleServer.src;
 using SimpleServer.src.Auth;
@@ -24,17 +26,14 @@ namespace SimpleServer.Utils.Mediator.Commands.Auth
         {
             private readonly UserManager<Account> _userManager;
             private readonly SocialLoginConfiguration _socialLoginConfiguration;
-            // private readonly IHttpClientFactory _httpClientFactory;
             private readonly IAuthService _authService;
 
             public LoginSocialUserCommandHandler(
                 UserManager<Account> userManager,
                 IOptions<SocialLoginConfiguration> socialLoginConfig,
-                // IHttpClientFactory httpClientFactory,
                 IAuthService authService)
             {
                 _userManager = userManager;
-                // _httpClientFactory = httpClientFactory;
                 _authService = authService;
                 _socialLoginConfiguration = socialLoginConfig.Value;
             }
@@ -64,10 +63,35 @@ namespace SimpleServer.Utils.Mediator.Commands.Auth
             {
                 var _ = request.Provider switch
                 {
-                    // Consts.LoginProviders.Facebook => await ValidateFacebookToken(request),
+                    Consts.LoginProviders.Facebook => await ValidateFacebookToken(request),
                     Consts.LoginProviders.Google => await ValidateGoogleToken(request),
                     _ => throw new Exception($"{request.Provider} provider is not supported.")
                 };
+            }
+
+            private async Task<bool> ValidateFacebookToken(SocialLoginRequest request)
+            {
+                var client = new RestClient("https://graph.facebook.com/v8.0");
+                var appAccessTokenRequest = new RestRequest($"/oauth/access_token?client_id={_socialLoginConfiguration.Facebook!.ClientId!}&client_secret={_socialLoginConfiguration.Facebook!.ClientSecret!}&grant_type=client_credentials");
+                var response = await client.GetAsync(appAccessTokenRequest);
+                if (!response.IsSuccessful || String.IsNullOrEmpty(response.Content))
+                {
+                    throw new Exception($"Unable to get Facebook app access token, error: {response.ErrorMessage}");
+                }
+                var appAccessTokenResponse = JsonConvert.DeserializeObject<FacebookAppAccessTokenResponse>(response.Content);
+                var debugTokenRequest = new RestRequest($"/debug_token?input_token={request.AccessToken}&access_token={appAccessTokenResponse!.access_token}");
+                response = await client.GetAsync(debugTokenRequest);
+                if (String.IsNullOrEmpty(response.Content))
+                {
+                    throw new Exception($"Unable to get Facebook debug token, error: {response.ErrorMessage}");
+                }
+                var result = JsonConvert.DeserializeObject<FacebookTokenValidationResult>(response.Content);
+
+                if (result?.Data.IsValid != true)
+                {
+                    throw new Exception($"{request.Provider} access token is not valid.");
+                }
+                return true;
             }
 
             private async Task<bool> ValidateGoogleToken(SocialLoginRequest request)

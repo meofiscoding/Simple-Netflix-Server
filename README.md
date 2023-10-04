@@ -21,7 +21,7 @@ Welcome to the Netflix Clone project! This project is a simplified Netflix-inspi
 - **User Authentication:** Implement user registration and login functionality with **Mediator** pattern.
     - Registration
     - Login
-    - Social login (for Google and Facebook)
+    - Social login (for `Google` and `Facebook`)
     - Role management
     - Refresh token
     - All based on JWT Tokens

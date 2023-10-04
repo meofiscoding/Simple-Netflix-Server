@@ -88,9 +88,10 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole(Role.Admin, Role.User));
 });
 
-// Add services to the container.
-builder.Services.Configure<JwtConfig>(
-         configuration.GetSection(JwtConfig.Position));
+// Add JWT config and externnal auth provider config
+builder.Services.Configure<JwtConfig>(configuration.GetSection(JwtConfig.Position));
+builder.Services.Configure<SocialLoginConfiguration>(configuration.GetSection(SocialLoginConfiguration.Position));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
