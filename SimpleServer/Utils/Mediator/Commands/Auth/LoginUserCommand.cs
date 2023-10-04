@@ -20,11 +20,11 @@ namespace SimpleServer.Utils.Mediator.Commands.Auth
 
         public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginResponseDto>
         {
-            private readonly UserManager<User> _userManager;
+            private readonly UserManager<Account> _userManager;
             private readonly IAuthService _authService;
 
             public LoginUserCommandHandler(
-                UserManager<User> userManager,
+                UserManager<Account> userManager,
                 IAuthService authService)
             {
                 _userManager = userManager;
