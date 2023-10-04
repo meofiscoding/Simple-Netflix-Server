@@ -6,6 +6,7 @@ namespace MongoConnector.Models
     {
         public const string Movies = "movies";
         public const string Users  = "users";
+        public const string Roles = "roles";
     }
 }
 

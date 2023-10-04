@@ -22,16 +22,16 @@ namespace MongoConnector.Seeder
 
         private static async Task SeedRoles(IServiceProvider services)
         {
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = services.GetRequiredService<RoleManager<Role>>();
 
             if (!roleManager.Roles.Any(r => r.Name == Admin))
             {
-                await roleManager.CreateAsync(new IdentityRole(Admin));
+                await roleManager.CreateAsync(new Role{Name = Admin});
             }
 
             if (!roleManager.Roles.Any(r => r.Name == User))
             {
-                await roleManager.CreateAsync(new IdentityRole(User));
+                await roleManager.CreateAsync(new Role{Name = User});
             }
         }
 
