@@ -16,6 +16,8 @@ using System.Text;
 using SimpleServer.src.Auth;
 using AspNetCore.Identity.MongoDbCore.Models;
 using SimpleServer.Utils.Mediator.Commands.Auth;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -52,8 +54,6 @@ builder.Services.ConfigureMongoDbIdentity<User, MongoIdentityRole, Guid>(mongoDb
                 .AddRoleManager<RoleManager<MongoIdentityRole>>()
                 .AddDefaultTokenProviders();
 
-builder.Services.AddMediatR(typeof(LoginUserCommand));
-
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -77,15 +77,16 @@ builder.Services.AddAuthentication(options =>
     }
 );
 
-//builder.Services.AddAuthorization(options =>
-//{
-// Only users with the "Admin" role will be authorized to access resources or perform actions
-//    options.AddPolicy("ElevatedRights", policy =>
-//        policy.RequireRole(Role.Admin));
-// User has either the "Admin" role or the "User" role to access resources 
-//    options.AddPolicy("StandardRights", policy =>
-//        policy.RequireRole(Role.Admin, Role.User));
-//});
+builder.Services.AddAuthorization(options =>
+{
+    // Only users with the "Admin" role will be authorized to access resources or perform actions
+    options.AddPolicy("ElevatedRights", policy =>
+        policy.RequireRole(Role.Admin));
+    // User has either the "Admin" role or the "User" role to access resources 
+    options.AddPolicy("StandardRights", policy =>
+        policy.RequireRole(Role.Admin, Role.User));
+});
+
 // Add services to the container.
 builder.Services.Configure<JwtConfig>(
          configuration.GetSection(JwtConfig.Position));
@@ -98,7 +99,7 @@ builder.Services.AddSingleton<MongoDbService>();
 
 // Server services register
 builder.Services.AddScoped<IMovieService, MovieService>();
-builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // add CORS rule
 builder.Services.AddCors(options =>
@@ -110,6 +111,9 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+builder.Services.AddMediatR(typeof(LoginUserCommand));
+
 
 var app = builder.Build();
 
@@ -130,6 +134,20 @@ app.UseAuthentication();
 app.MapControllers();
 
 app.UseCors("AngularClient");
+
+app.UseExceptionHandler(appError =>
+        {
+            appError.Run(async context =>
+            {
+                var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                if (contextFeature is not null)
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsync(contextFeature.Error.Message);
+                }
+            });
+        });
 
 app.Run();
 
