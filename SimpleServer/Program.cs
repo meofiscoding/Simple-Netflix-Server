@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SimpleServer.src.Auth;
 using AspNetCore.Identity.MongoDbCore.Models;
+using SimpleServer.Utils.Mediator.Commands.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -51,7 +52,7 @@ builder.Services.ConfigureMongoDbIdentity<User, MongoIdentityRole, Guid>(mongoDb
                 .AddRoleManager<RoleManager<MongoIdentityRole>>()
                 .AddDefaultTokenProviders();
 
-// builder.Services.AddMediatR(typeof(LoginUserCommand));
+builder.Services.AddMediatR(typeof(LoginUserCommand));
 
 builder.Services.AddAuthentication(options =>
     {
