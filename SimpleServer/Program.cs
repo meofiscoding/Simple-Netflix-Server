@@ -100,7 +100,7 @@ builder.Services.AddSingleton<MongoDbService>();
 
 // Server services register
 builder.Services.AddScoped<IMovieService, MovieService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 // add CORS rule
 builder.Services.AddCors(options =>
@@ -114,7 +114,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddMediatR(typeof(LoginUserCommand));
-
 
 var app = builder.Build();
 

@@ -29,6 +29,16 @@ namespace SimpleServer.src.Auth
         }
 
         [AllowAnonymous]
+        [HttpPost("social-login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SocialLogin([FromBody] SocialLoginRequest request)
+        {
+            return Ok(await _mediator.Send(new LoginSocialUserCommand(request)));
+        }
+
+        [AllowAnonymous]
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponseDto))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -36,6 +46,16 @@ namespace SimpleServer.src.Auth
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             return Ok(await _mediator.Send(new RegisterUserCommand(request)));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokenDto))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
+        {
+            return Ok(await _mediator.Send(new RefreshTokenCommand(request)));
         }
     }
 }
