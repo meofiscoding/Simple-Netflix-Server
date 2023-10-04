@@ -2,9 +2,10 @@
 namespace MongoConnector.Models
 {
 
-    public class MongoCollections
+    public static class MongoCollections
     {
-        public static string Movies { get; } = "movies";
+        public const string Movies = "movies";
+        public const string Users  = "users";
     }
 }
 

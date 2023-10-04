@@ -18,6 +18,7 @@ using AspNetCore.Identity.MongoDbCore.Models;
 using SimpleServer.Utils.Mediator.Commands.Auth;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
+using MongoConnector.Seeder;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -117,7 +118,12 @@ builder.Services.AddMediatR(typeof(LoginUserCommand));
 
 var app = builder.Build();
 
-await SeedData(app).ConfigureAwait(false);
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    await SeedManager.Seed(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -150,14 +156,6 @@ app.UseExceptionHandler(appError =>
         });
 
 app.Run();
-
-static async Task SeedData(WebApplication app)
-{
-    using var scope = app.Services.CreateAsyncScope();
-
-    var mongoDBService = scope.ServiceProvider.GetRequiredService<MongoDbService>();
-    await mongoDBService.SeedMovieData().ConfigureAwait(false);
-}
 
 public partial class Program { }
 
