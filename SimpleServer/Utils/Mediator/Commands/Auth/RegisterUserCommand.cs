@@ -52,7 +52,10 @@ namespace SimpleServer.Utils.Mediator.Commands.Auth
                         $"Unable to register user {command.Request.Username}, errors: {GetErrorsText(result.Errors)}");
                 }
 
-                return new RegisterResponseDto();
+                return new RegisterResponseDto
+                {
+                    Message = $"User {command.Request.Username} registered successfully."
+                };
             }
 
             private static string GetErrorsText(IEnumerable<IdentityError> errors)

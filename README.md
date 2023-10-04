@@ -18,7 +18,7 @@ Welcome to the Netflix Clone project! This project is a simplified Netflix-inspi
 
 ## Features
 
-- **User Authentication:** Implement user registration and login functionality.
+- **User Authentication:** Implement user registration and login functionality with **Mediator** pattern.
     - Registration
     - Login
     - Social login (for Google and Facebook)
