@@ -38,13 +38,13 @@ namespace MongoConnector.Seeder
         private static async Task SeedAdminUser(IServiceProvider services)
         {
             var context = services.GetRequiredService<MongoDbService>();
-            var userManager = services.GetRequiredService<UserManager<User>>();
+            var userManager = services.GetRequiredService<UserManager<Account>>();
 
-            var adminUser = (await context.Users.FindAsync(u => u.UserName == "AuthenticationAdmin")).FirstOrDefault();
+            var adminUser = (await context.Accounts.FindAsync(u => u.UserName == "AuthenticationAdmin")).FirstOrDefault();
 
             if (adminUser is null)
             {
-                adminUser = new User
+                adminUser = new Account
                 {
                     UserName = "AuthenticationAdmin",
                     Email = "tra@admin.com",

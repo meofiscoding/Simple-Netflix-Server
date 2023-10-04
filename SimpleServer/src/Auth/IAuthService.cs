@@ -7,7 +7,7 @@ namespace SimpleServer.src.Auth
 {
     public interface IAuthService
     {
-        Task<JwtSecurityToken> CreateToken(User user);
+        Task<JwtSecurityToken> CreateToken(Account user);
         string GenerateRefreshToken();
     }
 }

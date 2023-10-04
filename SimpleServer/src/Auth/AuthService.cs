@@ -16,17 +16,17 @@ namespace SimpleServer.src.Auth
     {
 
         private readonly JwtConfig _jwtConfig;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<Account> _userManager;
 
-        public AuthService(IOptions<JwtConfig> jwtConfig, UserManager<User> userManager)
+        public AuthService(IOptions<JwtConfig> jwtConfig, UserManager<Account> userManager)
         {
             _jwtConfig = jwtConfig.Value;
             _userManager = userManager;
         }
 
-        public async Task<JwtSecurityToken> CreateToken(User user)
+        public async Task<JwtSecurityToken> CreateToken(Account acc)
         {
-            var authClaims = await GetClaims(user);
+            var authClaims = await GetClaims(acc);
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Secret!));
 
             var token = new JwtSecurityToken(
@@ -47,17 +47,17 @@ namespace SimpleServer.src.Auth
             return Convert.ToBase64String(randomNumber);
         }
 
-        private async Task<List<Claim>> GetClaims(User user)
+        private async Task<List<Claim>> GetClaims(Account acc)
         {
             var authClaims = new List<Claim>
         {
             new(ClaimTypes.Sid, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Name, user.UserName!),
-            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.Name, acc.UserName!),
+            new(ClaimTypes.Email, acc.Email!),
             new(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(acc);
 
             if (userRoles.Any())
             {

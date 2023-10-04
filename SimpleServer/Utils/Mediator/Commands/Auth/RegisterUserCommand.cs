@@ -18,9 +18,9 @@ namespace SimpleServer.Utils.Mediator.Commands.Auth
 
         public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterResponseDto>
         {
-            private readonly UserManager<User> _userManager;
+            private readonly UserManager<Account> _userManager;
 
-            public RegisterUserCommandHandler(UserManager<User> userManager)
+            public RegisterUserCommandHandler(UserManager<Account> userManager)
             {
                 _userManager = userManager;
             }
@@ -32,19 +32,19 @@ namespace SimpleServer.Utils.Mediator.Commands.Auth
 
                 if (userByEmail is not null || userByUsername is not null)
                 {
-                    throw new Exception($"User with email {command.Request.Email} or username {command.Request.Username} already exists.");
+                    throw new Exception($"Account with email {command.Request.Email} or username {command.Request.Username} already exists.");
                 }
 
-                User user = new()
+                Account acc = new()
                 {
                     Email = command.Request.Email,
                     UserName = command.Request.Username,
                     Provider = Consts.LoginProviders.Password,
                 };
 
-                var result = await _userManager.CreateAsync(user, command.Request.Password!);
+                var result = await _userManager.CreateAsync(acc, command.Request.Password!);
 
-                await _userManager.AddToRoleAsync(user, Role.User);
+                await _userManager.AddToRoleAsync(acc, Role.User);
 
                 if (!result.Succeeded)
                 {
