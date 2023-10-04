@@ -19,6 +19,12 @@ Welcome to the Netflix Clone project! This project is a simplified Netflix-inspi
 ## Features
 
 - **User Authentication:** Implement user registration and login functionality.
+    - Registration
+    - Login
+    - Social login (for Google and Facebook)
+    - Role management
+    - Refresh token
+    - All based on JWT Tokens
 - **Streaming:** Watch movies and TV shows with a built-in video player.
 - **Movie Management:** Users can save and manage their favorite movies.
 - **Search Functionality:** Search for movies and TV shows by title or genre.
