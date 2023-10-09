@@ -1,13 +1,36 @@
 version: '3.4'
 
 services:
-  simpleserver:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+  moviedb:
+    container_name: moviedb
+    restart: always
     ports:
-      - "80"
-      - "443"
+      - "27017:27017"
     volumes:
-      - ~/.aspnet/https:/root/.aspnet/https:ro
-      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - simplenetflix-moviedb:/data/db
+
+  movie-api:
+    container_name: movie-api
+    environment:
+      - "DatabaseSettings:ConnectionString=mongodb://moviedb:27017"
+      - "DatabaseSettings:DatabaseName=sampleDB"
+      - "DatabaseSettings:CollectionName=movies"
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - moviedb
+    ports:
+      - "8000:80"
+  # simpleserver:
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=https://+:443;http://+:80
+  #   ports:
+  #     - "80"
+  #     - "443"
+  #   volumes:
+  #     - ~/.aspnet/https:/root/.aspnet/https:ro
+  #     - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+
+volumes:
+  simplenetflix-moviedb:
+    external: false

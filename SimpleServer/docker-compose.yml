@@ -1,8 +1,13 @@
 version: '3.4'
 
 services:
-  simpleserver:
-    image: ${DOCKER_REGISTRY-}simpleserver
+  moviedb:
+    image: mongo
+
+  movie-api:
+    image: ${REGISTRY:-simplenetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: src/Services/Movie/Movie.API/Dockerfile
+    depends_on:
+      - moviedb
