@@ -1,10 +1,9 @@
-﻿using System;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MongoConnector.Models
+namespace Movie.API.Models
 {
-    public class Movies
+    public class MovieInformation
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
