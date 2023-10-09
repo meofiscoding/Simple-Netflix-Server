@@ -1,0 +1,20 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/api/movie",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "movie-api",
+            "Port": "80"
+          }
+        ],
+        "UpstreamPathTemplate": "/movies",
+        "UpstreamHttpMethod": [
+          "GET",
+          "POST",
+          "PUT"
+        ]
+      }
+    ]
+  }

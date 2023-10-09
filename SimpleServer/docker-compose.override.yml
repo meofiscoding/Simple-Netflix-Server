@@ -20,6 +20,15 @@ services:
       - moviedb
     ports:
       - "8000:80"
+
+  ocelotapigw:
+    container_name: ocelotapigw
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - movie-api
+    ports:
+      - "8001:80"  
   # simpleserver:
   #   environment:
   #     - ASPNETCORE_ENVIRONMENT=Development
@@ -33,4 +42,4 @@ services:
 
 volumes:
   simplenetflix-moviedb:
-    external: false
+  

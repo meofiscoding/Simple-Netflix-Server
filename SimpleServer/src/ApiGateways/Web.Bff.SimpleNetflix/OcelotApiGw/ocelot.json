@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5179
+          "Port": 8000
         }
       ],
       "UpstreamPathTemplate": "/movies",

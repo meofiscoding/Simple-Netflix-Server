@@ -18,7 +18,7 @@ builder.Services.AddOcelot();
 builder.Services.AddCors();
 builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile(Path.GetRelativePath(builder.Environment.ContentRootPath, "./apigw/configuration.json"), optional: false, reloadOnChange: true);
+    .AddJsonFile(Path.GetRelativePath(builder.Environment.ContentRootPath, $"ocelot.{builder.Environment.EnvironmentName}.json"), optional: false, reloadOnChange: true);
 
 var app = builder.Build();
 

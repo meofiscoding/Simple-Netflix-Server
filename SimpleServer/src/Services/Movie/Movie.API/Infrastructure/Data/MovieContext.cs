@@ -21,7 +21,7 @@ namespace Movie.API.Infrastructure.Data
             var moviesData = await this.Movies.Find(_ => true).ToListAsync();
             if (moviesData.Count == 0)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "movies.json");
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Infrastructure", "Data", "movies.json");
                 // var data = File.ReadAllText("../MongoConnector/Seeder/movies.json");
                 var data = File.ReadAllText(path);
                 var movies = JsonConvert.DeserializeObject<List<MovieInformation>>(data);
