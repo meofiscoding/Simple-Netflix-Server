@@ -10,7 +10,7 @@ using Movie.API.Repository;
 
 namespace SimpleServer.src.Movie;
 
-[Route("api/[controller]")]
+[Route("api/movie")]
 public class MovieController : Controller
 {
     private readonly IMovieRepository _movieService;
