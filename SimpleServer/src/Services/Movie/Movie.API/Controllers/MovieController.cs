@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Movie.API.Models;
 using Movie.API.Repository;
@@ -10,6 +11,7 @@ using Movie.API.Repository;
 
 namespace SimpleServer.src.Movie;
 
+[Authorize]
 [Route("api/movie")]
 public class MovieController : Controller
 {

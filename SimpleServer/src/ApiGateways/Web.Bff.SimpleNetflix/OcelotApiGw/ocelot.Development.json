@@ -1,20 +1,43 @@
 {
-    "Routes": [
-      {
-        "DownstreamPathTemplate": "/api/movie",
-        "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [
-          {
-            "Host": "movie-api",
-            "Port": "80"
-          }
-        ],
-        "UpstreamPathTemplate": "/movies",
-        "UpstreamHttpMethod": [
-          "GET",
-          "POST",
-          "PUT"
-        ]
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/movie",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "movie-api",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/movies",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": []
       }
-    ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Auth/{path}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/{path}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT"
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7114"
   }
+}
