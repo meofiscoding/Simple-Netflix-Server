@@ -1,61 +1,119 @@
-﻿using Domain.Mediator.Commands.Auth;
-using Identity.API.Domain.Dtos.Auth;
-using Identity.API.Domain.Mediator.Commands.Auth;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using System.Threading.Tasks;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Identity.API.Models.Auth;
+using Identity.API.Entity;
 
 namespace Identity.API.Controllers;
 
-[ApiController]
-[Route("api/auth")]
-public class AuthController : ControllerBase
+public class AuthController : Controller
 {
-    private readonly IMediator _mediator;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IIdentityServerInteractionService _interactionService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public AuthController(IMediator mediator)
+    public AuthController(SignInManager<ApplicationUser> signInManager, IIdentityServerInteractionService interactionService, UserManager<ApplicationUser> userManager)
     {
-        _mediator = mediator;
-    }
-
-    [AllowAnonymous]
-    [HttpPost("login")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
-    {
-        return Ok(await _mediator.Send(new LoginUserCommand(request)));
-    }
-    
-    [AllowAnonymous]
-    [HttpPost("social-login")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SocialLogin([FromBody] SocialLoginRequest request)
-    {
-        return Ok(await _mediator.Send(new LoginSocialUserCommand(request)));
+        _signInManager = signInManager;
+        _interactionService = interactionService;
+        _userManager = userManager;
     }
 
-    [AllowAnonymous]
-    [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RegisterResponseDto))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    [HttpGet]
+    public IActionResult Login(string returnUrl)
     {
-        return Ok(await _mediator.Send(new RegisterUserCommand(request)));
+        return View(new LoginViewModel() { ReturnUrl = returnUrl });
     }
-    
-    [AllowAnonymous]
-    [HttpPost("refresh-token")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokenDto))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto request)
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel vm)
     {
-        return Ok(await _mediator.Send(new RefreshTokenCommand(request)));
+        // get tenant info// check if the model is valid
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.FindByNameAsync(vm.Username!) ?? await _userManager.FindByEmailAsync(vm.Username!);
+            // check if the user exists
+            if (user != null)
+            {
+                // check if the password is correct
+                var signInResult = _signInManager.PasswordSignInAsync(user, vm.Password, false, false).Result;
+                if (signInResult.Succeeded)
+                {
+                    // redirect to the return url
+                    if (vm.ReturnUrl != null)
+                    {
+                        return Redirect(vm.ReturnUrl);
+                    }
+                    else
+                    {
+                        return View();
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Username or password is incorrect");
+            }
+        }
+        return Redirect(vm.ReturnUrl);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Logout(string logoutId)
+    {
+        await _signInManager.SignOutAsync();
+
+        var logoutRequest = await _interactionService.GetLogoutContextAsync(logoutId);
+
+        if (string.IsNullOrEmpty(logoutRequest.PostLogoutRedirectUri))
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        return Redirect(logoutRequest.PostLogoutRedirectUri);
+    }
+
+    [HttpGet]
+    public IActionResult Register(string returnUrl)
+    {
+        return View(new RegisterViewModel { ReturnUrl = returnUrl });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterViewModel vm)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(vm);
+        }
+
+        var userByEmail = await _userManager.FindByEmailAsync(vm.Email!);
+        var userByUsername = await _userManager.FindByNameAsync(vm.Username!);
+        if (userByEmail is not null || userByUsername is not null)
+        {
+            throw new Exception($"User with email {vm.Email} or username {vm.Username} already exists.");
+        }
+
+        var user = new ApplicationUser
+        {
+            UserName = vm.Username,
+            Email = vm.Email
+        };
+
+        var result = await _userManager.CreateAsync(user, vm.Password);
+        // await _userManager.AddToRoleAsync(user, "User");
+
+        if (!result.Succeeded)
+        {
+            throw new Exception($"User creation failed. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+
+        await _signInManager.SignInAsync(user, false);
+
+        return Redirect(vm.ReturnUrl);
+    }
+
 }
-
