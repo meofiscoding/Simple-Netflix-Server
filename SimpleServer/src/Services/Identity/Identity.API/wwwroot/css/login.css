@@ -12,7 +12,7 @@
 
 
 .login-box{
-    background-color: rgba(0, 0, 0, 0.899);
+    background-color: rgb(0 0 0 / 67%);
     width: 430px;
     height: 630px;
     border-radius: 5px;
@@ -25,4 +25,24 @@
 
 .form-control{
     box-shadow: none !important;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+
+.divider::before {
+    margin-right: 10px;
+}
+
+.divider::after {
+    margin-left: 10px;
 }

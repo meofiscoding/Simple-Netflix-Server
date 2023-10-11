@@ -1,6 +1,8 @@
 ﻿using Identity.API.Configuration;
 using Identity.API.Data;
 using Identity.API.Entity;
+using IdentityServer4;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -14,6 +16,13 @@ builder.Services.AddControllersWithViews();
 // Configure DbContext
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("IdentityDB")));
 
+// Add Google support
+builder.Services.AddAuthentication().AddGoogle("Google", options =>
+{
+    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+    options.ClientId = configuration["Google:ClientId"];
+    options.ClientSecret = configuration["Google:ClientSecret"];
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     {
