@@ -11,27 +11,31 @@ builder.Services
     .AddAuthentication("IdentityApiKey")
     .AddJwtBearer("IdentityApiKey", options =>
     {
-        options.Authority = "https://localhost:5186";
+        options.Authority = "https://localhost:5001";
         options.TokenValidationParameters = new TokenValidationParameters
         {
-             ValidateAudience = false
+            ValidateAudience = false
         };
-        options.Configuration = new OpenIdConnectConfiguration();
+        // options.Configuration = new OpenIdConnectConfiguration();
     });
 
 builder.Services.AddOcelot();
-// add CORS rule
-builder.Services.AddCors();
 builder.Configuration
     .SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile(Path.GetRelativePath(builder.Environment.ContentRootPath, $"ocelot.{builder.Environment.EnvironmentName}.json"), optional: false, reloadOnChange: true);
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+// add CORS rule
+builder.Services.AddCors();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
 if (app.Environment.IsDevelopment())
 {
-    IdentityModelEventSource.ShowPII = true;
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 // Config ocelot
 // app.UseCors("AllowAngularDevClient");
@@ -41,6 +45,7 @@ app.UseCors(builder =>
     builder.AllowAnyHeader();
     builder.AllowAnyMethod();
 });
-app.UseOcelot().Wait();
 
+app.UseOcelot().Wait();
+app.MapControllers();
 app.Run();
