@@ -26,6 +26,7 @@ runs:
     with:
       dotnet-version: ${{ inputs.dotnet_version }}
   - name: Print Current Directory
+    shell: bash
     run: |
       pwd  # This command prints the current working directory
       ls   # This command lists the contents of the current directory
