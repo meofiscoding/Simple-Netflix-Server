@@ -1,8 +1,31 @@
 version: '3.4'
 
 services:
-  simpleserver:
-    image: ${DOCKER_REGISTRY-}simpleserver
+  moviedb:
+    image: mongo
+  
+  identitydb:
+    image: postgres
+
+  movie-api:
+    # image: ${REGISTRY:-simplenetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${DOCKER_REGISTRY-}movie.api
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: src/Services/Movie/Movie.API/Dockerfile
+    depends_on:
+      - moviedb
+
+  ocelotapigw:
+    image: ${DOCKER_REGISTRY-}ocelotapigw
+    build:
+      context: .
+      dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
+
+  identity-api:
+    image: ${DOCKER_REGISTRY-}identity.api
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+    depends_on:
+      - identitydb
