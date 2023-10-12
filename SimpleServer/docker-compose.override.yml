@@ -9,6 +9,18 @@ services:
     volumes:
       - simplenetflix-moviedb:/data/db
 
+  identitydb:
+    container_name: identitydb
+    environment:
+      - POSTGRES_USER=meofadmin
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=IdentityDB
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - simplenetflix-identitydb:/var/lib/postgresql/data
+
   movie-api:
     container_name: movie-api
     environment:
@@ -20,6 +32,15 @@ services:
       - moviedb
     ports:
       - "8000:80"
+  
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB;Pooling=true; IntegratedSecurity=true;
+      - MovieApiClient=http://docker.for.mac.localhost:8000
+    ports:
+      - "5001:80"
 
   ocelotapigw:
     container_name: ocelotapigw
@@ -28,7 +49,7 @@ services:
     depends_on:
       - movie-api
     ports:
-      - "8001:80"  
+      - "5000:80"  
   # simpleserver:
   #   environment:
   #     - ASPNETCORE_ENVIRONMENT=Development
@@ -42,4 +63,5 @@ services:
 
 volumes:
   simplenetflix-moviedb:
+  simplenetflix-identitydb:
   
