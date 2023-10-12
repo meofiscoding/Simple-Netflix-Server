@@ -16,6 +16,10 @@ namespace Movie.API.Infrastructure.Data
             SeedMovies();
         }
 
+        public MovieContext()
+        {
+        }
+
         private async void SeedMovies()
         {
             var moviesData = await this.Movies.Find(_ => true).ToListAsync();

@@ -18,6 +18,10 @@ namespace Movie.API.Repository
         public async Task<List<List<MovieInformation>>> GetAllMoviesAsync()
         {
             var cursor = await _context.Movies.FindAsync(_ => true);
+            if (cursor.Current == null)
+            {
+                return new List<List<MovieInformation>>();
+            }
             var movies = await cursor.ToListAsync();
 
             var result = new List<List<MovieInformation>>();
