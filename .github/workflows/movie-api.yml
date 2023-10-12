@@ -22,7 +22,7 @@ env:
   IMAGE: movie.api
   DOTNET_VERSION: 7.0.x
   PROJECT_PATH: Services/Movie/Movie.API
-  TESTS_PATH: SServices/Movie/tests/Movie.UnitTests
+  TESTS_PATH: Services/Movie/tests/Movie.UnitTests
 
 jobs:
   BuildContainersForPR_Linux:
