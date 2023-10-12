@@ -23,7 +23,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/auth/{path}",
+      "DownstreamPathTemplate": "/{path}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -40,6 +40,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7114"
+    "BaseUrl": "https://localhost:5000"
   }
 }

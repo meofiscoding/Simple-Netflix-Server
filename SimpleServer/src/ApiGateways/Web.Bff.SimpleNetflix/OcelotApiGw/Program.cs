@@ -38,7 +38,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 // Config ocelot
-// app.UseCors("AllowAngularDevClient");
 app.UseCors(builder =>
 {
     builder.AllowAnyOrigin();
