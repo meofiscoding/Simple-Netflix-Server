@@ -8,6 +8,7 @@ on:
 
     paths:
       - src/Services/Identity/**
+      - .github/workflows/composite/build/action.yml
       - .github/workflows/identity-api.yml
 
   pull_request:

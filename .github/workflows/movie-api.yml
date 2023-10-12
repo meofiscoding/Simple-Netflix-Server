@@ -8,6 +8,7 @@ on:
 
     paths:
       - src/Services/Movie/**
+      - .github/workflows/composite/build/action.yml
       - .github/workflows/movie-api.yml
 
   pull_request:
