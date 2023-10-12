@@ -61,3 +61,5 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+
+          
