@@ -7,14 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY "SimpleServer.sln" "SimpleServer.sln   
-COPY "ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/OcelotApiGw.csproj" "ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/OcelotApiGw.csproj"
 COPY ["Services/Identity/Identity.API/Identity.API.csproj", "Services/Identity/Identity.API/Identity.API.csproj"]
-COPY "Services/Movie/Movie.API/Movie.API.csproj" "Services/Movie/Movie.API/Movie.API.csproj"
-COPY "Services/Movie/tests/Movie.UnitTests/Movie.UnitTests.csproj" "Services/Movie/tests/Movie.UnitTests/Movie.UnitTests.csproj"
-COPY "Services/Movie/tests/Movie.FunctionalTests/Movie.FunctionalTests.csproj" "Services/Movie/tests/Movie.FunctionalTests/Movie.FunctionalTests.csproj"
-COPY "SimpleServer/docker-compose.dcproj" "SimpleServer/docker-compose.dcproj"
-
 RUN dotnet restore "SimpleServer.sln"
 
 COPY . .
