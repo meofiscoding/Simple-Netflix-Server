@@ -33,7 +33,9 @@ runs:
   - name: Build and run unit tests
     shell: bash
     run: |
-      cd SimpleServer/src
+      cd SimpleServer
+      ls
+      cd src
       dotnet restore "SimpleServer.sln"
       cd ${{ inputs.project_path }}
       dotnet build --no-restore
