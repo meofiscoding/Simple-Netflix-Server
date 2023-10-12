@@ -45,7 +45,7 @@ runs:
   - name: Compose build ${{ inputs.service }}
     shell: bash
     run: sudo -E docker-compose build ${{ inputs.service }}
-    working-directory: ./src
+    working-directory: ./SimpleServer
     env:
-      TAG: ${{ env.BRANCH }}
+      TAG: dev
       REGISTRY: ${{ inputs.registry_endpoint }}

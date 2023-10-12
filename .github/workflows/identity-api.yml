@@ -61,4 +61,5 @@ jobs:
       - uses: ./.github/workflows/composite/build
         with:
           service: ${{ env.SERVICE }}
-          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}     
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}  
+             
