@@ -38,7 +38,6 @@ runs:
       cd ${{ inputs.project_path }}
       dotnet build --no-restore
       cd -
-      ls
       cd ${{ inputs.tests_path }}
       dotnet build --no-restore
       dotnet test --no-build -v=normal
