@@ -18,6 +18,6 @@ html {
 }
 
 body{
-  background-image: linear-gradient(rgba(0, 0, 0, 0.491), rgba(0, 0, 0, 0.416)) , url(/images/login-bg.jpeg);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.491), rgba(0, 0, 0, 0.416)) , url(/images/loginbg.jpeg);
   height: 100vh;
 }
