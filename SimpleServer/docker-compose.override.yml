@@ -37,7 +37,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB;Pooling=true; IntegratedSecurity=true;
+      - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB
       - MovieApiClient=http://docker.for.mac.localhost:8000
     ports:
       - "5001:80"
