@@ -18,6 +18,9 @@ services:
   ocelotapigw:
     image: ${REGISTRY:-simpleNetflix}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
+      environment:
+        - GOOGLE_CLIENT_ID= ${GOOGLE_CLIENT_ID}
+        - GOOGLE_CLIENT_SECRET= ${GOOGLE_CLIENT_SECRET}
       context: .
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
 
