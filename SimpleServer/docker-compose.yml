@@ -8,8 +8,7 @@ services:
     image: postgres
 
   movie-api:
-    # image: ${REGISTRY:-simplenetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
-    image: ${DOCKER_REGISTRY-}movie.api
+    image: ${REGISTRY:-simpleNetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Movie/Movie.API/Dockerfile
@@ -17,13 +16,13 @@ services:
       - moviedb
 
   ocelotapigw:
-    image: ${DOCKER_REGISTRY-}ocelotapigw
+    image: ${REGISTRY:-simpleNetflix}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
 
   identity-api:
-    image: ${DOCKER_REGISTRY-}identity.api
+    image: ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
