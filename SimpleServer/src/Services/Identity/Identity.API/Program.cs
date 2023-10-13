@@ -50,7 +50,6 @@ builder.Services.ConfigureApplicationCookie(config =>
     config.LoginPath = "/Auth/Login";
     config.LogoutPath = "/Auth/Logout";
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

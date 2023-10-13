@@ -37,10 +37,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
+      - USER_SECRETS_ID=9201287f-9e32-478f-903b-c2bee2bcb15a
       - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB;Pooling=true; IntegratedSecurity=true;
       - MovieApiClient=http://docker.for.mac.localhost:8000
     ports:
       - "5001:80"
+    volumes:
+      - $APPDATA/Microsoft/UserSecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
+      - $HOME/.microsoft/usersecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
 
   ocelotapigw:
     container_name: ocelotapigw
