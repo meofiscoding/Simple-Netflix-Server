@@ -8,7 +8,6 @@ on:
 
     paths:
       - src/Services/Identity/**
-      - .github/workflows/composite/build/action.yml
       - .github/workflows/identity-api.yml
 
   pull_request:
@@ -26,7 +25,7 @@ jobs:
   Linting_And_Build_Service:
     name: Lint, build and unit tests
     runs-on: ubuntu-latest
-
+    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.1.0
@@ -55,6 +54,8 @@ jobs:
 
   BuildContainersForPR_Linux:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: Linting_And_Build_Service
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.1.0
@@ -62,4 +63,19 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}  
+
+  BuildLinux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4.1.0
+    - uses: ./.github/workflows/composite/build-push
+      with:
+        service: ${{ env.SERVICE }}
+        registry_host: ${{ secrets.REGISTRY_HOST }}
+        registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+        image_name: ${{ env.IMAGE }}
+        registry_username: ${{ secrets.USERNAME }}
+        registry_password: ${{ secrets.PASSWORD }}
              

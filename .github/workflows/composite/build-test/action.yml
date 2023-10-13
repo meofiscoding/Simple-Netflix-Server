@@ -47,5 +47,5 @@ runs:
     run: sudo -E docker-compose build ${{ inputs.service }}
     working-directory: ./SimpleServer
     env:
-      TAG: dev
+      TAG: ${{ env.BRANCH }}
       REGISTRY: ${{ inputs.registry_endpoint }}
