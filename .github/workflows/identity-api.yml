@@ -80,7 +80,5 @@ jobs:
         registry_password: ${{ secrets.PASSWORD }}
         google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
         google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-
-        
         
 
