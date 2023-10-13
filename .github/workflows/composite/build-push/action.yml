@@ -49,7 +49,7 @@ runs:
   - name: Compose build ${{ inputs.service }}
     shell: bash
     run: sudo -E docker-compose build ${{ inputs.service }}
-    working-directory: ./src
+    working-directory: ./SimpleServer/src
     env:
       TAG: ${{ env.BRANCH }}
       REGISTRY: ${{ inputs.registry_endpoint }}
@@ -57,7 +57,7 @@ runs:
   - name: Compose push ${{ inputs.service }}
     shell: bash
     run: sudo -E docker-compose push ${{ inputs.service }}
-    working-directory: ./src
+    working-directory: ./SimpleServer/src
     env:
       TAG: ${{ env.BRANCH }}
       REGISTRY: ${{ inputs.registry_endpoint }}
