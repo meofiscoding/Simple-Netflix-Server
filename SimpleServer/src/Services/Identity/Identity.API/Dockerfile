@@ -17,6 +17,9 @@ FROM build AS publish
 RUN dotnet publish "Identity.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+# Set environment variables
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Identity.API.dll"]
