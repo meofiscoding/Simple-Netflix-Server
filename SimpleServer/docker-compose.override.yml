@@ -39,8 +39,8 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB;Pooling=true; IntegratedSecurity=true;
       - MovieApiClient=http://docker.for.mac.localhost:8000
-      - GOOGLE_CLIENT_ID = ${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET = ${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID= ${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET= ${GOOGLE_CLIENT_SECRET}
     ports:
       - "5001:80"
 
