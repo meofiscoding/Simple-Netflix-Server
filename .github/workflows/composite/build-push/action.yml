@@ -20,7 +20,12 @@ inputs:
   registry_password:
     description: "Registry password"
     required: true
-  
+  google_client_id:
+    description: "Google client id"
+    required: false
+  google_client_secret:
+    description: "Google client secret"
+    required: false
 runs:
   using: "composite"
   steps:
@@ -53,6 +58,8 @@ runs:
     env:
       TAG: ${{ env.BRANCH }}
       REGISTRY: ${{ inputs.registry_endpoint }}
+      GOOGLE_CLIENT_ID: ${{ inputs.google_client_id }}
+      GOOGLE_CLIENT_SECRET: ${{ inputs.google_client_secret }}
 
   - name: Compose push ${{ inputs.service }}
     shell: bash
@@ -61,6 +68,8 @@ runs:
     env:
       TAG: ${{ env.BRANCH }}
       REGISTRY: ${{ inputs.registry_endpoint }}
+      GOOGLE_CLIENT_ID: ${{ inputs.google_client_id }}
+      GOOGLE_CLIENT_SECRET: ${{ inputs.google_client_secret }}
 
   - name: Create multiarch manifest
     shell: bash

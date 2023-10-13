@@ -20,8 +20,13 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configu
 builder.Services.AddAuthentication().AddGoogle("Google", options =>
 {
     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-    options.ClientId = configuration["Google:ClientId"];
-    options.ClientSecret = configuration["Google:ClientSecret"];
+    // Uncomment this when in development
+    // options.ClientId = configuration["Google:ClientId"];
+    // options.ClientSecret = configuration["Google:ClientSecret"];
+
+    // This part is use when dockerize the application
+    options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+    options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
 });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
