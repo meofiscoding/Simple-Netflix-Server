@@ -22,11 +22,11 @@ services:
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
 
   identity-api:
-    environment:
-      - GOOGLE_CLIENT_ID= ${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET= ${GOOGLE_CLIENT_SECRET}
     image: ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
+      args:
+        - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+        - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
     depends_on:
