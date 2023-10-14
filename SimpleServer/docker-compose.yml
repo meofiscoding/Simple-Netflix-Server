@@ -1,33 +1,22 @@
 version: '3.4'
 
 services:
-  moviedb:
-    image: mongo
-  
-  identitydb:
-    image: postgres
-
-  movie-api:
-    image: ${REGISTRY:-simpleNetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Services/Movie/Movie.API/Dockerfile
-    depends_on:
-      - moviedb
-
   ocelotapigw:
-    image: ${REGISTRY:-simpleNetflix}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${DOCKER_REGISTRY-}ocelotapigw
     build:
       context: .
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
 
-  identity-api:
-    image: ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
     build:
-      args:
-        - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-        - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
-    depends_on:
-      - identitydb
+
+
+  movie.api:
+    image: ${DOCKER_REGISTRY-}movieapi
+    build:
+      context: .
+      dockerfile: src/Services/Movie/Movie.API/Dockerfile
+

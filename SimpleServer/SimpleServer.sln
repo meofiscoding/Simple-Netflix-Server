@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1706.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D6B1FD89-8AD1-46A3-A89C-6A73DEFE7D81}"
 EndProject
@@ -13,25 +13,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{EB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E3641C79-283C-4773-986F-38CA61740300}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Common", "src\Services\Common\Services.Common\Services.Common.csproj", "{D4A6CCDB-CA07-44F2-A5A9-4B707F639DCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services.Common", "src\Services\Common\Services.Common\Services.Common.csproj", "{D4A6CCDB-CA07-44F2-A5A9-4B707F639DCB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{96C41B3F-C50A-499A-8341-6BDC36B37389}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Movie", "Movie", "{F5E3190D-7394-4DD2-9F0B-E1BA2E9E0D44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movie.API", "src\Services\Movie\Movie.API\Movie.API.csproj", "{205F7C5B-E4E4-4DF7-BB5B-AF5F2DF96D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movie.API", "src\Services\Movie\Movie.API\Movie.API.csproj", "{205F7C5B-E4E4-4DF7-BB5B-AF5F2DF96D3F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C720C0F8-1069-4A3E-982A-84DE90772E75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movie.UnitTests", "src\Services\Movie\tests\Movie.UnitTests\Movie.UnitTests.csproj", "{1B27D2BC-A5A8-4371-81E4-9BE66BACD1A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movie.UnitTests", "src\Services\Movie\tests\Movie.UnitTests\Movie.UnitTests.csproj", "{1B27D2BC-A5A8-4371-81E4-9BE66BACD1A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OcelotApiGw", "OcelotApiGw", "{70846491-6EED-4E01-A5B1-04B90B389FE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcelotApiGw", "src\ApiGateways\Web.Bff.SimpleNetflix\OcelotApiGw\OcelotApiGw.csproj", "{F5712AD2-6DF9-4039-9C38-ABCCC3BB9007}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcelotApiGw", "src\ApiGateways\Web.Bff.SimpleNetflix\OcelotApiGw\OcelotApiGw.csproj", "{F5712AD2-6DF9-4039-9C38-ABCCC3BB9007}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Identity.API", "src\Services\Identity\Identity.API\Identity.API.csproj", "{9DA4BFD0-CD2F-4303-B6E7-F668AF41DA06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.API", "src\Services\Identity\Identity.API\Identity.API.csproj", "{9DA4BFD0-CD2F-4303-B6E7-F668AF41DA06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movie.FunctionalTests", "src\Services\Movie\tests\Movie.FunctionalTests\Movie.FunctionalTests.csproj", "{504E1B3F-F357-4546-A925-AE5D552333B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movie.FunctionalTests", "src\Services\Movie\tests\Movie.FunctionalTests\Movie.FunctionalTests.csproj", "{504E1B3F-F357-4546-A925-AE5D552333B5}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BFFA34B5-F6C1-4746-BA18-E21048D56EA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,12 +65,13 @@ Global
 		{504E1B3F-F357-4546-A925-AE5D552333B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{504E1B3F-F357-4546-A925-AE5D552333B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{504E1B3F-F357-4546-A925-AE5D552333B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFFA34B5-F6C1-4746-BA18-E21048D56EA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFFA34B5-F6C1-4746-BA18-E21048D56EA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFFA34B5-F6C1-4746-BA18-E21048D56EA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFFA34B5-F6C1-4746-BA18-E21048D56EA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C9B02C29-4D8B-4687-AB7D-9DF5642002D9}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0BE79968-B3EB-4C01-BF77-CB0A1995D339} = {D6B1FD89-8AD1-46A3-A89C-6A73DEFE7D81}
@@ -85,5 +88,8 @@ Global
 		{F5712AD2-6DF9-4039-9C38-ABCCC3BB9007} = {70846491-6EED-4E01-A5B1-04B90B389FE5}
 		{9DA4BFD0-CD2F-4303-B6E7-F668AF41DA06} = {96C41B3F-C50A-499A-8341-6BDC36B37389}
 		{504E1B3F-F357-4546-A925-AE5D552333B5} = {C720C0F8-1069-4A3E-982A-84DE90772E75}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C9B02C29-4D8B-4687-AB7D-9DF5642002D9}
 	EndGlobalSection
 EndGlobal
