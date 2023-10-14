@@ -24,38 +24,38 @@ services:
   ocelotapigw:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:443;http://+:80
     ports:
-      - "5000:80"
+      - "5001:80"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - ~/.aspnet/https:/root/.aspnet/https:ro
 
   identity.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:443;http://+:80
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB
       - MovieApiClient=http://docker.for.mac.localhost:8000
     ports:
-      - "5001:80"
+      - "5002:80"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - ~/.aspnet/https:/root/.aspnet/https:ro
 
   movie.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:443;http://+:80
       - DatabaseSettings__ConnectionString=mongodb://moviedb:27017
       - DatabaseSettings__DatabaseName=sampleDB
       - DatabaseSettings__CollectionName=movies
     ports:
       - "8000:80"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - ~/.aspnet/https:/root/.aspnet/https:ro
 
 volumes:
   simplenetflix-moviedb:
