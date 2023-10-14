@@ -1,6 +1,12 @@
 version: '3.4'
 
 services:
+  moviedb:
+    image: mongo
+  
+  identitydb:
+    image: postgres
+
   ocelotapigw:
     image: ${DOCKER_REGISTRY-}ocelotapigw
     build:
@@ -12,11 +18,14 @@ services:
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
-
+    depends_on:
+      - identitydb
 
   movie.api:
     image: ${DOCKER_REGISTRY-}movieapi
     build:
       context: .
       dockerfile: src/Services/Movie/Movie.API/Dockerfile
+    depends_on:
+      - moviedb
 
