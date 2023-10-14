@@ -18,7 +18,7 @@ on:
       - src/Services/Identity/**
       - .github/workflows/identity-api.yml
 env:
-  SERVICE: identity-api
+  SERVICE: identity.api
   IMAGE: identity.api
 
 jobs:
