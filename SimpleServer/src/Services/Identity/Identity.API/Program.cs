@@ -14,7 +14,8 @@ var configuration = builder.Configuration;
 builder.Services.AddControllersWithViews();
 
 // Configure DbContext
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("IdentityDB")));
+builder.Services.AddDbContext<AppDbContext>(options => 
+    options.UseNpgsql(configuration.GetConnectionString("IdentityDB")));
 
 // Add Google support
 builder.Services.AddAuthentication().AddGoogle("Google", options =>

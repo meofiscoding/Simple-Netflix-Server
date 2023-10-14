@@ -1,0 +1,67 @@
+version: '3.4'
+
+services:
+  moviedb:
+    container_name: moviedb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - simplenetflix-moviedb:/data/db
+
+  identitydb:
+    container_name: identitydb
+    environment:
+      - POSTGRES_USER=meofadmin
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=IdentityDB
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - simplenetflix-identitydb:/var/lib/postgresql/data
+
+  movie-api:
+    container_name: movie-api
+    environment:
+      - "DatabaseSettings:ConnectionString=mongodb://moviedb:27017"
+      - "DatabaseSettings:DatabaseName=sampleDB"
+      - "DatabaseSettings:CollectionName=movies"
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - moviedb
+    ports:
+      - "8000:80"
+  
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB
+      - MovieApiClient=http://docker.for.mac.localhost:8000
+    ports:
+      - "5001:80"
+
+  ocelotapigw:
+    container_name: ocelotapigw
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - movie-api
+    ports:
+      - "5000:80"  
+  # simpleserver:
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=https://+:443;http://+:80
+  #   ports:
+  #     - "80"
+  #     - "443"
+  #   volumes:
+  #     - ~/.aspnet/https:/root/.aspnet/https:ro
+  #     - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+
+volumes:
+  simplenetflix-moviedb:
+  simplenetflix-identitydb:
+  
