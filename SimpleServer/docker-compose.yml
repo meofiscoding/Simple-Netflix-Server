@@ -8,13 +8,17 @@ services:
     image: postgres
 
   ocelotapigw:
-    image: ${DOCKER_REGISTRY-}ocelotapigw
+    image: ${REGISTRY:-simpleNetflix}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    # uncomment the following lines to run the ocelotapigw locally
+    # ${DOCKER_REGISTRY-}ocelotapigw
     build:
       context: .
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
 
   identity.api:
-    image: ${DOCKER_REGISTRY-}identityapi
+    image: ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+    # uncomment the following lines to run the identity.api locally
+    # ${DOCKER_REGISTRY-}identityapi
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
@@ -22,7 +26,9 @@ services:
       - identitydb
 
   movie.api:
-    image: ${DOCKER_REGISTRY-}movieapi
+    image: ${REGISTRY:-simpleNetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
+    # uncomment the following lines to run the movie.api locally
+    # ${DOCKER_REGISTRY-}movieapi
     build:
       context: .
       dockerfile: src/Services/Movie/Movie.API/Dockerfile
