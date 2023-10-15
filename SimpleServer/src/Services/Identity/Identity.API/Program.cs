@@ -18,18 +18,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("IdentityDB")));
 
-// // Add Google support
-// builder.Services.AddAuthentication().AddGoogle("Google", options =>
-// {
-//     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-//     // Uncomment this when in development
-//     options.ClientId = configuration["Google:ClientId"];
-//     options.ClientSecret = configuration["Google:ClientSecret"];
+// Add Google support
+builder.Services.AddAuthentication().AddGoogle("Google", options =>
+{
+    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+    // Uncomment this when in development
+    options.ClientId = configuration["Google:ClientId"];
+    options.ClientSecret = configuration["Google:ClientSecret"];
 
-//     // This part is use when dockerize the application
-//     // options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
-//     // options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
-// });
+    // This part is use when dockerize the application
+    // options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+    // options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     {
@@ -50,7 +50,7 @@ builder.Services.AddIdentityServer()
 .AddDeveloperSigningCredential(); // Not recommended for production - you need to store your key material somewhere secure
 
 builder.Services.AddHealthChecks()
-    .AddNpgSql(_=>configuration.GetRequiredConnectionString("IdentityDB"),
+    .AddNpgSql(_ => configuration.GetRequiredConnectionString("IdentityDB"),
         name: "IdentityDB-check",
         tags: new string[] { "IdentityDB" });
 
