@@ -1,6 +1,8 @@
 using System;
+using System.Security.Claims;
 using Identity.API.Data;
 using Identity.API.Entity;
+using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Polly;
@@ -39,8 +41,21 @@ namespace Identity.API
                             throw new Exception(result.Errors.First().Description);
                         }
 
+                        result = userMgr.AddClaimsAsync(testUser, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Test User"),
+                            new Claim(JwtClaimTypes.GivenName, "Test"),
+                            new Claim(JwtClaimTypes.FamilyName, "User"),
+                            new Claim(JwtClaimTypes.WebSite, "http://test.com"),
+                        }).Result;
+                        
+                        if (!result.Succeeded)
+                        {
+                            throw new Exception(result.Errors.First().Description);
+                        }
                         logger.LogDebug("test@local created");
-                    }else{
+                    }
+                    else
+                    {
                         logger.LogDebug("test@local already exists");
                     }
 
