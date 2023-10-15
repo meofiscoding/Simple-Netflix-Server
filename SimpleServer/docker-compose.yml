@@ -18,9 +18,9 @@ services:
 
   identity.api:
     image:
-    # ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+     ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
     # uncomment the following lines to run the identity.api locally
-     ${DOCKER_REGISTRY-}identityapi
+    #  ${DOCKER_REGISTRY-}identityapi
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
@@ -29,9 +29,9 @@ services:
 
   movie.api:
     image:
-    # ${REGISTRY:-simpleNetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
+      ${REGISTRY:-simpleNetflix}/movie.api:${PLATFORM:-linux}-${TAG:-latest}
     # uncomment the following lines to run the movie.api locally
-     ${DOCKER_REGISTRY-}movieapi
+    #  ${DOCKER_REGISTRY-}movieapi
     build:
       context: .
       dockerfile: src/Services/Movie/Movie.API/Dockerfile
