@@ -7,7 +7,7 @@ on:
     - dev
 
     paths:
-    - src/ApiGateways/Web.Bff.SimpleNetlfix/OcelotApiGw/**
+    - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetlfix/OcelotApiGw/**
     - .github/workflows/ocelotapigw.yml
   
   pull_request:
@@ -15,7 +15,7 @@ on:
     - dev
 
     paths:
-    - src/ApiGateways/Web.Bff.SimpleNetlfix/OcelotApiGw/**
+    - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetlfix/OcelotApiGw/**
     - .github/workflows/ocelotapigw.yml
 env:
   SERVICE: ocelotapigw
