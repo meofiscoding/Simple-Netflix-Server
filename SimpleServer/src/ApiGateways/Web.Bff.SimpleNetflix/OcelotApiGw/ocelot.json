@@ -28,7 +28,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5001
+          "Port": 5002
         }
       ],
       "UpstreamPathTemplate": "/identity/{path}",
@@ -40,6 +40,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:5000"
+    "BaseUrl": "https://localhost:5001"
   }
 }
