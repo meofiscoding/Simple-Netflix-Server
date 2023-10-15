@@ -47,7 +47,7 @@ namespace Identity.API
                             new Claim(JwtClaimTypes.FamilyName, "User"),
                             new Claim(JwtClaimTypes.WebSite, "http://test.com"),
                         }).Result;
-                        
+
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
