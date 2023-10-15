@@ -50,7 +50,7 @@ builder.Services.AddIdentityServer()
 .AddDeveloperSigningCredential(); // Not recommended for production - you need to store your key material somewhere secure
 
 builder.Services.AddHealthChecks()
-    .AddNpgSql(_=>configuration.GetRequiredConnectionString("IdentityDB"),
+    .AddNpgSql(_ => configuration.GetRequiredConnectionString("IdentityDB"),
         name: "IdentityDB-check",
         tags: new string[] { "IdentityDB" });
 
