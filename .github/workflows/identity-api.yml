@@ -7,7 +7,7 @@ on:
       - dev
 
     paths:
-      - src/Services/Identity/**
+      - SimpleServer/src/Services/Identity/**
       - .github/workflows/identity-api.yml
 
   pull_request:
@@ -15,7 +15,7 @@ on:
       - dev
 
     paths:
-      - src/Services/Identity/**
+      - SimpleServer/src/Services/Identity/**
       - .github/workflows/identity-api.yml
 env:
   SERVICE: identity.api
