@@ -1,4 +1,5 @@
-﻿using Identity.API.Configuration;
+﻿using Identity.API;
+using Identity.API.Configuration;
 using Identity.API.Data;
 using Identity.API.Entity;
 using IdentityServer4;
@@ -14,21 +15,21 @@ var configuration = builder.Configuration;
 builder.Services.AddControllersWithViews();
 
 // Configure DbContext
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("IdentityDB")));
 
-// Add Google support
-builder.Services.AddAuthentication().AddGoogle("Google", options =>
-{
-    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-    // Uncomment this when in development
-    options.ClientId = configuration["Google:ClientId"];
-    options.ClientSecret = configuration["Google:ClientSecret"];
+// // Add Google support
+// builder.Services.AddAuthentication().AddGoogle("Google", options =>
+// {
+//     options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+//     // Uncomment this when in development
+//     options.ClientId = configuration["Google:ClientId"];
+//     options.ClientSecret = configuration["Google:ClientSecret"];
 
-    // This part is use when dockerize the application
-    // options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
-    // options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
-});
+//     // This part is use when dockerize the application
+//     // options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+//     // options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+// });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     {
@@ -48,6 +49,11 @@ builder.Services.AddIdentityServer()
 .AddAspNetIdentity<ApplicationUser>()
 .AddDeveloperSigningCredential(); // Not recommended for production - you need to store your key material somewhere secure
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(_=>configuration.GetRequiredConnectionString("IdentityDB"),
+        name: "IdentityDB-check",
+        tags: new string[] { "IdentityDB" });
+
 builder.Services.ConfigureApplicationCookie(config =>
 {
     config.Cookie.Name = "IdentityServer.Cookie";
@@ -65,7 +71,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+// This cookie policy fixes login issues with Chrome 80+ using HHTP
+app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -77,5 +84,13 @@ app.UseIdentityServer();
 
 app.MapDefaultControllerRoute();
 
-app.Run();
+// Apply database migration automatically. Note that this approach is not
+// recommended for production scenarios. Consider generating SQL scripts from
+// migrations instead.
+using (var scope = app.Services.CreateScope())
+{
+    await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
+}
+
+await app.RunAsync();
 
