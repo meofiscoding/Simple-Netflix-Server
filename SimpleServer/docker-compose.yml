@@ -9,9 +9,9 @@ services:
 
   ocelotapigw:
     image:
-    # ${REGISTRY:-simpleNetflix}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+      ${REGISTRY:-simpleNetflix}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     # uncomment the following lines to run the ocelotapigw locally
-     ${DOCKER_REGISTRY-}ocelotapigw
+    #  ${DOCKER_REGISTRY-}ocelotapigw
     build:
       context: .
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
