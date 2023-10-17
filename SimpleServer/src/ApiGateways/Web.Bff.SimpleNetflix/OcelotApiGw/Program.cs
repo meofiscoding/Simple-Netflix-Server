@@ -6,12 +6,14 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+IdentityModelEventSource.ShowPII = true;
 
 builder.Services
     .AddAuthentication("IdentityApiKey")
     .AddJwtBearer("IdentityApiKey", options =>
     {
-        options.Authority = "https://localhost:5001";
+        options.RequireHttpsMetadata = false;
+        options.Authority = builder.Configuration.GetRequiredConnectionString("IdentityUrl");
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

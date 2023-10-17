@@ -9,7 +9,8 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:5001";
+        options.RequireHttpsMetadata = false;
+        options.Authority = builder.Configuration.GetRequiredConnectionString("IdentityUrl");
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

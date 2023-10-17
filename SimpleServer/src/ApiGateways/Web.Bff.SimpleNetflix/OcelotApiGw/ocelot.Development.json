@@ -2,11 +2,11 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/movie",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "movie-api",
-          "Port": "80"
+          "Host": "movie.api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/movies",
@@ -21,25 +21,9 @@
           "movies"
         ]
       }
-    },
-    {
-      "DownstreamPathTemplate": "/{path}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "UpstreamPathTemplate": "/identity/{path}",
-      "UpstreamHttpMethod": [
-        "GET",
-        "POST",
-        "PUT"
-      ]
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:5000"
+    "BaseUrl": "http:localhost:5001"
   }
 }

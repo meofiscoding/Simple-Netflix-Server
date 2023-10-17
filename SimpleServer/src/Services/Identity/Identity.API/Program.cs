@@ -4,6 +4,7 @@ using Identity.API.Data;
 using Identity.API.Entity;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -41,7 +42,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddIdentityServer()
+
+builder.Services.AddIdentityServer(option =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            option.IssuerUri = "http://identity.api:80";
+        }
+    }
+)
 .AddInMemoryClients(Config.Clients)
 .AddInMemoryIdentityResources(Config.IdentityResources)
 .AddInMemoryApiResources(Config.ApiResources)
@@ -73,7 +82,7 @@ if (!app.Environment.IsDevelopment())
 }
 // This cookie policy fixes login issues with Chrome 80+ using HHTP
 app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
