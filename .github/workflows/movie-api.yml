@@ -7,7 +7,7 @@ on:
       - dev
 
     paths:
-      - src/Services/Movie/**
+      - SimpleServer/src/Services/Movie/**
       - .github/workflows/movie-api.yml
 
   pull_request:
