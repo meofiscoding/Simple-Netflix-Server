@@ -5,7 +5,7 @@
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "movie-api",
+          "Host": "movie.api",
           "Port": "80"
         }
       ],

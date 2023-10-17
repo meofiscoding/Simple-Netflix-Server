@@ -78,4 +78,3 @@ jobs:
         image_name: ${{ env.IMAGE }}
         registry_username: ${{ secrets.USERNAME }}
         registry_password: ${{ secrets.PASSWORD }} 
-         
