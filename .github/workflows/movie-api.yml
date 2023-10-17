@@ -18,7 +18,7 @@ on:
       - src/Services/Movie/**
       - .github/workflows/movie-api.yml
 env:
-  SERVICE: movie-api
+  SERVICE: movie.api
   IMAGE: movie.api
   DOTNET_VERSION: 7.0.x
   PROJECT_PATH: src/Services/Movie/Movie.API
