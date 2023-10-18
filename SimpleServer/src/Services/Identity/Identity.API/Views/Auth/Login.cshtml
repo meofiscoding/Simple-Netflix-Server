@@ -70,8 +70,7 @@
                            asp-controller="External"
                            asp-action="Challenge"
                            asp-route-scheme="@provider.AuthenticationScheme"
-                           asp-route-returnUrl="@Model.ReturnUrl"
-                           asp-route-isLogin="true">
+                           asp-route-returnUrl="@Model.ReturnUrl">
                             <img width="20px" src="~/images/@(provider.DisplayName.ToString().ToLower()).png" alt="" />
                             Continue with @provider.DisplayName
                         </a>

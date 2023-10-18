@@ -67,7 +67,7 @@ public class AuthController : Controller
             {
                 EnableLocalLogin = local,
                 ReturnUrl = returnUrl,
-                Username = context?.LoginHint,
+                Email = context?.LoginHint,
             };
 
             if (!local)
@@ -108,7 +108,7 @@ public class AuthController : Controller
             AllowRememberLogin = AccountOptions.AllowRememberLogin,
             EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
             ReturnUrl = returnUrl,
-            Username = context?.LoginHint ?? string.Empty,
+            Email = context?.LoginHint ?? string.Empty,
             ExternalProviders = providers.ToArray()
         };
     }
@@ -119,12 +119,18 @@ public class AuthController : Controller
         // get tenant info// check if the model is valid
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByNameAsync(vm.Username!) ?? await _userManager.FindByEmailAsync(vm.Username!);
+            var user = await _userManager.FindByEmailAsync(vm.Email);
             // check if the user exists
             if (user != null)
             {
                 // check if the password is correct
                 var signInResult = _signInManager.PasswordSignInAsync(user, vm.Password, false, false).Result;
+                // check if email is verify or not
+                if (!user.EmailConfirmed)
+                {
+                    ModelState.AddModelError("", "Email is not confirmed");
+                    return View(vm);
+                }
                 if (signInResult.Succeeded)
                 {
                     // redirect to the return url
