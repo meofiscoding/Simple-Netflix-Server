@@ -176,15 +176,13 @@ public class AuthController : Controller
         }
 
         var userByEmail = await _userManager.FindByEmailAsync(vm.Email!);
-        var userByUsername = await _userManager.FindByNameAsync(vm.Username!);
-        if (userByEmail is not null || userByUsername is not null)
+        if (userByEmail is not null)
         {
-            throw new Exception($"User with email {vm.Email} or username {vm.Username} already exists.");
+            throw new Exception($"User with email {vm.Email} already exists.");
         }
 
         var user = new ApplicationUser
         {
-            UserName = vm.Username,
             Email = vm.Email
         };
 
