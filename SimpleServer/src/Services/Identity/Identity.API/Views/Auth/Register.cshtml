@@ -10,7 +10,7 @@
         <img src="~/images/logo.png" alt="">
     </a>
     <a class="authLinks"
-        asp-controller="Auth"
+       asp-controller="Auth"
        asp-action="Login"
        asp-route-returnUrl="@Model.ReturnUrl">
         Sign in
@@ -22,21 +22,25 @@
         <div class="col-md-4">
             <span id="" class="stepIndicator" data-uia="">STEP <b>1</b> OF <b>3</b></span>
             <h1 class="stepTitle" data-uia="stepTitle"><span id="" data-uia="">Welcome back! <br> Joining Netflix is easy.</span></h1>
-            <span class="subtitle">Enter your password and you'll be watching in no time.</span>
-            <form>
+            <span class="subtitle">Enter your email and password and you'll be watching in no time.</span>
+            <form asp-controller="Auth" asp-action="Register" method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
                 <div class="form-floating my-3">
                     <input type="email"
                            class="form-control"
                            id="floatingInput"
                            placeholder="name@example.com"
-                           asp-for="Username" />
+                           asp-for="Email" />
+                    <span asp-validation-for="Email"></span>
                     <label class="text-muted" for="floatingInput">Email</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="password"
                            class="form-control"
                            id="floatingPassword"
+                           asp-for="Password"
                            placeholder="Password" />
+                    <span asp-validation-for="Password"></span>
                     <label class="text-muted" for="floatingPassword" asp-for="Password">Password</label>
                 </div>
                 <a class="link-forgot-password" data-uia="link-forgot-password" href="/LoginHelp">Forgot your password?</a>
@@ -49,32 +53,4 @@
         </div>
     </div>
 </div>
-
-
-@* <form asp-controller="Auth" asp-action="Register" method="post">
-    <input type="hidden" asp-for="ReturnUrl" />
-    <div>
-        <label>Username</label>
-        <input asp-for="Username" />
-        <span asp-validation-for="Username"></span>
-    </div>
-    <div>
-        <label>Email</label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label>Password</label>
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label>Password</label>
-        <input asp-for="ConfirmPassword" />
-        <span asp-validation-for="ConfirmPassword"></span>
-    </div>
-    <div>
-        <button type="submit">Sign Up</button>
-    </div>
-</form> *@
 
