@@ -13,7 +13,7 @@ builder.Services
     .AddJwtBearer("IdentityApiKey", options =>
     {
         options.RequireHttpsMetadata = false;
-        options.Authority = builder.Configuration.GetRequiredConnectionString("IdentityUrl");
+        options.Authority = builder.Configuration["IdentityUrl"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false

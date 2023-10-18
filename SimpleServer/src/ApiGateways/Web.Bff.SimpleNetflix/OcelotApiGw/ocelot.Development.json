@@ -5,6 +5,11 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
+          // Uncomment this to use the local api
+          // "Host": "localhost",
+          // "Port": 8000
+          
+          // Uncomment this to use the docker container
           "Host": "movie.api",
           "Port": 80
         }
