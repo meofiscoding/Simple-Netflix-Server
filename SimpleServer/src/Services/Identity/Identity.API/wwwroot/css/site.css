@@ -17,7 +17,7 @@ html {
   min-height: 100%;
 }
 
-body{
-  background-image: linear-gradient(rgba(0, 0, 0, 0.491), rgba(0, 0, 0, 0.416)) , url(/images/loginbg.jpeg);
-  height: 100vh;
+a{
+  text-decoration: none;
 }
+
