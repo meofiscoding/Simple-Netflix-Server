@@ -8,7 +8,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/OcelotApiGw.csproj", "src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/"]
-COPY ["src/Services/Common/Services.Common/Services.Common.csproj", "src/Services/Common/Services.Common/"]
 RUN dotnet restore "src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/OcelotApiGw.csproj"
 COPY . .
 WORKDIR "/src/src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw"

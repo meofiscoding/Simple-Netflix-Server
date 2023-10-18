@@ -47,7 +47,7 @@ builder.Services.AddIdentityServer(option =>
     {
         if (builder.Environment.IsDevelopment())
         {
-            option.IssuerUri = "http://identity.api:80";
+            option.IssuerUri = configuration["IdentityUrl"];
         }
     }
 )
