@@ -21,19 +21,22 @@ public class AuthController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IClientStore _clientStore;
+    private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         SignInManager<ApplicationUser> signInManager,
         IIdentityServerInteractionService interactionService,
         UserManager<ApplicationUser> userManager,
         IAuthenticationSchemeProvider schemeProvider,
-        IClientStore clientStore)
+        IClientStore clientStore,
+        ILogger<AuthController> logger)
     {
         _signInManager = signInManager;
         _interactionService = interactionService;
         _userManager = userManager;
         _schemeProvider = schemeProvider;
         _clientStore = clientStore;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -128,7 +131,7 @@ public class AuthController : Controller
                 // check if email is verify or not
                 if (!user.EmailConfirmed)
                 {
-                    ModelState.AddModelError("", "Email is not confirmed");
+                    ModelState.AddModelError("Email", "Email is not confirmed");
                     return View(vm);
                 }
                 if (signInResult.Succeeded)
@@ -146,7 +149,7 @@ public class AuthController : Controller
             }
             else
             {
-                ModelState.AddModelError("", "Username or password is incorrect");
+                ModelState.AddModelError("Password", "Email or password is incorrect");
             }
         }
         return Redirect(vm.ReturnUrl);
@@ -184,11 +187,18 @@ public class AuthController : Controller
         var userByEmail = await _userManager.FindByEmailAsync(vm.Email!);
         if (userByEmail is not null)
         {
-            throw new Exception($"User with email {vm.Email} already exists.");
+            ModelState.AddModelError("Email", "Email already exists!!");
+            return View(vm);
         }
+
+        string username = vm.Email.Split('@')[0];
+        int count = await _userManager.Users
+            .Where(u => u.Email != null && u.Email.Contains(username))
+            .CountAsync();
 
         var user = new ApplicationUser
         {
+            UserName = $"{username}{(count > 0 ? count.ToString() : "")}",
             Email = vm.Email
         };
 
@@ -197,11 +207,14 @@ public class AuthController : Controller
 
         if (!result.Succeeded)
         {
-            throw new Exception($"User creation failed. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            _logger.LogError($"User creation failed. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            ViewBag.ErrorMessage = "User creation failed due to server error. Please try again later.";
+            return View(vm);
         }
 
         await _signInManager.SignInAsync(user, false);
 
+        // TODO: need to redirect to login before redirect to authorize page
         return Redirect(vm.ReturnUrl);
     }
 
