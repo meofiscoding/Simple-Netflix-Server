@@ -29,8 +29,8 @@ spec:
               value: "http://+:443;http://+:80"
             - name: DatabaseSettings__ConnectionString
               valueFrom:
-                configMapKeyRef:
-                  name: mongo-configmap
+                secretKeyRef:
+                  name: movie-secret
                   key: connection_string
           resources:
             requests:
