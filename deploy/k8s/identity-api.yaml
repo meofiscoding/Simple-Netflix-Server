@@ -42,6 +42,8 @@ spec:
               secretKeyRef:
                 name: identity-api-secret
                 key: client_secret
+          - name: IdentityUrl
+            value: http://identity-api-service:5002
         resources:
           requests:
             memory: "100Mi"

@@ -21,6 +21,8 @@ spec:
           ports:
             - containerPort: 80
           env:
+            - name: IdentityUrl
+              value: http://identity-api-service:5002
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
             - name: ASPNETCORE_URLS
@@ -48,6 +50,6 @@ spec:
     app: movie-api
   ports:
     - protocol: TCP
-      port: 8000
+      port: 80
       targetPort: 80
       nodePort: 31000
