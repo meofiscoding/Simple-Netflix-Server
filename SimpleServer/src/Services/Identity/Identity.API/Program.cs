@@ -96,10 +96,10 @@ app.MapDefaultControllerRoute();
 // Apply database migration automatically. Note that this approach is not
 // recommended for production scenarios. Consider generating SQL scripts from
 // migrations instead.
-using (var scope = app.Services.CreateScope())
-{
-    await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
+// }
 
 await app.RunAsync();
 
