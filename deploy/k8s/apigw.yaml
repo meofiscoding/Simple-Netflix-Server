@@ -5,7 +5,7 @@ metadata:
   labels:
     app: apigw
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: apigw
@@ -19,7 +19,7 @@ spec:
           image: 281901/ocelotapigw:dev
           volumeMounts:
             - name: ocelot-config-volume
-              mountPath: /app
+              mountPath: /app/publish
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -28,6 +28,8 @@ spec:
               value: http://identity-api-service:5002
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
+            - name: OCELOT_CONFIG_PATH
+              value: /app/publish/ocelot.Development.json
       volumes:
         - name: ocelot-config-volume
           configMap:
@@ -38,11 +40,10 @@ kind: Service
 metadata:
   name: apigw-service
 spec:
-  type: NodePort
   selector:
     app: apigw
   ports:
     - protocol: TCP
-      port: 80
+      port: 5001
       targetPort: 80
-      nodePort: 31001
+  type: LoadBalancer
