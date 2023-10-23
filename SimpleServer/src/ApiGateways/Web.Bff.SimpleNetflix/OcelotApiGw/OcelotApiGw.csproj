@@ -20,7 +20,4 @@
     <PackageReference Include="Ocelot" Version="20.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Remove="ocelot.Development.json" />
-  </ItemGroup>
 </Project>
