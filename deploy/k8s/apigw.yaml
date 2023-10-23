@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigw-deployment
+  labels:
+    app: apigw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigw
+  template:
+    metadata:
+      labels:
+        app: apigw
+    spec:
+      containers:
+        - name: apigw
+          image: 281901/ocelotapigw:dev
+          volumeMounts:
+            - name: ocelot-config-volume
+              mountPath: /app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: IdentityUrl
+              value: http://identity-api-service:5002
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+      volumes:
+        - name: ocelot-config-volume
+          configMap:
+            name: ocelot-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apigw-service
+spec:
+  type: NodePort
+  selector:
+    app: apigw
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31001
