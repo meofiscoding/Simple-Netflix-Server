@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: meofiscodingsimplenetflixserver 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meofiscodingsimplenetflixserver
+  template:
+    metadata:
+      labels:
+        app: meofiscodingsimplenetflixserver 
+    spec:
+      containers:
+        - name: meofiscodingsimplenetflixserver 
+          image: simplenetflix.azurecr.io/meofiscodingsimplenetflixserver
+          ports:
+          - containerPort: 80
