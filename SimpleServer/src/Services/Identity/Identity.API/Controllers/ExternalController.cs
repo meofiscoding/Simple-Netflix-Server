@@ -1,6 +1,7 @@
 using System;
 using System.Security.Claims;
 using Identity.API.Entity;
+using Identity.API.Models.Auth;
 using Identity.API.Utils;
 using IdentityModel;
 using IdentityServer4;
@@ -40,7 +41,7 @@ namespace Identity.API.Controllers
         /// initiate roundtrip to external authentication provider
         /// </summary>
         [HttpGet]
-        public IActionResult Challenge(string scheme, string returnUrl, bool isLogin)
+        public IActionResult Challenge(string scheme, string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
 
@@ -54,7 +55,7 @@ namespace Identity.API.Controllers
             // start challenge and roundtrip the return URL and scheme 
             var props = new AuthenticationProperties
             {
-                RedirectUri = isLogin ? Url.Action(nameof(LoginCallback)) : Url.Action(nameof(RegisterCallback)),
+                RedirectUri = Url.Action(nameof(Callback)),
                 Items =
                 {
                     { "returnUrl", returnUrl },
@@ -69,7 +70,7 @@ namespace Identity.API.Controllers
         /// Post processing of external authentication
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> LoginCallback()
+        public async Task<IActionResult> Callback()
         {
             // read external identity from the temporary cookie
             var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
@@ -86,11 +87,15 @@ namespace Identity.API.Controllers
 
             // lookup our user and external provider info
             var (user, provider, providerUserId, claims) = await FindUserFromExternalProviderAsync(result);
-
             if (user == null)
             {
-                TempData["ErrorMessage"] = "User not found";
-                // return to Login page with error message
+                // redirect to login page with error
+                TempData["ErrorMessage"] = "User is not registered, please register first.";
+                return RedirectToAction("Login", "Auth");
+            }
+            if (!user.EmailConfirmed)
+            {
+                TempData["ErrorMessage"] = "User email address is not confirmed, please confirm first.";
                 return RedirectToAction("Login", "Auth");
             }
 
@@ -102,17 +107,11 @@ namespace Identity.API.Controllers
             ProcessLoginCallback(result, additionalLocalClaims, localSignInProps);
 
             // issue authentication cookie for user
-            // we must issue the cookie maually, and can't use the SignInManager because
+            // we must issue the cookie manually, and can't use the SignInManager because
             // it doesn't expose an API to issue additional claims from the login workflow
             var principal = await _signInManager.CreateUserPrincipalAsync(user);
             additionalLocalClaims.AddRange(principal.Claims);
             var name = principal.FindFirst(JwtClaimTypes.Name)?.Value ?? user.Id;
-            var email = principal.FindFirst(JwtClaimTypes.Email)?.Value ?? user.Id;
-            var filtered = new List<Claim>
-            {
-                new Claim(JwtClaimTypes.Email, email),
-                new Claim(JwtClaimTypes.Name, name),
-            };
 
             var isuser = new IdentityServerUser(user.Id)
             {
@@ -136,52 +135,15 @@ namespace Identity.API.Controllers
             if (context != null)
             {
                 HttpContext.Response.StatusCode = 200;
-                HttpContext.Response.Headers["Location"] = "";
-                return View("Redirect", returnUrl);
+                return View("Redirect", new RedirectViewModel { RedirectUrl = returnUrl });
             }
 
-            // let user login
             return Redirect(returnUrl);
-        }
-
-        /// <summary>
-        /// Post processing of external authentication
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> RegisterCallback()
-        {
-            // read external identity from the temporary cookie
-            var result = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
-            if (result?.Succeeded != true)
-            {
-                throw new Exception("External authentication error");
-            }
-
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                var externalClaims = result.Principal.Claims.Select(c => $"{c.Type}: {c.Value}");
-                _logger.LogDebug("External claims: {@claims}", externalClaims);
-            }
-
-            // lookup our user and external provider info
-            var (user, provider, providerUserId, claims) = await FindUserFromExternalProviderAsync(result);
-            // this might be where you might initiate a custom workflow for user registration
-            // in this sample we don't show how that would be done, as our sample implementation
-            // simply auto-provisions new external user
-            if (user != null)
-            {
-                // return to Login page with error message
-                return RedirectToAction("Register", "Auth", new { error = "User already exists" });
-            }
-            await AutoProvisionUserAsync(provider, providerUserId, claims);
-
-            // redirect to login page 
-            return RedirectToAction("Login", "Auth");
         }
 
         // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
         // this will be different for WS-Fed, SAML2p or other protocols
-        private static void ProcessLoginCallback(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
+        private void ProcessLoginCallback(AuthenticateResult externalResult, List<Claim> localClaims, AuthenticationProperties localSignInProps)
         {
             // if the external system sent a session id claim, copy it over
             // so we can use it for single sign-out
@@ -197,59 +159,6 @@ namespace Identity.API.Controllers
             {
                 localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
             }
-        }
-
-        private async Task<ApplicationUser> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
-        {
-            // create a list of claims that we want to transfer into our store
-            var filtered = new List<Claim>();
-
-            // user's display name
-            var name = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
-                claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-            if (name == null)
-            {
-                var first = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
-                    claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-                var last = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
-                    claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
-                if (first != null && last != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
-                }
-                else if (first != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first));
-                }
-                else if (last != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, last));
-                }
-            }
-            // email
-            var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
-               claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-
-            var user = new ApplicationUser
-            {
-                UserName = name,
-                Email = email,
-                EmailConfirmed = true,
-            };
-
-            var identityResult = await _userManager.CreateAsync(user);
-            if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
-
-            if (filtered.Any())
-            {
-                identityResult = await _userManager.AddClaimsAsync(user, filtered);
-                if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
-            }
-
-            identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
-            if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
-
-            return user;
         }
 
         private async Task<(ApplicationUser user, string provider, string providerUserId, IEnumerable<Claim> claims)> FindUserFromExternalProviderAsync(AuthenticateResult result)
@@ -275,5 +184,6 @@ namespace Identity.API.Controllers
 
             return (user, provider, providerUserId, claims);
         }
+
     }
 }

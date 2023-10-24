@@ -1,0 +1,70 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-api-deployment
+  labels:
+    app: identity-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: identity-api
+  template:
+    metadata:
+      labels:
+        app: identity-api
+    spec:
+      containers:
+      - name: identityapi
+        image: 281901/identity.api:dev
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: identityapi-port
+        env:
+          - name: ASPNETCORE_URLS
+            value: "http://+:443;http://+:80"
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ConnectionStrings__IdentityDB
+            valueFrom:
+              configMapKeyRef:
+                name: postgres-configmap
+                key: connection_string
+          - name: Google__ClientId
+            valueFrom:
+              secretKeyRef:
+                name: identity-api-secret
+                key: client_id
+          - name: Google__ClientSecret
+            valueFrom:
+              secretKeyRef:
+                name: identity-api-secret
+                key: client_secret
+          - name: IdentityUrl
+            value: http://identity-api-service:5002
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "250m"
+          limits:
+            memory: "200Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-api-service
+  labels:
+    app: identity-api-service
+spec:
+  selector:
+    app: identity-api
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 80
+  type: LoadBalancer

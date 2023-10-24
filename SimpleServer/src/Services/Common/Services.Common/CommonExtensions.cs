@@ -28,6 +28,7 @@ namespace Services.Common
 
             services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
                 {
+                    options.RequireHttpsMetadata = false;
                     options.Authority = identityUrl;
                     options.RequireHttpsMetadata = false;
                     // options.Audience = "movies";

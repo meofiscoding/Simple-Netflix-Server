@@ -30,8 +30,8 @@
                            class="form-control"
                            id="floatingInput"
                            placeholder="name@example.com"
-                           asp-for="Username" />
-                    <label for="floatingInput">Username or Email</label>
+                           asp-for="Email" />
+                    <label for="floatingInput">Email</label>
                 </div>
 
                 <div class="form-floating">
@@ -70,8 +70,7 @@
                            asp-controller="External"
                            asp-action="Challenge"
                            asp-route-scheme="@provider.AuthenticationScheme"
-                           asp-route-returnUrl="@Model.ReturnUrl"
-                           asp-route-isLogin="true">
+                           asp-route-returnUrl="@Model.ReturnUrl">
                             <img width="20px" src="~/images/@(provider.DisplayName.ToString().ToLower()).png" alt="" />
                             Continue with @provider.DisplayName
                         </a>

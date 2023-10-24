@@ -1,12 +1,17 @@
-{
+﻿{
   "Routes": [
     {
       "DownstreamPathTemplate": "/api/movie",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
+          // Uncomment this to use the local api
+          // "Host": "localhost",
+          // "Port": 8000
+
+          // Uncomment this to use the docker container
           "Host": "movie.api",
-          "Port": "80"
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/movies",
@@ -21,22 +26,9 @@
           "movies"
         ]
       }
-    },
-    {
-      "DownstreamPathTemplate": "/{path}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "UpstreamPathTemplate": "/identity/{path}",
-      "UpstreamHttpMethod": [
-        "GET",
-        "POST",
-        "PUT"
-      ]
     }
-  ]
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http:localhost:5001"
+  }
 }

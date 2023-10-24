@@ -1,13 +1,13 @@
 name: movie-api
 
-on:
+on: 
   workflow_dispatch:
   push:
     branches:
       - dev
 
     paths:
-      - src/Services/Movie/**
+      - SimpleServer/src/Services/Movie/**
       - .github/workflows/movie-api.yml
 
   pull_request:

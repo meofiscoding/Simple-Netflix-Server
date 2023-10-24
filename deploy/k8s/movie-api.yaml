@@ -17,18 +17,20 @@ spec:
       containers:
         - name: movieapi
           image: 281901/movie.api:dev
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           env:
+            - name: IdentityUrl
+              value: http://identity-api-service:5002
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
             - name: ASPNETCORE_URLS
               value: "http://+:443;http://+:80"
             - name: DatabaseSettings__ConnectionString
               valueFrom:
-                configMapKeyRef:
-                  name: mongo-configmap
+                secretKeyRef:
+                  name: movie-secret
                   key: connection_string
           resources:
             requests:
@@ -48,6 +50,6 @@ spec:
     app: movie-api
   ports:
     - protocol: TCP
-      port: 8000
+      port: 80
       targetPort: 80
       nodePort: 31000

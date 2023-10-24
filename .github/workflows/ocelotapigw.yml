@@ -1,13 +1,13 @@
 name: ocelot-apigw
 
-on:
+on: 
   workflow_dispatch:
   push:
     branches:
     - dev
 
     paths:
-    - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetlfix/OcelotApiGw/**
+    - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/**
     - .github/workflows/ocelotapigw.yml 
   
   pull_request:
@@ -15,7 +15,7 @@ on:
     - dev
 
     paths:
-    - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetlfix/OcelotApiGw/**
+    - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/**
     - .github/workflows/ocelotapigw.yml
 env:
   SERVICE: ocelotapigw
