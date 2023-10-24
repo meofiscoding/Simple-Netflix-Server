@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk" DefaultTargets="Build">
+<Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>{D35EDC6E-5F77-4B55-BF0C-B22FB4C875C6}</ProjectGuid>
-    <DockerLaunchBrowser>True</DockerLaunchBrowser>
+    <ProjectGuid>bffa34b5-f6c1-4746-ba18-e21048d56ea0</ProjectGuid>
+    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>simpleserver</DockerServiceName>
+    <DockerServiceName>ocelotapigw</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

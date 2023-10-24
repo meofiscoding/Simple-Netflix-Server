@@ -59,5 +59,5 @@ static async Task SeedData(WebApplication app)
     await mongoDBService.SeedMovieData().ConfigureAwait(false);
 }
 
-public partial class Program { }
+
 

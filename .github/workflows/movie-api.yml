@@ -1,0 +1,55 @@
+name: movie-api
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+
+    paths:
+      - SimpleServer/src/Services/Movie/**
+      - .github/workflows/movie-api.yml
+
+  pull_request:
+    branches:
+      - dev
+
+    paths:
+      - src/Services/Movie/**
+      - .github/workflows/movie-api.yml
+env:
+  SERVICE: movie.api
+  IMAGE: movie.api
+  DOTNET_VERSION: 7.0.x
+  PROJECT_PATH: src/Services/Movie/Movie.API
+  TESTS_PATH: src/Services/Movie/tests/Movie.UnitTests
+
+jobs:
+  BuildContainersForPR_Linux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.0
+      - uses: ./.github/workflows/composite/build-test
+        with:
+          service: ${{ env.SERVICE }}
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+          dotnet_version: ${{ env.DOTNET_VERSION }}
+          project_path: ${{ env.PROJECT_PATH }}
+          tests_path: ${{ env.TESTS_PATH }}
+
+  BuildLinux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.0
+      - uses: ./.github/workflows/composite/build-push
+        with:
+          service: ${{ env.SERVICE }}
+          registry_host: ${{ secrets.REGISTRY_HOST }}
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+          image_name: ${{ env.IMAGE }}
+          registry_username: ${{ secrets.USERNAME }}
+          registry_password: ${{ secrets.PASSWORD }}
