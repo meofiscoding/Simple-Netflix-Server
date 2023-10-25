@@ -1,0 +1,34 @@
+name: Deploy identity-api
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+    paths:
+      - .github/workflows/identity-api-deploy.yml
+
+env:
+  NAMESPACE: development
+
+jobs:
+  deploy-to-k8s:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - uses: ./.github/workflows/composite/deploy
+        with:
+          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          cluster_name: ${{ secrets.CLUSTER_NAME }}
+          resource_group: ${{ secrets.RESOURCE_GROUP }}
+          manifest_path: |
+            ../../../deploy/k8s/identity-api.yaml
+            ../../../deploy/k8s/postgresql.yaml
+            ../../../deploy/k8s/postgresql-secret.yaml
+            ../../../deploy/k8s/postgres-configmap.yaml
+          registry_host: ${{ secrets.REGISTRY_HOST }}
+          namespace: ${{ env.NAMESPACE }}
+          image_name: identity.api
