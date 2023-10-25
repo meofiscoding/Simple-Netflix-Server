@@ -98,5 +98,7 @@ spec:
           - path: /identity(/|$)(.*)
             pathType: Prefix
             backend:
-              serviceName: identity-api-service
-              servicePort: 80
+              service:
+                name: identity-api-service
+                port:
+                  number: 80
