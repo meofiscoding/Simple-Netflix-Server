@@ -8,6 +8,7 @@ on:
 
     paths:
       - .github/workflows/identity-api-deploy.yml
+      - .github/workflows/composite/deploy/action.yml
 
 env:
   NAMESPACE: development
