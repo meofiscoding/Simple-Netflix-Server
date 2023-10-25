@@ -13,8 +13,8 @@ inputs:
   manifest_path:
     description: "Path to k8s manifest"
     required: true
-  registry_host:
-    description: "Image registry host e.g. myacr.azureacr.io"
+  registry_endpoint:
+    description: "Endpoint of container registry"
     required: true
   image_name:
     description: "Name of image to deploy"
@@ -54,6 +54,6 @@ runs:
       manifests: |
         ${{ inputs.manifest_path }}
       images: |
-        ${{ inputs.registry_host }}/${{ inputs.image_name }}:dev
+        ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:dev
       pull-images: true
       namespace: ${{ inputs.namespace }}

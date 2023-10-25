@@ -48,6 +48,6 @@ jobs:
             deploy/k8s/postgresql.yaml
             deploy/k8s/postgres-secret.yaml
             deploy/k8s/postgres-configmap.yaml
-          registry_host: ${{ secrets.REGISTRY_HOST }}
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
           image_name: identity.api
