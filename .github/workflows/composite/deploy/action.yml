@@ -28,26 +28,26 @@ runs:
   steps:
   # Logs in with your Azure credentials
   - name: Azure login
-  uses: azure/login@v1.4.6
-  with:
-    client-id: ${{ secrets.AZURE_CLIENT_ID }}
-    tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-    subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    uses: azure/login@v1.4.6
+    with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   # Use kubelogin to configure your kubeconfig for Azure auth
   - name: Set up kubelogin for non-interactive login
-  uses: azure/use-kubelogin@v1
-  with:
-    kubelogin-version: 'v0.0.25'
+    uses: azure/use-kubelogin@v1
+    with:
+        kubelogin-version: 'v0.0.25'
 
   # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
   - name: Get K8s context
-  uses: azure/aks-set-context@v3
-  with:
-    resource-group: ${{ inputs.resource_group }}
-    cluster-name: ${{ inputs.cluster_name }}
-    admin: 'false'
-    use-kubelogin: 'true'
+    uses: azure/aks-set-context@v3
+    with:
+        resource-group: ${{ inputs.resource_group }}
+        cluster-name: ${{ inputs.cluster_name }}
+        admin: 'false'
+        use-kubelogin: 'true'
   
   - name: Set branch name as env variable
     shell: bash
