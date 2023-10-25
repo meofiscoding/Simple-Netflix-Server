@@ -96,7 +96,7 @@ spec:
     - http:
         paths:
           - path: /identity(/|$)(.*)
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: identity-api-service
