@@ -1,0 +1,55 @@
+name: "Deploy to AKS"
+
+inputs:
+  azure_credentials:
+    description: "Credentials to connect to AKS"
+    required: true
+  cluster_name:
+    description: "Name of AKS cluster"
+    required: true
+  resource_group:
+    description: "Resource group of AKS cluster"
+    required: true
+  manifest_path:
+    description: "Path to k8s manifest"
+    required: true
+  registry_host:
+    description: "Image registry host e.g. myacr.azureacr.io"
+    required: true
+  image_name:
+    description: "Name of image to deploy"
+    required: true
+  namespace:
+    description: "Namespace to deploy to"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - uses: azure/login@v1
+    with:
+      creds: ${{ inputs.azure_credentials }}
+
+  - uses: azure/aks-set-context@v3
+    name: Set AKS context
+    with:
+      creds: '${{ inputs.azure_credentials }}'
+      cluster-name: ${{ inputs.cluster_name }}
+      resource-group: ${{ inputs.resource_group }}
+  
+  - name: Set branch name as env variable
+    shell: bash
+    run: |
+      currentbranch=$(echo ${GITHUB_REF##*/})
+      echo "running on $currentbranch"
+      echo "BRANCH=$currentbranch" >> $GITHUB_ENV
+  
+  - name: Deploy microservice
+    uses: azure/k8s-deploy@v4
+    with:
+      manifests: |
+        ${{ inputs.manifest_path }}
+      images: |
+        ${{ inputs.registry_host }}/${{ inputs.image_name }}:${{ env.BRANCH }}
+      pull-images: true
+      namespace: ${{ inputs.namespace }}
