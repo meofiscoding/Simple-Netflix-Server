@@ -41,12 +41,12 @@ runs:
         admin: 'false'
         use-kubelogin: 'true'
   
-  - name: Set branch name as env variable
-    shell: bash
-    run: |
-      currentbranch=$(echo ${GITHUB_REF##*/})
-      echo "running on $currentbranch"
-      echo "BRANCH=$currentbranch" >> $GITHUB_ENV
+#   - name: Set branch name as env variable
+#     shell: bash
+#     run: |
+#       currentbranch=$(echo ${GITHUB_REF##*/})
+#       echo "running on $currentbranch"
+#       echo "BRANCH=$currentbranch" >> $GITHUB_ENV
   
   - name: Deploy microservice
     uses: azure/k8s-deploy@v4
@@ -54,6 +54,6 @@ runs:
       manifests: |
         ${{ inputs.manifest_path }}
       images: |
-        ${{ inputs.registry_host }}/${{ inputs.image_name }}:${{ env.BRANCH }}
+        ${{ inputs.registry_host }}/${{ inputs.image_name }}:dev
       pull-images: true
       namespace: ${{ inputs.namespace }}
