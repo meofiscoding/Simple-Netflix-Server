@@ -45,7 +45,7 @@ jobs:
           manifest_path: |
             deploy/k8s/identity-api.yaml
             deploy/k8s/postgresql.yaml
-            deploy/k8s/postgresql-secret.yaml
+            deploy/k8s/postgres-secret.yaml
             deploy/k8s/postgres-configmap.yaml
           registry_host: ${{ secrets.REGISTRY_HOST }}
           namespace: ${{ env.NAMESPACE }}
