@@ -20,7 +20,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-          name: identityapi-port
+          name: identity-port
         env:
           - name: ASPNETCORE_URLS
             value: "http://+:443;http://+:80"
