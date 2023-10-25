@@ -17,7 +17,7 @@ jobs:
   deploy-to-k8s:
     permissions:
         actions: read
-        contents: read
+        # contents: read
         id-token: write
     runs-on: ubuntu-latest
 
