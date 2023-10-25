@@ -50,8 +50,6 @@ spec:
           limits:
             memory: "200Mi"
             cpu: "500m"
-        ports:
-        - containerPort: 80
 ---
 # apiVersion: v1
 # kind: Service
