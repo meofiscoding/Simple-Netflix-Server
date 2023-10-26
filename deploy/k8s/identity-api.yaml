@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: identity-api-deployment
+  namespace: development
   labels:
     app: identity-api
 spec:
@@ -59,7 +60,7 @@ spec:
 #     app: identity-api-service
 # spec:
 #   selector:
-#     app: identity-api
+#     app: identity-apic
 #   ports:
 #     - protocol: TCP
 #       port: 5002
@@ -96,7 +97,7 @@ spec:
     - http:
         paths:
           - path: /identity(/|$)(.*)
-            pathType: ImplementationSpecific
+            pathType: Prefix
             backend:
               service:
                 name: identity-api-service
