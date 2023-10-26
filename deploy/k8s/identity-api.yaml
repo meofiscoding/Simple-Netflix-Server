@@ -25,8 +25,6 @@ spec:
           env:
             - name: ASPNETCORE_URLS
               value: "http://+:443;http://+:80"
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Development
             - name: ConnectionStrings__IdentityDB
               valueFrom:
                 configMapKeyRef:
