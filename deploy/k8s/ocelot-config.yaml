@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ocelot-config
+data:
+  ocelot.Production.json: |-
+    {
+     "Routes": [
+       {
+         "DownstreamPathTemplate": "/api/movie",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+             "Host": "movie-api-service",
+             "Port": 80
+           }
+         ],
+         "UpstreamPathTemplate": "/movies",
+         "UpstreamHttpMethod": [
+           "GET",
+           "POST",
+           "PUT"
+         ],
+         "AuthenticationOptions": {
+           "AuthenticationProviderKey": "IdentityApiKey",
+           "AllowedScopes": [
+             "movies"
+           ]
+         }
+       }
+     ]
+    }
