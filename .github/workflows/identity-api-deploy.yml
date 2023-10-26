@@ -12,7 +12,7 @@ on:
       - deploy/k8s/identity-api.yaml
 
 env:
-  NAMESPACE: development
+  namespace: ingress-nginx
 
 jobs:
   deploy-to-k8s:

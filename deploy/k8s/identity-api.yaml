@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: identity-api-deployment
-  namespace: development
+  namespace: ingress-nginx
   labels:
     app: identity-api
 spec:
@@ -71,7 +71,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: identity-api-service
-  namespace: development
+  namespace: ingress-nginx
   labels:
     app: identity-api
 spec:
