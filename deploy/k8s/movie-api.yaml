@@ -23,7 +23,7 @@ spec:
             - containerPort: 80
           env:
             - name: IdentityUrl
-              value: http://identity-api-service:5002
+              value: http://identity-api-service
             # - name: ASPNETCORE_ENVIRONMENT
             #   value: Development
             - name: ASPNETCORE_URLS
