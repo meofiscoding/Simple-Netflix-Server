@@ -125,4 +125,11 @@ spec:
                 name: identity-api-service
                 port:
                   number: 80
+          - path: /images/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: identity-api-service
+                port:
+                  number: 80
 
