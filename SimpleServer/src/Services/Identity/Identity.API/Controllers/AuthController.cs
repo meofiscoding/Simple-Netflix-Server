@@ -132,6 +132,7 @@ public class AuthController : Controller
                 if (!user.EmailConfirmed)
                 {
                     ModelState.AddModelError("Email", "Email is not confirmed");
+                    _logger.LogWarning($"Email {user.Email} is not confirmed");
                     return View(vm);
                 }
                 if (signInResult.Succeeded)
@@ -139,19 +140,23 @@ public class AuthController : Controller
                     // redirect to the return url
                     if (vm.ReturnUrl != null)
                     {
+                        _logger.LogWarning($"Route to {vm.ReturnUrl}");
                         return Redirect(vm.ReturnUrl);
                     }
                     else
                     {
+                        _logger.LogWarning("ReturnUrl is null");
                         return View();
                     }
                 }
             }
             else
             {
+                _logger.LogWarning($"Password is incorrect for {vm.Email}");
                 ModelState.AddModelError("Password", "Email or password is incorrect");
             }
         }
+        _logger.LogWarning("Model is invalid");
         return Redirect(vm.ReturnUrl);
     }
 
