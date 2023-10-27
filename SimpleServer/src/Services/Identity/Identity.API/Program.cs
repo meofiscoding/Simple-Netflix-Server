@@ -1,4 +1,5 @@
-﻿using Identity.API;
+﻿using System.Security.Cryptography.X509Certificates;
+using Identity.API;
 using Identity.API.Configuration;
 using Identity.API.Data;
 using Identity.API.Entity;
@@ -30,6 +31,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"/var/dpkeys/"))
+                .SetApplicationName("IdentityServer")
                 .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
                 {
                     EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
