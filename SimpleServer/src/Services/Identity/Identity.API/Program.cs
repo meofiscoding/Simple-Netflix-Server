@@ -21,6 +21,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders =
         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.RequireHeaderSymmetry = false;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 // Configure DbContext
