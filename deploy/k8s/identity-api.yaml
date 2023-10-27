@@ -58,7 +58,7 @@ spec:
 #     app: identity-api-service
 # spec:
 #   selector:
-#     app: identity-apic
+#     app: identity-api
 #   ports:
 #     - protocol: TCP
 #       port: 5002
