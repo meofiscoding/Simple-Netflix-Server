@@ -40,8 +40,8 @@ jobs:
 
       - name: Delete existing Deployment and Service
         run: |
-          /usr/bin/kubectl delete deployment identity-api-deployment -n ${{ env.NAMESPACE}} --ignore-not-found=true
-          /usr/bin/kubectl delete service identity-api-service -n ${{ env.NAMESPACE}} --ignore-not-found=true
+            kubectl delete deployment identity-api-deployment -n ${{ env.NAMESPACE}} --ignore-not-found=true
+            kubectl delete service identity-api-service -n ${{ env.NAMESPACE}} --ignore-not-found=true
 
       - uses: ./.github/workflows/composite/deploy
         with:
