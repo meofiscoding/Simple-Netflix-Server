@@ -5,6 +5,9 @@ using Identity.API.Entity;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +28,13 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
+
+builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(@"/var/dpkeys/"))
+                .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration()
+                {
+                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+                });
 
 // Configure DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -78,6 +88,7 @@ builder.Services.ConfigureApplicationCookie(config =>
     config.LoginPath = "/Auth/Login";
     config.LogoutPath = "/Auth/Logout";
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
