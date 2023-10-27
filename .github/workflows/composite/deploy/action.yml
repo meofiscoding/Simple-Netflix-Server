@@ -51,6 +51,7 @@ runs:
 
     - name: Delete existing Deployment and Service
       if: inputs.deployment_name != '' && inputs.service_name != ''
+      shell: bash
       run: |
         kubectl delete deployment ${{ inputs.deployment_name }} -n ${{ env.NAMESPACE}} --ignore-not-found=true
         kubectl delete service ${{ inputs.service_name }}  -n ${{ env.NAMESPACE}} --ignore-not-found=true
