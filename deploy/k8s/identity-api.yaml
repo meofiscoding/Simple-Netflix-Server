@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: identity-api-deployment
+  namespace: ingress-nginx
   labels:
     app: identity-api
 spec:
@@ -15,43 +16,39 @@ spec:
         app: identity-api
     spec:
       containers:
-      - name: identityapi
-        image: 281901/identity.api:dev
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
-          name: identityapi-port
-        env:
-          - name: ASPNETCORE_URLS
-            value: "http://+:443;http://+:80"
-          - name: ASPNETCORE_ENVIRONMENT
-            value: Development
-          - name: ConnectionStrings__IdentityDB
-            valueFrom:
-              configMapKeyRef:
-                name: postgres-configmap
-                key: connection_string
-          - name: Google__ClientId
-            valueFrom:
-              secretKeyRef:
-                name: identity-api-secret
-                key: client_id
-          - name: Google__ClientSecret
-            valueFrom:
-              secretKeyRef:
-                name: identity-api-secret
-                key: client_secret
-          - name: IdentityUrl
-            value: http://identity-api-service:5002
-        resources:
-          requests:
-            memory: "100Mi"
-            cpu: "250m"
-          limits:
-            memory: "200Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 80
+        - name: identityapi
+          image: 281901/identity.api:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: identity-port
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://+:443;http://+:80"
+            - name: ConnectionStrings__IdentityDB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: connection_string
+            - name: Google__ClientId
+              valueFrom:
+                secretKeyRef:
+                  name: identity-api-secret
+                  key: client_id
+            - name: Google__ClientSecret
+              valueFrom:
+                secretKeyRef:
+                  name: identity-api-secret
+                  key: client_secret
+            - name: IdentityUrl
+              value: http://identity-api-service
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "0.1"
+            limits:
+              memory: "200Mi"
+              cpu: "0.3"
 ---
 # apiVersion: v1
 # kind: Service
@@ -72,7 +69,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: identity-api-service
-  namespace: development
+  namespace: ingress-nginx
   labels:
     app: identity-api
 spec:
@@ -82,3 +79,27 @@ spec:
   ports:
     - protocol: TCP
       port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: identity-service-ingress
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # nginx.ingress.kubernetes.io/rewrite-target: /identity/$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /(.*) 
+            pathType: Prefix
+            backend:
+              service:
+                name: identity-api-service
+                port:
+                  number: 80
+    
+

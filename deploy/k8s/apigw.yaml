@@ -25,11 +25,11 @@ spec:
             - containerPort: 80
           env:
             - name: IdentityUrl
-              value: http://identity-api-service:5002
+              value: http://identity-api-service
             - name: ASPNETCORE_ENVIRONMENT
-              value: Development
+              value: Production
             - name: OCELOT_CONFIG_PATH
-              value: /app/publish/ocelot.Development.json
+              value: /app/publish/ocelot.Production.json
       volumes:
         - name: ocelot-config-volume
           configMap:
@@ -44,6 +44,26 @@ spec:
     app: apigw
   ports:
     - protocol: TCP
-      port: 5001
-      targetPort: 80
-  type: LoadBalancer
+      port: 80
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: movie-service-ingress
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /movies(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: apigw-service
+                port:
+                  number: 80

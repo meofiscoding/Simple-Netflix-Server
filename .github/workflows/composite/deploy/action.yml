@@ -13,8 +13,8 @@ inputs:
   manifest_path:
     description: "Path to k8s manifest"
     required: true
-  registry_host:
-    description: "Image registry host e.g. myacr.azureacr.io"
+  registry_endpoint:
+    description: "Endpoint of container registry"
     required: true
   image_name:
     description: "Name of image to deploy"
@@ -26,23 +26,27 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - uses: azure/login@v1
+  # Use kubelogin to configure your kubeconfig for Azure auth
+  - name: Set up kubelogin for non-interactive login
+    uses: azure/use-kubelogin@v1
     with:
-      creds: ${{ inputs.azure_credentials }}
+        kubelogin-version: 'v0.0.25'
 
-  - uses: azure/aks-set-context@v3
-    name: Set AKS context
+  # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
+  - name: Get K8s context
+    uses: azure/aks-set-context@v3
     with:
-      creds: '${{ inputs.azure_credentials }}'
-      cluster-name: ${{ inputs.cluster_name }}
-      resource-group: ${{ inputs.resource_group }}
+        resource-group: ${{ inputs.resource_group }}
+        cluster-name: ${{ inputs.cluster_name }}
+        admin: 'false'
+        use-kubelogin: 'true'
   
-  - name: Set branch name as env variable
-    shell: bash
-    run: |
-      currentbranch=$(echo ${GITHUB_REF##*/})
-      echo "running on $currentbranch"
-      echo "BRANCH=$currentbranch" >> $GITHUB_ENV
+#   - name: Set branch name as env variable
+#     shell: bash
+#     run: |
+#       currentbranch=$(echo ${GITHUB_REF##*/})
+#       echo "running on $currentbranch"
+#       echo "BRANCH=$currentbranch" >> $GITHUB_ENV
   
   - name: Deploy microservice
     uses: azure/k8s-deploy@v4
@@ -50,6 +54,6 @@ runs:
       manifests: |
         ${{ inputs.manifest_path }}
       images: |
-        ${{ inputs.registry_host }}/${{ inputs.image_name }}:${{ env.BRANCH }}
+        ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:dev
       pull-images: true
       namespace: ${{ inputs.namespace }}

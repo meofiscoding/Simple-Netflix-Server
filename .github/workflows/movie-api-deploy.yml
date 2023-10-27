@@ -1,4 +1,4 @@
-name: Deploy identity-api
+name: Deploy movie-api to k8s
 
 on:
   workflow_dispatch:
@@ -7,9 +7,9 @@ on:
       - main
 
     paths:
-      - .github/workflows/identity-api-deploy.yml
+      - .github/workflows/movie-api-deploy.yml
       - .github/workflows/composite/deploy/action.yml
-      - deploy/k8s/identity-api.yaml
+      - deploy/k8s/movie-api.yaml
 
 env:
   NAMESPACE: ingress-nginx
@@ -33,21 +33,14 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Print Current Directory
-        run: |
-            pwd  # This command prints the current working directory
-            ls   # This command lists the contents of the current directory
-            
       - uses: ./.github/workflows/composite/deploy
         with:
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
           cluster_name: ${{ secrets.CLUSTER_NAME }}
           resource_group: ${{ secrets.RESOURCE_GROUP }}
           manifest_path: |
-            deploy/k8s/identity-api.yaml
-            deploy/k8s/postgresql.yaml
-            deploy/k8s/postgres-secret.yaml
-            deploy/k8s/postgres-configmap.yaml
+            deploy/k8s/movie-secret.yaml
+            deploy/k8s/movie-api.yaml
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
-          image_name: identity.api
+          image_name: movie.api
