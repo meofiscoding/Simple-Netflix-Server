@@ -17,9 +17,9 @@ env:
 jobs:
   deploy-to-k8s:
     permissions:
-        actions: read
-        # contents: read
-        id-token: write
+      actions: read
+      # contents: read
+      id-token: write
     runs-on: ubuntu-latest
 
     steps:
@@ -35,9 +35,14 @@ jobs:
 
       - name: Print Current Directory
         run: |
-            pwd  # This command prints the current working directory
-            ls   # This command lists the contents of the current directory
-            
+          pwd  # This command prints the current working directory
+          ls   # This command lists the contents of the current directory
+
+      - name: Delete existing Deployment and Service
+        run: |
+            kubectl delete deployment identity-api-deployment -n ${{ env.NAMESPACE}} --ignore-not-found=true
+            kubectl delete service identity-api-service -n ${{ env.NAMESPACE}} --ignore-not-found=true
+
       - uses: ./.github/workflows/composite/deploy
         with:
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
