@@ -33,6 +33,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Delete existing Deployment and Service
+        run: |
+            kubectl delete deployment apigw-deployment -n ${{ env.NAMESPACE}} --ignore-not-found=true
+            kubectl delete service apigw-service  -n ${{ env.NAMESPACE}} --ignore-not-found=true
+
       - uses: ./.github/workflows/composite/deploy
         with:
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
