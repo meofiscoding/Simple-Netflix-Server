@@ -38,11 +38,6 @@ jobs:
           pwd  # This command prints the current working directory
           ls   # This command lists the contents of the current directory
 
-      - name: Delete existing Deployment and Service
-        run: |
-            kubectl delete deployment identity-api-deployment -n ${{ env.NAMESPACE}} --ignore-not-found=true
-            kubectl delete service identity-api-service -n ${{ env.NAMESPACE}} --ignore-not-found=true
-
       - uses: ./.github/workflows/composite/deploy
         with:
           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
@@ -56,3 +51,5 @@ jobs:
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
           image_name: identity.api
+          deployment_name: identity-api-deployment
+          service_name: identity-api-service

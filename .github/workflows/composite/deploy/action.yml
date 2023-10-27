@@ -1,6 +1,14 @@
 name: "Deploy to AKS"
 
 inputs:
+  deployment_name:
+    description: "Name of deployment to delete"
+    required: false
+    default: ""
+  service_name:
+    description: "Name of service to delete"
+    required: false
+    default: ""
   azure_credentials:
     description: "Credentials to connect to AKS"
     required: true
@@ -26,34 +34,40 @@ inputs:
 runs:
   using: "composite"
   steps:
-  # Use kubelogin to configure your kubeconfig for Azure auth
-  - name: Set up kubelogin for non-interactive login
-    uses: azure/use-kubelogin@v1
-    with:
-        kubelogin-version: 'v0.0.25'
+    # Use kubelogin to configure your kubeconfig for Azure auth
+    - name: Set up kubelogin for non-interactive login
+      uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: "v0.0.25"
 
-  # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
-  - name: Get K8s context
-    uses: azure/aks-set-context@v3
-    with:
+    # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
+    - name: Get K8s context
+      uses: azure/aks-set-context@v3
+      with:
         resource-group: ${{ inputs.resource_group }}
         cluster-name: ${{ inputs.cluster_name }}
-        admin: 'false'
-        use-kubelogin: 'true'
-  
-#   - name: Set branch name as env variable
-#     shell: bash
-#     run: |
-#       currentbranch=$(echo ${GITHUB_REF##*/})
-#       echo "running on $currentbranch"
-#       echo "BRANCH=$currentbranch" >> $GITHUB_ENV
-  
-  - name: Deploy microservice
-    uses: azure/k8s-deploy@v4
-    with:
-      manifests: |
-        ${{ inputs.manifest_path }}
-      images: |
-        ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:dev
-      pull-images: true
-      namespace: ${{ inputs.namespace }}
+        admin: "false"
+        use-kubelogin: "true"
+
+    - name: Delete existing Deployment and Service
+      if: inputs.deployment_name != '' && inputs.service_name != ''
+      run: |
+        kubectl delete deployment ${{ inputs.deployment_name }} -n ${{ env.NAMESPACE}} --ignore-not-found=true
+        kubectl delete service ${{ inputs.service_name }}  -n ${{ env.NAMESPACE}} --ignore-not-found=true
+
+    #   - name: Set branch name as env variable
+    #     shell: bash
+    #     run: |
+    #       currentbranch=$(echo ${GITHUB_REF##*/})
+    #       echo "running on $currentbranch"
+    #       echo "BRANCH=$currentbranch" >> $GITHUB_ENV
+
+    - name: Deploy microservice
+      uses: azure/k8s-deploy@v4
+      with:
+        manifests: |
+          ${{ inputs.manifest_path }}
+        images: |
+          ${{ inputs.registry_endpoint }}/${{ inputs.image_name }}:dev
+        pull-images: true
+        namespace: ${{ inputs.namespace }}
