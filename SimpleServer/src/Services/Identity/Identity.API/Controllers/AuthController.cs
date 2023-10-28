@@ -117,7 +117,6 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Login(LoginViewModel vm)
     {
         // get tenant info// check if the model is valid
@@ -183,7 +182,6 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel vm)
     {
         if (!ModelState.IsValid)
