@@ -6,6 +6,7 @@ using Identity.API.Entity;
 using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -104,8 +105,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseForwardedHeaders();
 // This cookie policy fixes login issues with Chrome 80+ using HHTP
-app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
-// app.UseHttpsRedirection();
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax,
+});
+
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
