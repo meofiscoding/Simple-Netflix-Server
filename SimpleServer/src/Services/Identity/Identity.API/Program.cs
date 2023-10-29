@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Azure.Security.KeyVault.Secrets;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -20,6 +21,9 @@ builder.Services.AddControllersWithViews();
 // Configure DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("IdentityDB")));
+
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<AppDbContext>();
 
 // Add Google support
 builder.Services.AddAuthentication().AddGoogle("Google", options =>
@@ -85,6 +89,7 @@ app.UseForwardedHeaders();
 // This cookie policy fixes login issues with Chrome 80+ using HHTP
 app.UseCookiePolicy(new CookiePolicyOptions
 {
+    CheckConsentNeeded = _ => true,
     MinimumSameSitePolicy = SameSiteMode.Lax,
 });
 
