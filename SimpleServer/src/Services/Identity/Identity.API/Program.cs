@@ -11,6 +11,7 @@ using Azure.Security.KeyVault.Secrets;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -95,7 +96,10 @@ app.UseCors(builder =>
     builder.AllowAnyMethod();
 });
 
-app.UseForwardedHeaders();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 // This cookie policy fixes login issues with Chrome 80+ using HHTP
 app.UseCookiePolicy(new CookiePolicyOptions
 {
