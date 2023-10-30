@@ -33,26 +33,26 @@ namespace Identity.API.Configuration
                 AllowOfflineAccess = true,
                 RequireConsent = false
             },
-            new Client()
-            {
-                ClientId = "angular",
+            // new Client()
+            // {
+            //     ClientId = "angular",
 
-                AllowedGrantTypes = GrantTypes.Code,
-                RequirePkce = true,
-                RequireClientSecret = false,
+            //     AllowedGrantTypes = GrantTypes.Code,
+            //     RequirePkce = true,
+            //     RequireClientSecret = false,
 
-                RedirectUris = { "http://localhost:4200" },
-                PostLogoutRedirectUris = { "http://localhost:4200" },
-                AllowedCorsOrigins = { "http://localhost:4200" },
+            //     RedirectUris = { "http://localhost:4200" },
+            //     PostLogoutRedirectUris = { "http://localhost:4200" },
+            //     AllowedCorsOrigins = { "http://localhost:4200" },
 
-                AllowedScopes = {
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    "movies",
-                },
+            //     AllowedScopes = {
+            //         IdentityServerConstants.StandardScopes.OpenId,
+            //         "movies",
+            //     },
 
-                AllowAccessTokensViaBrowser = true,
-                RequireConsent = false,
-            },
+            //     AllowAccessTokensViaBrowser = true,
+            //     RequireConsent = false,
+            // },
             new Client()
             {
                 ClientId = "angular",
