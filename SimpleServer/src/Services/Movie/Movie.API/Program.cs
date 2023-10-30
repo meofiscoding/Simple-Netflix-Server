@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.RequireHttpsMetadata = false;
+        // options.RequireHttpsMetadata = false;
         options.Authority = builder.Configuration["IdentityUrl"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
