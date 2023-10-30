@@ -1,6 +1,15 @@
 # Simple Netflix (AngularJS + ASP.NET API)
 
-[![.NET](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/pipeline.yml) ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/meofiscoding/963b7585a91835492e8df1d4a7d6c356/raw/code-coverage.json)
+
+## Build Status (GitHub Actions)
+
+| Image | Docker Build Status | AKS Deploy Status |
+| ------------- | ------------- | ------------- |
+| Identity API |[![identity-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api.yml) | [![Deploy identity-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api-deploy.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api-deploy.yml) |
+
+
+
 
 ![Preview](https://github.com/meofiscoding/Simple-Netflix-Server/blob/main/assets/preview_landing2.png)
 
