@@ -53,6 +53,26 @@ namespace Identity.API.Configuration
                 AllowAccessTokensViaBrowser = true,
                 RequireConsent = false,
             },
+            new Client()
+            {
+                ClientId = "angular",
+
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true,
+                RequireClientSecret = false,
+
+                RedirectUris = { "https://simplenetflix.vercel.app" },
+                PostLogoutRedirectUris = { "https://simplenetflix.vercel.app" },
+                AllowedCorsOrigins = { "https://simplenetflix.vercel.app" },
+
+                AllowedScopes = {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    "movies",
+                },
+
+                AllowAccessTokensViaBrowser = true,
+                RequireConsent = false,
+            },
         };
 
         public static IEnumerable<ApiScope> ApiScopes =>
