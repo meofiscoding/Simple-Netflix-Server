@@ -85,17 +85,17 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseForwardedHeaders(new ForwardedHeadersOptions
-    {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-    });
+    // app.UseForwardedHeaders(new ForwardedHeadersOptions
+    // {
+    //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    // });
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    // app.Use(async (ctx, next) =>
-    // {
-    //     ctx.SetIdentityServerOrigin("https://frontend.20.211.61.204.nip.io");
-    //     await next();
-    // });
+    app.Use(async (ctx, next) =>
+    {
+        ctx.SetIdentityServerOrigin("https://frontend.20.211.61.204.nip.io");
+        await next();
+    });
 }
 
 app.UseCors(builder =>
