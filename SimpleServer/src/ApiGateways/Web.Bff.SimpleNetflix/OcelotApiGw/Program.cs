@@ -47,6 +47,7 @@ app.UseCors(builder =>
     builder.AllowAnyMethod();
 });
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseOcelot().Wait();
 app.MapControllers();
 app.Run();
