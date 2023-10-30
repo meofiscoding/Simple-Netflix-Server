@@ -33,6 +33,10 @@ spec:
                 secretKeyRef:
                   name: movie-secret
                   key: connection_string
+            - name: DatabaseSettings__DatabaseName
+              value: simpleNetflixMovie
+            - name: DatabaseSettings__CollectionName
+              value: movies
           resources:
             requests:
               memory: "64Mi"
