@@ -58,40 +58,6 @@ foreach (var item in movieHTMLElements)
         // if movie not exist, then add it to list
         movie = new MovieItem
         {
-            // Get id of parent node
-            // var parent = item.ParentNode.GetAttributeValue("id", "");
-            // if (parent.Contains("featured-titles"))
-            // {
-            /*
-                 <article id="post-featured-54297" class="item tvshows">
-                    <div class="poster">
-                      <img
-                        src="https://phimmoiyyy.net/wp-content/uploads/2023/10/Phim-tet-o-lang-dia-nguc.jpg"
-                        alt="Tết Ở Làng Địa Ngục"
-                      />
-                      <div class="trangthai">Tập 4 HD</div>
-                      <div class="featu">NỔI BẬT</div>
-                      <a
-                        href="https://phimmoiyyy.net/phim-bo/tet-o-lang-dia-nguc-154210"
-                        ><div
-                          class="
-
-        "
-                        ></div
-                      ></a>
-                    </div>
-                    <div class="data dfeatur">
-                      <h3>
-                        <a
-                          href="https://phimmoiyyy.net/phim-bo/tet-o-lang-dia-nguc-154210"
-                          >Tết Ở Làng Địa Ngục</a
-                        >
-                      </h3>
-                      <span>2023</span>
-                    </div>
-                  </article>
-            */
-            // chec
             MovieName = item.Descendants("h3").FirstOrDefault()?.InnerText,
             UrlDetail = item.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", ""),
             Poster = item.Descendants("img").FirstOrDefault()?.GetAttributeValue("src", ""),
