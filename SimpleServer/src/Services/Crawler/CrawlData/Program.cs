@@ -2,7 +2,7 @@
 using CrawlData.Model;
 using System.Collections.Concurrent;
 
-List<MovieItem> movies = await CrawlHelper.CrawlMovieInfoAsync("https://phimmoiyyy.net/");
+List<MovieItem> movies = CrawlHelper.CrawlMovieInfo("https://phimmoiyyy.net/");
 if (movies == null || movies.Count == 0)
 {
     Console.WriteLine("No movie found");

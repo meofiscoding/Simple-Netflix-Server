@@ -14,7 +14,7 @@ namespace CrawlData.Helper
 {
     public static partial class CrawlHelper
     {
-        public static async Task<List<MovieItem>> CrawlMovieInfoAsync(string url)
+        public static List<MovieItem> CrawlMovieInfo(string url)
         {
             HtmlDocument document = LoadDocument(url);
 
@@ -207,10 +207,18 @@ namespace CrawlData.Helper
 
         private static async Task<string> GetStreamingUrlAsync(string url)
         {
-            var response = await HttpHelper.GetAsync(url);
-            // get the url contain .m3u8 in response, url must start with "http"
-            var streamingUrl = StreamingUrlRegex().Match(response).Value;
-            return HttpUtility.UrlDecode(streamingUrl);
+            try
+            {
+                var response = await HttpHelper.GetAsync(url);
+                // get the url contain .m3u8 in response, url must start with "http"
+                var streamingUrl = StreamingUrlRegex().Match(response).Value;
+                return HttpUtility.UrlDecode(streamingUrl);
+            }
+            catch
+            {
+                // throw exception url invalid, can not call HTTP GET
+                throw new HttpRequestException($"Url {url} is invalid");
+            }
         }
 
         [GeneratedRegex("http.*?\\.m3u8")]
