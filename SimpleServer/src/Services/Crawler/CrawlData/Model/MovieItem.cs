@@ -4,11 +4,18 @@ namespace CrawlData.Model
 {
     public class MovieItem
     {
-        public string? Poster { get; set; }   
+        public string? Poster { get; set; }
+
+        public string? StreamingUrl { get; set; }
+
+        public string? TrailerUrl { get; set; }
 
         public string? UrlDetail { get; set; }
 
         public Category MovieCategory { get; set; }
+
+        public string? Description { get; set; }
+
         public List<Tag>? Tags { get; set; }
 
         public string? MovieName { get; set; }

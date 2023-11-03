@@ -1,15 +1,16 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Web;
 using CrawlData.Enum;
 using CrawlData.Model;
 using HtmlAgilityPack;
 
 namespace CrawlData.Helper
 {
-    public static class CrawlHelper
+    public static partial class CrawlHelper
     {
-        public static async Task CrawlMovieInfoAsync(string url)
+        public static async Task<List<MovieItem>> CrawlMovieInfoAsync(string url)
         {
             HtmlDocument document = LoadDocument(url);
 
@@ -74,7 +75,7 @@ namespace CrawlData.Helper
                     movieItem.Add(movie);
                 }
             }
-            await ExtractDataToJsonAsync(movieItem);
+            return movieItem;
         }
 
         private static HtmlDocument LoadDocument(string url)
@@ -99,12 +100,61 @@ namespace CrawlData.Helper
             // check if file exist
             if (File.Exists("phimmoiMovieCrawledData.json"))
             {
-                Console.WriteLine($"Crawling data completed!\n {movieItem.Count} movies crawled!\n You can check output file at: {Directory.GetCurrentDirectory()}");
+                Console.WriteLine($" Crawling data completed!\n {movieItem.Count} movies crawled!\n You can check output file at: {Directory.GetCurrentDirectory()}");
             }
             else
             {
                 Console.WriteLine("Extract data to json failed!");
             }
         }
+
+        public static async Task<MovieItem> CrawlMovieDetailAsync(MovieItem movie)
+        {
+            if (string.IsNullOrEmpty(movie.UrlDetail))
+            {
+                throw new Exception($"Movie url of movie {movie.MovieName} is null or empty");
+            }
+            HtmlDocument document = LoadDocument(movie.UrlDetail);
+
+            // get movie description from div which itemprop="description"
+            string? description = document.DocumentNode.Descendants("div")
+                .FirstOrDefault(x => x.GetAttributeValue("itemprop", "").Equals("description"))?.InnerText.Trim() ?? "";
+            movie.Description = HttpUtility.HtmlDecode(description);
+            // get movie streaming url
+            if (movie.MovieCategory == Category.Movies)
+            {
+                // get the first iframe element
+                var iframe = document.DocumentNode.Descendants("iframe").FirstOrDefault();
+                var iframeSrc = iframe?.GetAttributeValue("src", "") ?? throw new Exception("Iframe src is null");
+                // check if link in src attribute contain ".m3u8"
+                if (iframeSrc.Contains(".m3u8"))
+                {
+                    movie.StreamingUrl = iframe.GetAttributeValue("src", "");
+                }
+                else
+                {
+                    // get all query params in src attribute
+                    var queryParams = HttpUtility.ParseQueryString(iframeSrc) ?? throw new Exception("Query params is null");
+                    // Filter all query param to get value which value start with "http"
+                    var url = Array.Find(queryParams.AllKeys, x => queryParams[x].StartsWith("http")) ?? throw new Exception("Not found url in query params");
+                    // Decode url
+                    url = HttpUtility.UrlDecode(url);
+                    // call HTTP GET to get the streaming url
+                    var response = await HttpHelper.GetAsync(url);
+                    // get the url contain .m3u8 in response, url must start with "http"
+                    var streamingUrl = StreamingUrlRegex().Match(response).Value;
+                    movie.StreamingUrl = streamingUrl;
+                }
+            }
+            else
+            {
+                movie.StreamingUrl = document.DocumentNode.Descendants("iframe")
+                    .FirstOrDefault(x => x.GetAttributeValue("id", "").Equals("iframe-embed"))?.GetAttributeValue("data-src", "");
+            }
+            return movie;
+        }
+
+        [GeneratedRegex("http.*?\\.m3u8")]
+        private static partial Regex StreamingUrlRegex();
     }
 }
