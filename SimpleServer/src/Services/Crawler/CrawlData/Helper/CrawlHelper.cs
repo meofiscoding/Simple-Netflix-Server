@@ -70,6 +70,7 @@ namespace CrawlData.Helper
                         MovieName = item.Descendants("h3").FirstOrDefault()?.InnerText,
                         UrlDetail = item.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", ""),
                         Poster = item.Descendants("img").FirstOrDefault()?.GetAttributeValue("src", ""),
+                        Status = item.Descendants("div").FirstOrDefault(x => x.GetAttributeValue("class", "").Contains("trangthai"))?.InnerText.Trim() ?? "",
                         // assign category for movie based on value of class="item <movie type>"
                         Tags = new List<Tag>(),
                         MovieCategory = System.Enum.TryParse<Category>(item.GetAttributeValue("class", "").Split(" ").LastOrDefault(), true, out var result) ? result : Category.Movies
@@ -127,13 +128,13 @@ namespace CrawlData.Helper
             using (var driver = new ChromeDriver(chromeOptions))
             {
                 driver.Navigate().GoToUrl(movie.UrlDetail);
-                // wait until div with id playeroptions had no class "onload"
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-                wait.Until(x => x.FindElement(By.Id("playeroptions")).GetAttribute("class") != "onload");
                 // if timeout and div with id playeroptions still have class "onload" then throw exception
-                if (driver.FindElement(By.Id("playeroptions")).GetAttribute("class") == "onload")
+                while (driver.FindElement(By.Id("playeroptions")).GetAttribute("class").Contains("onload"))
                 {
-                    throw new Exception($"Iframe of movie {movie.MovieName} is not loaded");
+                    // reload page
+                    driver.Navigate().Refresh();
+                    // wait for 5 seconds for page to load
+                    await Task.Delay(5000);
                 }
                 // get movie description from div which itemprop="description"
                 string? description = driver.FindElement(By.CssSelector("div[itemprop='description']"))?.Text;
@@ -158,12 +159,12 @@ namespace CrawlData.Helper
                     {
                         if (iframeSrc.Contains(".m3u8"))
                         {
-                            movie.StreamingUrl = HttpUtility.UrlDecode(iframeSrc);
+                            movie.StreamingUrls = new List<string>() { HttpUtility.UrlDecode(iframeSrc) };
                         }
                         else
                         {
                             // call HTTP GET to get the streaming url
-                            movie.StreamingUrl = await GetStreamingUrlAsync(iframeSrc);
+                            movie.StreamingUrls = new List<string>() { await GetStreamingUrlAsync(iframeSrc) };
                         }
                     }
                     else
@@ -186,19 +187,20 @@ namespace CrawlData.Helper
 
                         if (url.Contains(".m3u8"))
                         {
-                            movie.StreamingUrl = url;
+                            movie.StreamingUrls = new List<string>() { url };
                         }
                         else
                         {
                             // call HTTP GET to get the streaming url
-                            movie.StreamingUrl = await GetStreamingUrlAsync(url);
+                            movie.StreamingUrls = new List<string>() { await GetStreamingUrlAsync(url) };
                         }
                     }
                 }
                 else
                 {
-                    // movie.StreamingUrl = document.DocumentNode.Descendants("iframe")
-                    //     .FirstOrDefault(x => x.GetAttributeValue("id", "").Equals("iframe-embed"))?.GetAttributeValue("data-src", "");
+                    // For each li in ul with class episodios, get src value in a tag
+                    // Call HTTP GET to get the streaming url
+
                 }
             }
 
