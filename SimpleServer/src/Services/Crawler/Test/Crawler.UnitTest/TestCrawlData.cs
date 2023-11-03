@@ -8,7 +8,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace Crawler.UnitTest;
 
-public class Tests
+public class TestCrawlData
 {
     [SetUp]
     public void Setup()
@@ -29,9 +29,6 @@ public class Tests
             MovieCategory = CrawlData.Enum.Category.Movies,
             UrlDetail = inputUrl
         };
-        var chromeOptions = new ChromeOptions();
-        chromeOptions.AddArguments("headless");
-        var driver = new ChromeDriver(chromeOptions);
 
         // Act
         var result = await CrawlHelper.CrawlMovieDetailAsync(item);
@@ -58,9 +55,6 @@ public class Tests
             MovieName = "Loki: Phần 2",
             UrlDetail = null
         };
-        var chromeOptions = new ChromeOptions();
-        chromeOptions.AddArguments("headless");
-        var driver = new ChromeDriver(chromeOptions);
         //Act
 
         // Assert throw exception with message "Movie URL is null or empty"
