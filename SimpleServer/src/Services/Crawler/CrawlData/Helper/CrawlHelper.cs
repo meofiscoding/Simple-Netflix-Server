@@ -9,6 +9,7 @@ using HtmlAgilityPack;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Serilog;
 
 namespace CrawlData.Helper
 {
@@ -175,7 +176,7 @@ namespace CrawlData.Helper
                     var url = queryParams.AllKeys
                         .Where(x => queryParams[x]?.StartsWith("http") ?? false)
                         .Select(x => HttpUtility.UrlDecode(queryParams[x]))
-                        .FirstOrDefault() ?? throw new Exception("No .m3u8 url found");
+                        .FirstOrDefault() ?? throw new NullReferenceException("No .m3u8 url found");
 
                     // Get the final url in query param until not contain query param
                     while (url.Contains('?'))
@@ -185,7 +186,7 @@ namespace CrawlData.Helper
                         url = queryParams.AllKeys
                             .Where(x => queryParams[x]?.StartsWith("http") ?? false)
                             .Select(x => HttpUtility.UrlDecode(queryParams[x]))
-                            .FirstOrDefault() ?? throw new Exception("No .m3u8 url found");
+                            .FirstOrDefault() ?? throw new NullReferenceException("No .m3u8 url found");
                     }
 
                     if (url.Contains(".m3u8"))
@@ -201,11 +202,19 @@ namespace CrawlData.Helper
                     }
                 }
             }
+            catch (NullReferenceException)
+            {
+                driver.Quit();
+                return "";
+            }
             catch (Exception ex)
             {
                 // quit chrome driver instance
                 driver.Quit();
-                throw new Exception($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
+                //throw new Exception($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
+                // TODO: Implement logging the error
+                Log.Warning($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
+                return await GetPlayListUrlOfMovie(movieUrl);
             }
         }
 
@@ -303,10 +312,9 @@ namespace CrawlData.Helper
             catch (Exception ex)
             {
                 // throw exception url invalid, can not call HTTP GET
-                throw new HttpRequestException($"Url {url} got error: {ex.Message}");
+                Log.Warning($"Url {url} got error: {ex.Message}");
+                return "";
             }
         }
-
-
     }
 }
