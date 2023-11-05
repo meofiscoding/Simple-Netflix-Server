@@ -12,7 +12,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace CrawlData.Helper
 {
-    public static partial class CrawlHelper
+    public static class CrawlHelper
     {
         public static List<MovieItem> CrawlMovieInfo(string url)
         {

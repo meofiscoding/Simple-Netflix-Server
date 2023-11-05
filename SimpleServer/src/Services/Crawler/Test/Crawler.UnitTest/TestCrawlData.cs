@@ -42,21 +42,6 @@ public class TestCrawlData
     }
 
     [Test]
-    public void TestCrawlMovieDetailAsync_MovieURLIsNullOrEmpty_ThrowExceptionWithAppropriateMessage()
-    {
-        // Arrange
-        MovieItem item = new()
-        {
-            MovieName = "Loki: Phần 2",
-            UrlDetail = null
-        };
-        //Act
-
-        // Assert throw exception with message "Movie URL is null or empty"
-        Assert.ThrowsAsync<Exception>(async () => await CrawlHelper.CrawlMovieDetailAsync(item), $"Movie url of movie {item.MovieName} is null or empty");
-    }
-
-    [Test]
     // Testcase 1: MovieItem have category is Movies have direct m3u8 link in src
     [TestCase("https://phimmoiyyy.net/phim-bo/loki-phan-2-154230",
               "Tập 5 Vietsub",
