@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Text;
 using CrawlData.Enum;
 using CrawlData.Model;
 using CrawlData.Utils;
@@ -46,6 +48,9 @@ namespace CrawlData.Helper
                         return;
                     }
 
+                    // convert movie name from Biệt Đội Đánh Thuê 4 to Biet-doi-danh-thue-4
+                    movie.MovieName = ConvertMovieNameToUrlFriendly(movie.MovieName);
+
                     if (movie.StreamingUrls.Count == 1)
                     {
                         await HLSHandler.UploadHLSStream(movie.StreamingUrls[0], movie.MovieName);
@@ -69,6 +74,40 @@ namespace CrawlData.Helper
             });
 
             await Task.WhenAll(tasks);
+        }
+
+        private static string ConvertMovieNameToUrlFriendly(string movieName)
+        {
+            if (string.IsNullOrWhiteSpace(movieName))
+            {
+                return string.Empty;
+            }
+
+            // Remove diacritics (accents)
+            string str = movieName.Normalize(NormalizationForm.FormD);
+            StringBuilder result = new();
+
+            foreach (char c in str)
+            {
+                // Remove diacritics (accents)
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                {
+                    // Keep characters that are not letters or digits
+                    // For example: spaces, parentheses, hyphens, etc. will become hyphens 
+                    // Ex: Biệt Đội Đánh Thuê 4 -> Biet-Doi-Danh-Thuê-4
+                    // Ex: The Falcon@meofiscoding -> The-Falcon-meofiscoding
+                    if (!char.IsLetterOrDigit(c))
+                    {
+                        result.Append('-');
+                    }
+                    else
+                    {
+                        result.Append(c);
+                    }
+                }
+            }
+
+            return result.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }
