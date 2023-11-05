@@ -65,7 +65,7 @@ namespace CrawlData.Helper
                     // if movie not exist, then add it to list
                     movie = new MovieItem
                     {
-                        MovieName = item.Descendants("h3").FirstOrDefault()?.InnerText,
+                        MovieName = item.Descendants("h3").FirstOrDefault()?.InnerText??"",
                         UrlDetail = item.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", ""),
                         Poster = item.Descendants("img").FirstOrDefault()?.GetAttributeValue("src", ""),
                         Status = item.Descendants("div").FirstOrDefault(x => x.GetAttributeValue("class", "").Contains("trangthai"))?.InnerText.Trim() ?? "",
@@ -86,29 +86,6 @@ namespace CrawlData.Helper
             var web = new HtmlWeb();
             // loading the target web page 
             return web.Load(url);
-        }
-
-        private static async Task ExtractDataToJsonAsync(List<MovieItem> movieItem)
-        {
-            // crating the json output file
-            var json = JsonSerializer.Serialize(movieItem, new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            });
-
-            // write the data crawled to file
-            await File.WriteAllTextAsync("phimmoiMovieCrawledData.json", json);
-
-            // check if file exist
-            if (File.Exists("phimmoiMovieCrawledData.json"))
-            {
-                Console.WriteLine($" Crawling data completed!\n {movieItem.Count} movies crawled!\n You can check output file at: {Directory.GetCurrentDirectory()}");
-            }
-            else
-            {
-                Console.WriteLine("Extract data to json failed!");
-            }
         }
 
         private static async Task<string> GetPlayListUrlOfMovie(string movieUrl)

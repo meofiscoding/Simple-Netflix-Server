@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
+using CrawlData;
 using CrawlData.Helper;
 using CrawlData.Model;
+using CrawlData.Utils;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -15,17 +17,45 @@ if (movies == null || movies.Count == 0)
     Console.WriteLine("No movie found");
     return;
 }
-int batchSize = 5; // Adjust the batch size as needed
 
-var crawledData = new ConcurrentBag<MovieItem>();
+var semaphore = new SemaphoreSlim(4);
 
-Parallel.ForEach(
-    movies,
-    // limiting the parallelization level to 5 pages at a time 
-    new ParallelOptions { MaxDegreeOfParallelism = batchSize },
-    movie =>
+// for each movie, crawl its streaming url
+var tasks = movies.Select(async movie =>
+{
+    await semaphore.WaitAsync();
+    try
     {
-        var movieDetail = CrawlHelper.CrawlMovieDetailAsync(movie);
-    }
-);
+        movie = await CrawlHelper.CrawlMovieDetailAsync(movie);
 
+        if (movie.StreamingUrls == null || movie.Poster == null)
+        {
+            Log.Error($"Error when crawling movie detail for movie {movie.MovieName}");
+            return;
+        }
+
+        if (movie.StreamingUrls.Count == 1)
+        {
+            await HLSHandler.UploadHLSStream(movie.StreamingUrls[0], movie.MovieName);
+        }
+        else
+        {
+            movie.StreamingUrls.ForEach(async url => await HLSHandler.UploadHLSStream(url, movie.MovieName, $"ep {movie.StreamingUrls.IndexOf(url) + 1}"));
+        }
+
+        // upload movie poster tp GCS
+        GCSHelper.UploadFile(Consts.bucketName, movie.Poster, $"{movie.MovieName}/poster.jpg");
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, $"Error when crawling streaming url for movie {movie.MovieName}");
+    }
+    finally
+    {
+        semaphore.Release();
+    }
+});
+
+await Task.WhenAll(tasks);
+// Write movie list to file
+await FileHelper.ExtractDataToJsonAsync(movies);

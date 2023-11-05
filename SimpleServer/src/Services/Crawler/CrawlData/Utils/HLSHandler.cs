@@ -6,7 +6,7 @@ namespace CrawlData.Utils
 {
     public static class HLSHandler
     {
-        public static async Task<string> UploadHLSStream(string hlsUrl, string movieName)
+        public static async Task<string> UploadHLSStream(string hlsUrl, string movieName, string? episode = null)
         {
             var client = new HttpClient();
             var playlistUri = new Uri(hlsUrl);
@@ -31,8 +31,8 @@ namespace CrawlData.Utils
             string playlistUriPrefix = playlistUri.AbsoluteUri[..(playlistUri.AbsoluteUri.LastIndexOf('/') + 1)];
 
             // Parse the playlist to extract the video segments
-            ParseHLSPlaylist(playlist, playlistUriPrefix, $"{movieName}/hls");
-            string playlistName = $"hls/{playlistUri.AbsoluteUri.Split('/').Last()}";
+            ParseHLSPlaylist(playlist, playlistUriPrefix, episode == null ? $"{movieName}/hls" : $"{movieName}/{episode}/hls");
+            string playlistName = (episode == null ? "" : $"{episode}/") + $"hls/{playlistUri.AbsoluteUri.Split('/').Last()}";
 
             // TODO: Upload the playlist to Google Cloud Storage
             string playlistUrl = GCSHelper.UploadFile(Consts.bucketName, new MemoryStream(Encoding.UTF8.GetBytes(playlist)), $"{movieName}/{playlistName}");
@@ -45,7 +45,7 @@ namespace CrawlData.Utils
             Stream playlistMasterContent = new MemoryStream(Encoding.UTF8.GetBytes(playlistMaster));
 
             // TODO: Upload the playlistMaster to Google Cloud Storage and return the URL
-            return GCSHelper.UploadFile(Consts.bucketName, playlistMasterContent, $"{movieName}/{hlsUrl.Split('/').Last()}");
+            return GCSHelper.UploadFile(Consts.bucketName, playlistMasterContent, episode == null ? $"{movieName}/{hlsUrl.Split('/').Last()}" : $"{movieName}/{episode}/{hlsUrl.Split('/').Last()}");
         }
 
         private static void ParseHLSPlaylist(string playlist, string baseUrl, string prefix)

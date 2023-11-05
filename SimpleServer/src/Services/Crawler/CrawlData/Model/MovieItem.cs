@@ -20,6 +20,6 @@ namespace CrawlData.Model
 
         public List<Tag>? Tags { get; set; }
 
-        public string? MovieName { get; set; }
+        public string MovieName { get; set; } = string.Empty;
     }
 }
