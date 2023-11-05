@@ -18,7 +18,7 @@ namespace CrawlData.Model
 
         public string? Description { get; set; }
 
-        public List<Tag>? Tags { get; set; }
+        public List<Tag> Tags { get; set; } = new List<Tag>();
 
         public string MovieName { get; set; } = string.Empty;
     }
