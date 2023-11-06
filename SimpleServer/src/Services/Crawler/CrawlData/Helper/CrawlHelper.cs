@@ -108,7 +108,7 @@ namespace CrawlData.Helper
                 wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
                 // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("interactive"));
                 bodyHtml = driver.FindElement(By.TagName("body")).GetAttribute("innerHTML");
-                var playerOptions = wait.Until(x => x.FindElement(By.Id("playeroptions")));
+                var playerOptions = driver.FindElement(By.Id("playeroptions"));
                 // if timeout and div with id playeroptions still have class "onload" then throw exception
                 while (playerOptions.GetAttribute("class").Contains("onload"))
                 {
@@ -180,11 +180,6 @@ namespace CrawlData.Helper
                     }
                 }
             }
-            catch (NullReferenceException)
-            {
-                driver.Quit();
-                return "";
-            }
             catch (Exception ex)
             {
                 // quit chrome driver instance
@@ -192,7 +187,7 @@ namespace CrawlData.Helper
                 //throw new Exception($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
                 // TODO: Implement logging the error
                 Log.Warning($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
-                return await GetPlayListUrlOfMovie(movieUrl);
+                return "";
             }
         }
 
