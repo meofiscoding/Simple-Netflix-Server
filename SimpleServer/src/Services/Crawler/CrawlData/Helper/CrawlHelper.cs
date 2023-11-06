@@ -91,7 +91,7 @@ namespace CrawlData.Helper
         private static async Task<string> GetPlayListUrlOfMovie(string movieUrl)
         {
             var chromeOptions = new ChromeOptions();
-            //chromeOptions.AddArguments("headless");
+            chromeOptions.AddArguments("headless");
             chromeOptions.PageLoadStrategy = PageLoadStrategy.None;
             //chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
             var driver = new ChromeDriver(chromeOptions);
