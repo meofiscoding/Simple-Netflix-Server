@@ -3,6 +3,7 @@ using CrawlData.Model;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Serilog;
 
 namespace CrawlData.Helper
 {
@@ -27,5 +28,16 @@ namespace CrawlData.Helper
             await Movies.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
         }
 
+        // Get movie by name
+        public async Task<MovieItem> GetMovieByNameAsync(string movieName)
+        {
+            var filter = Builders<MovieItem>.Filter.Eq(x => x.MovieName, movieName);
+            return (await Movies.FindAsync(filter)).FirstOrDefault();
+        }
+
+        public async Task<List<MovieItem>> GetAllMovie()
+        {
+            return (await Movies.FindAsync(_ => true)).ToList();
+        }
     }
 }

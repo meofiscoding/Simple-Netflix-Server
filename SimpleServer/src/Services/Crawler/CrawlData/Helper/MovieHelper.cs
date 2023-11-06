@@ -103,5 +103,10 @@ namespace CrawlData.Helper
 
             return result.ToString().Normalize(NormalizationForm.FormC);
         }
+
+        public static List<MovieItem> GetMoviesWithStreamingUrls(List<MovieItem> movies, Category category)
+        {
+            return movies.Where(x => x.MovieCategory == category && x.StreamingUrls.Count > 0 && x.StreamingUrls.All(y => !string.IsNullOrEmpty(y.Value)) && !x.IsAvailable).ToList();
+        }
     }
 }

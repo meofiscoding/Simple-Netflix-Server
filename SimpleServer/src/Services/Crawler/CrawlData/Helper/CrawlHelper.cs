@@ -206,48 +206,45 @@ namespace CrawlData.Helper
                 .FirstOrDefault(x => x.GetAttributeValue("itemprop", "") == "description")?.InnerText.Trim() ?? "";
 
             movie.Description = HttpUtility.HtmlDecode(description);
+
             if (movie.MovieCategory == Category.Movies)
             {
-                string streamingUrl = await GetPlayListUrlOfMovie(movie.UrlDetail);
-                movie.StreamingUrls = new Dictionary<string, string> { { "0", streamingUrl } };
+                if (movie.StreamingUrls.Count == 0)
+                {
+                    string streamingUrl = await GetPlayListUrlOfMovie(movie.UrlDetail);
+                    movie.StreamingUrls = new Dictionary<string, string> { { "0", streamingUrl } };
+                }
             }
             else
             {
                 // status format: "Tập <number> Vietsub" or "FULL <number>/ <number> RAW"
                 // get number of available episode
                 var availableEpisode = int.Parse(CustomRegex.EpisodesRegex().Match(movie.Status).Value);
+                // get all episode number that not crawled
+                var remainStreamingUrls = Enumerable.Range(1, availableEpisode)
+                    .Where(x => string.IsNullOrEmpty(movie.StreamingUrls.GetValueOrDefault(x.ToString())))
+                    .ToList();
                 // get ul with class = episodios
                 var ulEpisode = document.DocumentNode.Descendants("ul")
                     .FirstOrDefault(x => x.GetAttributeValue("class", "") == "episodios")
-                    ?? throw new Exception("No episode found");
-                // get all url from a tag in li tag which number of li tag equal available episode
-                var episodeUrls = ulEpisode
-                    .Descendants("li")
-                    .Where(x => x.Descendants("a").Any())
-                    .Take(availableEpisode)
-                    .Select(x => x.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", "") ?? throw new Exception("No episode url found"))
-                    .ToList();
+                    ?? throw new Exception($"No episode found for movie {movie.MovieName}");
+
+                // get all episodeUrl which episode appear in remainStreamingUrls
+                Dictionary<int, string?> episodeUrls = ulEpisode.Descendants("li")
+                    .Where(x => remainStreamingUrls.Contains(int.Parse(CustomRegex.EpisodesRegex().Match(x.InnerText).Value)))
+                    .ToDictionary(x => int.Parse(CustomRegex.EpisodesRegex().Match(x.InnerText).Value), x => x.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", ""));
 
                 var streamingUrlsDict = new ConcurrentDictionary<int, string>();
-                // Parallel.ForEach(
-                //     episodeUrls.Select((url, index) => new { url, index }),
-                //     new ParallelOptions { MaxDegreeOfParallelism = 3 },
-                //     async item =>
-                //     {
-                //         string playlistUrl = await GetPlayListUrlOfMovie(item.url);
-                //         streamingUrlsDict.TryAdd(item.index, playlistUrl);
-                //     }
-                // );
 
                 var semaphore = new SemaphoreSlim(4); // Set the maximum degree of parallelism
 
-                var tasks = episodeUrls.Select(async (url, index) =>
+                var tasks = episodeUrls.Select(async item =>
                 {
                     await semaphore.WaitAsync();
                     try
                     {
-                        string playlistUrl = await GetPlayListUrlOfMovie(url);
-                        streamingUrlsDict.TryAdd(index, playlistUrl);
+                        var streamingUrl = await GetPlayListUrlOfMovie(item.Value ?? throw new Exception("No episode url found"));
+                        streamingUrlsDict.TryAdd(item.Key, streamingUrl);
                     }
                     finally
                     {
@@ -257,7 +254,11 @@ namespace CrawlData.Helper
 
                 // Re-order streaming url by episode number and add to movie.streamingUrls
                 await Task.WhenAll(tasks);
-                movie.StreamingUrls = streamingUrlsDict.OrderBy(x => x.Key).ToDictionary(x => x.Key.ToString(), x => x.Value);
+                // preserve non null value of streamingUrls and update new value for all key in remainStreamingUrls
+                foreach (var item in streamingUrlsDict)
+                {
+                    movie.StreamingUrls[item.Key.ToString()] = item.Value;
+                }
             }
 
             return movie;
