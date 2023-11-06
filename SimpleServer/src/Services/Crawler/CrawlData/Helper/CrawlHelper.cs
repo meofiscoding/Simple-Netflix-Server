@@ -65,7 +65,7 @@ namespace CrawlData.Helper
                     // if movie not exist, then add it to list
                     movie = new MovieItem
                     {
-                        MovieName = item.Descendants("h3").FirstOrDefault()?.InnerText??"",
+                        MovieName = item.Descendants("h3").FirstOrDefault()?.InnerText ?? "",
                         UrlDetail = item.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", ""),
                         Poster = item.Descendants("img").FirstOrDefault()?.GetAttributeValue("src", ""),
                         Status = item.Descendants("div").FirstOrDefault(x => x.GetAttributeValue("class", "").Contains("trangthai"))?.InnerText.Trim() ?? "",
@@ -91,7 +91,7 @@ namespace CrawlData.Helper
         private static async Task<string> GetPlayListUrlOfMovie(string movieUrl)
         {
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments("headless");
+            //chromeOptions.AddArguments("headless");
             chromeOptions.PageLoadStrategy = PageLoadStrategy.None;
             //chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
             var driver = new ChromeDriver(chromeOptions);
@@ -104,9 +104,9 @@ namespace CrawlData.Helper
                 // navigate to movie url
                 driver.Navigate().GoToUrl(movieUrl);
                 // wait until document state is ready
-                // wait until body tag exist
-                // get all inside body
-                wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("complete"));
+                // wait until  excute script that verify playeroptions div is exist
+                wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
+                // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("interactive"));
                 bodyHtml = driver.FindElement(By.TagName("body")).GetAttribute("innerHTML");
                 var playerOptions = wait.Until(x => x.FindElement(By.Id("playeroptions")));
                 // if timeout and div with id playeroptions still have class "onload" then throw exception
@@ -114,9 +114,10 @@ namespace CrawlData.Helper
                 {
                     // reload page
                     driver.Navigate().Refresh();
-                    wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("complete"));
+                    wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
+                    // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("interactive"));
                     // wait tuntil div with id playeroptions exist
-                    playerOptions = wait.Until(x => x.FindElement(By.Id("playeroptions")));
+                    playerOptions = driver.FindElement(By.Id("playeroptions"));
                 }
                 isOnloadExist = playerOptions.GetAttribute("class").Contains("onload");
                 // get the first iframe element

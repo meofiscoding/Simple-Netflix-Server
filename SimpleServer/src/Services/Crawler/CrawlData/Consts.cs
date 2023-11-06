@@ -4,6 +4,6 @@ namespace CrawlData
 {
     public static class Consts
     {
-        public const string bucketName = "cinema-movie";
+        public const string bucketName = "simple-netflix";
     }
 }

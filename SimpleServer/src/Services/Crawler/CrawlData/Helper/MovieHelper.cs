@@ -32,48 +32,38 @@ namespace CrawlData.Helper
 
         public static async Task PushMovieAssetToGCS(List<MovieItem> movies)
         {
-            var semaphore = new SemaphoreSlim(4);
-
-            // for each movie, crawl its streaming url
-            var tasks = movies.Select(async movie =>
+            foreach (var movie in movies)
             {
-                await semaphore.WaitAsync();
                 try
                 {
-                    movie = await CrawlHelper.CrawlMovieDetailAsync(movie);
+                    var result = await CrawlHelper.CrawlMovieDetailAsync(movie);
 
-                    if (movie.StreamingUrls == null || movie.Poster == null)
+                    if (result.StreamingUrls == null || result.Poster == null)
                     {
-                        Log.Error($"Error when crawling movie detail for movie {movie.MovieName}");
+                        Log.Error($"Error when crawling movie detail for movie {result.MovieName}");
                         return;
                     }
 
                     // convert movie name from Biệt Đội Đánh Thuê 4 to Biet-doi-danh-thue-4
-                    movie.MovieName = ConvertMovieNameToUrlFriendly(movie.MovieName);
+                    movie.MovieName = ConvertMovieNameToUrlFriendly(result.MovieName);
 
-                    if (movie.StreamingUrls.Count == 1)
+                    if (result.MovieCategory == Category.Movies)
                     {
-                        await HLSHandler.UploadHLSStream(movie.StreamingUrls[0], movie.MovieName);
+                        await HLSHandler.UploadHLSStream(result.StreamingUrls[0], result.MovieName);
                     }
                     else
                     {
-                        movie.StreamingUrls.ForEach(async url => await HLSHandler.UploadHLSStream(url, movie.MovieName, $"ep {movie.StreamingUrls.IndexOf(url) + 1}"));
+                        result.StreamingUrls.ForEach(async url => await HLSHandler.UploadHLSStream(url, result.MovieName, $"ep {result.StreamingUrls.IndexOf(url) + 1}"));
                     }
 
                     // upload movie poster tp GCS
-                    GCSHelper.UploadFile(Consts.bucketName, movie.Poster, $"{movie.MovieName}/poster.jpg");
+                    GCSHelper.UploadFile(Consts.bucketName, result.Poster, $"{result.MovieName}/poster.jpg");
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, $"Error when crawling streaming url for movie {movie.MovieName}");
                 }
-                finally
-                {
-                    semaphore.Release();
-                }
-            });
-
-            await Task.WhenAll(tasks);
+            }
         }
 
         private static string ConvertMovieNameToUrlFriendly(string movieName)
