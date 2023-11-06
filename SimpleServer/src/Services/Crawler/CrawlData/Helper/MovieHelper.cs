@@ -53,7 +53,11 @@ namespace CrawlData.Helper
                     }
                     else
                     {
-                        result.StreamingUrls.ForEach(async url => await HLSHandler.UploadHLSStream(url, result.MovieName, $"ep {result.StreamingUrls.IndexOf(url) + 1}"));
+                        // upload movie streaming url in dictionary to GCS
+                        foreach (var (key, value) in result.StreamingUrls)
+                        {
+                            await HLSHandler.UploadHLSStream(value, result.MovieName, $"episode-{key}");
+                        }
                     }
 
                     // upload movie poster tp GCS
