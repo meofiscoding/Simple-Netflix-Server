@@ -209,7 +209,7 @@ namespace CrawlData.Helper
             if (movie.MovieCategory == Category.Movies)
             {
                 string streamingUrl = await GetPlayListUrlOfMovie(movie.UrlDetail);
-                movie.StreamingUrls = new Dictionary<int, string> { { 0, streamingUrl } };
+                movie.StreamingUrls = new Dictionary<string, string> { { "0", streamingUrl } };
             }
             else
             {
@@ -257,7 +257,7 @@ namespace CrawlData.Helper
 
                 // Re-order streaming url by episode number and add to movie.streamingUrls
                 await Task.WhenAll(tasks);
-                movie.StreamingUrls = streamingUrlsDict.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+                movie.StreamingUrls = streamingUrlsDict.OrderBy(x => x.Key).ToDictionary(x => x.Key.ToString(), x => x.Value);
             }
 
             return movie;

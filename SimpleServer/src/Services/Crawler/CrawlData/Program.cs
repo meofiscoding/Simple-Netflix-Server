@@ -10,7 +10,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-MongoHelper database = new(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build());
+MongoHelper database = new(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
 
 List<MovieItem> movies = CrawlHelper.CrawlMovieInfo("https://phimmoiyyy.net/");
 if (movies == null || movies.Count == 0)
@@ -19,15 +19,20 @@ if (movies == null || movies.Count == 0)
     return;
 }
 
-// Add all movie to database
-await database.Movies.InsertManyAsync(movies);
+movies.ForEach(async movie =>
+{
+    var result = await CrawlHelper.CrawlMovieDetailAsync(movie);
+    // add movie to database
+    await database.UpsertMovieAsync(result);
+    Console.WriteLine($"Movie {result.MovieName} added to database successfully!!");
+});
 
 // TODO: Only push 5 item of movie to GCS in each day
 // If movie category is Movies, then that movie will equal to 1 item
 // If movie category is TVShows, then each episode of that movie will equal to 1 item
-// TODO: Implement a method to get number of item in database
+// TODO: Implement a method to get 5 streaming
 
 // Push movie asset to GCS
-await MovieHelper.PushMovieAssetToGCS(movies);
+// await MovieHelper.PushMovieAssetToGCS(movies);
 // Write movie list to file
-await FileHelper.ExtractDataToJsonAsync(movies);
+// await FileHelper.ExtractDataToJsonAsync(movies);

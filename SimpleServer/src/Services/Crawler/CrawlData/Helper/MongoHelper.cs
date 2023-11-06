@@ -1,6 +1,7 @@
 using System;
 using CrawlData.Model;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace CrawlData.Helper
@@ -21,7 +22,8 @@ namespace CrawlData.Helper
         // Upsert movie to database
         public async Task UpsertMovieAsync(MovieItem movie)
         {
-            var filter = Builders<MovieItem>.Filter.Eq(x => x.MovieName, movie.MovieName);
+            movie.Id ??= ObjectId.GenerateNewId().ToString();
+            var filter = Builders<MovieItem>.Filter.Eq(x => x.Id, movie.Id);
             await Movies.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
         }
 

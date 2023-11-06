@@ -49,7 +49,7 @@ namespace CrawlData.Helper
 
                     if (result.MovieCategory == Category.Movies)
                     {
-                        await HLSHandler.UploadHLSStream(result.StreamingUrls[0], result.MovieName);
+                        await HLSHandler.UploadHLSStream(result.StreamingUrls["0"], result.MovieName);
                     }
                     else
                     {

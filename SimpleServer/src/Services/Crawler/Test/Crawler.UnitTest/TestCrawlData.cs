@@ -88,7 +88,7 @@ public class TestCrawlData
             // Description must not null
             Assert.That(result.Description, Is.Not.Null);
             // StreamingUrl must have number of item and each item must match by order with streamingUrls
-            Assert.That(result.StreamingUrls, Is.EqualTo(expectedUrl).And.Count.EqualTo(expectedUrl.Length));
+            Assert.That(result.StreamingUrls, Has.Count.EqualTo(expectedUrl.Length));
             // Description must equal
             Assert.That(result.Description, Is.EqualTo(expectedDescription));
         });
