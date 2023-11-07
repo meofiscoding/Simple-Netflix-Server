@@ -93,4 +93,44 @@ public class TestCrawlData
             Assert.That(result.Description, Is.EqualTo(expectedDescription));
         });
     }
+
+    [Test]
+    public async Task TestCrawlMovieDetailAsync_MovieAlreadyExistsInDatabase_ReturnMovieItemThatNullStreamingUrlValueIsSetted()
+    {
+        // Arrange
+        MovieItem movie = new()
+        {
+            MovieCategory = CrawlData.Enum.Category.TVShows,
+            UrlDetail = "https://phimmoiyyy.net/phim-bo/cuoc-chien-sinh-ton-644141",
+            Status = "Tập 13 Vietsub",
+            StreamingUrls = new Dictionary<string, string>{
+            {"1", ""},
+            {"2", ""},
+            {"3", ""},
+            {"4", ""},
+            {"5", "https://vie2.opstream7.com/20230930/1167_f57bfd5d/index.m3u8"},
+            {"6", ""},
+            {"7", ""},
+            {"8", ""},
+            {"9", ""},
+            {"10", ""},
+            {"11", "https://vie2.opstream7.com/20231028/1401_f6fc6dc9/index.m3u8"},
+            {"12", ""},
+            {"13", ""}
+        }
+        };
+
+        // Act
+        var result = await CrawlHelper.CrawlMovieDetailAsync(movie);
+
+        // Assert
+        // The url of episode 5 and 11 must be preserved
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.StreamingUrls, Is.Not.Null);
+            Assert.That(result.StreamingUrls, Has.Count.EqualTo(13));
+            Assert.That(result.StreamingUrls["5"], Is.EqualTo("https://vie2.opstream7.com/20230930/1167_f57bfd5d/index.m3u8"));
+            Assert.That(result.StreamingUrls["11"], Is.EqualTo("https://vie2.opstream7.com/20231028/1401_f6fc6dc9/index.m3u8"));
+        });
+    }
 }
