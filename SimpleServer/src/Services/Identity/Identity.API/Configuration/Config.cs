@@ -33,32 +33,12 @@ namespace Identity.API.Configuration
                 AllowOfflineAccess = true,
                 RequireConsent = false
             },
-            // new Client()
-            // {
-            //     ClientId = "angular",
-
-            //     AllowedGrantTypes = GrantTypes.Code,
-            //     RequirePkce = true,
-            //     RequireClientSecret = false,
-
-            //     RedirectUris = { "http://localhost:4200" },
-            //     PostLogoutRedirectUris = { "http://localhost:4200" },
-            //     AllowedCorsOrigins = { "http://localhost:4200" },
-
-            //     AllowedScopes = {
-            //         IdentityServerConstants.StandardScopes.OpenId,
-            //         "movies",
-            //     },
-
-            //     AllowAccessTokensViaBrowser = true,
-            //     RequireConsent = false,
-            // },
             new Client()
             {
                 ClientName = "Angular-Client",
                 ClientId = "angular-client",
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = new List<string>{ "http://localhost:4200/signin-callback", "http://localhost:4200/assets/silent-callback.html" },
+                RedirectUris = new List<string>{ "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home/signin-callback", "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home/assets/silent-callback.html" },
                 RequirePkce = true,
                 AllowAccessTokensViaBrowser = true,
                 AllowedScopes =
@@ -67,12 +47,33 @@ namespace Identity.API.Configuration
                     IdentityServerConstants.StandardScopes.Profile,
                     "movies"
                 },
-                AllowedCorsOrigins = { "http://localhost:4200" },
+                AllowedCorsOrigins = { "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home" },
                 RequireClientSecret = false,
-                PostLogoutRedirectUris = new List<string> { "http://localhost:4200/signout-callback" },
+                PostLogoutRedirectUris = new List<string> { "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home/signout-callback" },
                 RequireConsent = false,
                 AccessTokenLifetime = 600
             }
+            
+            // new Client()
+            // {
+            //     ClientName = "Angular-Client",
+            //     ClientId = "angular-client",
+            //     AllowedGrantTypes = GrantTypes.Code,
+            //     RedirectUris = new List<string>{ "http://localhost:4200/signin-callback", "http://localhost:4200/assets/silent-callback.html" },
+            //     RequirePkce = true,
+            //     AllowAccessTokensViaBrowser = true,
+            //     AllowedScopes =
+            //     {
+            //         IdentityServerConstants.StandardScopes.OpenId,
+            //         IdentityServerConstants.StandardScopes.Profile,
+            //         "movies"
+            //     },
+            //     AllowedCorsOrigins = { "http://localhost:4200" },
+            //     RequireClientSecret = false,
+            //     PostLogoutRedirectUris = new List<string> { "http://localhost:4200/signout-callback" },
+            //     RequireConsent = false,
+            //     AccessTokenLifetime = 600
+            // }
         };
 
         public static IEnumerable<ApiScope> ApiScopes =>
