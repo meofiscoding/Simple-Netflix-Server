@@ -38,3 +38,10 @@ services:
     depends_on:
       - moviedb
 
+
+  crawldata:
+    image: ${DOCKER_REGISTRY-}crawldata
+    build:
+      context: .
+      dockerfile: src/Services/Crawler/CrawlData/Dockerfile
+
