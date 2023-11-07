@@ -22,29 +22,24 @@ if (movies == null || movies.Count == 0)
 
 var moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
 // get movies with category is TVShows which all streamingUrls value is not null
-var tvShowsWithFullNonNullStreamingUrls =MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
-// crawl detail of each movie until total movie with streamingUrls >= 5
-while (moviesWithNonNullStreamingUrls.Count + tvShowsWithFullNonNullStreamingUrls.Count < 5)
+var tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
+while (moviesWithNonNullStreamingUrls.Count < 5 && (tvShowsWithFullNonNullStreamingUrls.Count != 1 || (tvShowsWithFullNonNullStreamingUrls[0].StreamingUrls.Count < 5 && tvShowsWithFullNonNullStreamingUrls[0].StreamingUrls.Count + moviesWithNonNullStreamingUrls.Count < 5)))
 {
     foreach (var movie in movies)
     {
-        // get movie from database that has same name with movie
+        // get movie from database that has the same name as the movie
         var movieFromDB = await database.GetMovieByNameAsync(movie.MovieName);
         var result = await CrawlHelper.CrawlMovieDetailAsync(movieFromDB ?? movie);
-        // add movie to database
+        // add the movie to the database
         await database.UpsertMovieAsync(result);
-        Console.WriteLine($"Movie {result.MovieName} added to database successfully!!");
+        Console.WriteLine($"Movie {result.MovieName} added to the database successfully!!");
     }
-    // get all movues from database
+    // get all movies from the database
     movies = await database.GetAllMovie();
     moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
     tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
 }
 
 // TODO: Only push 5 item of movie to GCS in each day
-// If movie category is Movies, then that movie will equal to 1 item
-// If movie category is TVShows, then each episode of that movie will equal to 1 item
 // Push movie asset to GCS
 // await MovieHelper.PushMovieAssetToGCS(movies);
-// Write movie list to file
-// await FileHelper.ExtractDataToJsonAsync(movies);

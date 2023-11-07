@@ -220,15 +220,20 @@ namespace CrawlData.Helper
                 // status format: "Tập <number> Vietsub" or "FULL <number>/ <number> RAW"
                 // get number of available episode
                 var availableEpisode = int.Parse(CustomRegex.EpisodesRegex().Match(movie.Status).Value);
-                // get all episode number that not crawled
-                var remainStreamingUrls = Enumerable.Range(1, availableEpisode)
-                    .Where(x => string.IsNullOrEmpty(movie.StreamingUrls.GetValueOrDefault(x.ToString())))
-                    .ToList();
+
                 // get ul with class = episodios
                 var ulEpisode = document.DocumentNode.Descendants("ul")
                     .FirstOrDefault(x => x.GetAttributeValue("class", "") == "episodios")
                     ?? throw new Exception($"No episode found for movie {movie.MovieName}");
-
+                // get all episode number that not crawled
+                var remainStreamingUrls = Enumerable
+                    .Range(
+                        // start from number of first li value in ulEpisode
+                        int.Parse(CustomRegex.EpisodesRegex().Match(ulEpisode.Descendants("li").FirstOrDefault()?.InnerText ?? "").Value), 
+                        availableEpisode
+                    )
+                    .Where(x => string.IsNullOrEmpty(movie.StreamingUrls.GetValueOrDefault(x.ToString())))
+                    .ToList();
                 // get all episodeUrl which episode appear in remainStreamingUrls
                 Dictionary<int, string?> episodeUrls = ulEpisode.Descendants("li")
                     .Where(x => remainStreamingUrls.Contains(int.Parse(CustomRegex.EpisodesRegex().Match(x.InnerText).Value)))
@@ -260,7 +265,6 @@ namespace CrawlData.Helper
                     movie.StreamingUrls[item.Key.ToString()] = item.Value;
                 }
             }
-
             return movie;
         }
 
