@@ -203,42 +203,42 @@ using (var scope = app.Services.CreateScope())
     await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
 }
 
-X509Certificate2 GetIdentityServerCertificate()
-{
-    string keyVaultUrl = configuration["KeyVault:AzureKeyVaultURL"];
-    string clientId = configuration["KeyVault:ClientId"];
-    string clientSecret = configuration["KeyVault:ClientSecret"];
-    string tenantId = configuration["KeyVault:AzureClientTenantId"];
+// X509Certificate2 GetIdentityServerCertificate()
+// {
+//     string keyVaultUrl = configuration["KeyVault:AzureKeyVaultURL"];
+//     string clientId = configuration["KeyVault:ClientId"];
+//     string clientSecret = configuration["KeyVault:ClientSecret"];
+//     string tenantId = configuration["KeyVault:AzureClientTenantId"];
 
-    // Create a new SecretClient using ClientSecretCredential​
-    var client = new SecretClient(new Uri(keyVaultUrl), new ClientSecretCredential(tenantId, clientId, clientSecret));
+//     // Create a new SecretClient using ClientSecretCredential​
+//     var client = new SecretClient(new Uri(keyVaultUrl), new ClientSecretCredential(tenantId, clientId, clientSecret));
 
-    try
-    {
-        // get certificate from key vault
-        var secret = client.GetSecret("IdenittyServer4Certificate");
-        var pemContent = secret.Value.Value;
-        // Separate the private key and certificate portions
-        string[] pemParts = pemContent.Split(new string[] { "-----END PRIVATE KEY-----" }, StringSplitOptions.RemoveEmptyEntries);
-        string privateKeyPem = pemParts[0] + "-----END PRIVATE KEY-----";
-        string certificatePem = pemParts[1];
+//     try
+//     {
+//         // get certificate from key vault
+//         var secret = client.GetSecret("IdenittyServer4Certificate");
+//         var pemContent = secret.Value.Value;
+//         // Separate the private key and certificate portions
+//         string[] pemParts = pemContent.Split(new string[] { "-----END PRIVATE KEY-----" }, StringSplitOptions.RemoveEmptyEntries);
+//         string privateKeyPem = pemParts[0] + "-----END PRIVATE KEY-----";
+//         string certificatePem = pemParts[1];
 
-        // Load the private key into a RSA private key
-        var privateKey = RSA.Create();
-        privateKey.ImportFromPem(privateKeyPem);
+//         // Load the private key into a RSA private key
+//         var privateKey = RSA.Create();
+//         privateKey.ImportFromPem(privateKeyPem);
 
-        // Load the certificate
-        var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(certificatePem));
+//         // Load the certificate
+//         var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(certificatePem));
 
-        // Attach the private key to the certificate
-        return certificate.CopyWithPrivateKey(privateKey);
-    }
-    catch (System.Exception ex)
-    {
-        // handle case where certificate is not found in key vault
-        throw new System.Exception(ex.Message);
-    }
-}
+//         // Attach the private key to the certificate
+//         return certificate.CopyWithPrivateKey(privateKey);
+//     }
+//     catch (System.Exception ex)
+//     {
+//         // handle case where certificate is not found in key vault
+//         throw new System.Exception(ex.Message);
+//     }
+// }
 
 await app.RunAsync();
 
