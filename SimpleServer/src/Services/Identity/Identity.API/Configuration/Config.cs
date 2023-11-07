@@ -38,7 +38,7 @@ namespace Identity.API.Configuration
                 ClientName = "Angular-Client",
                 ClientId = "angular-client",
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = new List<string>{ "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home/signin-callback", "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home/assets/silent-callback.html" },
+                RedirectUris = new List<string>{ "https://simplenetflix.vercel.app/signin-callback", "https://simplenetflix.vercel.app/assets/silent-callback.html" },
                 RequirePkce = true,
                 AllowAccessTokensViaBrowser = true,
                 AllowedScopes =
@@ -47,9 +47,9 @@ namespace Identity.API.Configuration
                     IdentityServerConstants.StandardScopes.Profile,
                     "movies"
                 },
-                AllowedCorsOrigins = { "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home" },
+                AllowedCorsOrigins = { "https://simplenetflix.vercel.app" },
                 RequireClientSecret = false,
-                PostLogoutRedirectUris = new List<string> { "https://simple-netflix-irnjixk8p-meof-coding.vercel.app/home/signout-callback" },
+                PostLogoutRedirectUris = new List<string> { "https://simplenetflix.vercel.app/signout-callback" },
                 RequireConsent = false,
                 AccessTokenLifetime = 600
             }
