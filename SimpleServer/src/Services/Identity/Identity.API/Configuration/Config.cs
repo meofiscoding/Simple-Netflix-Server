@@ -55,23 +55,23 @@ namespace Identity.API.Configuration
             // },
             new Client()
             {
-                ClientId = "angular",
-
+                ClientName = "Angular-Client",
+                ClientId = "angular-client",
                 AllowedGrantTypes = GrantTypes.Code,
+                RedirectUris = new List<string>{ "http://localhost:4200/signin-callback", "http://localhost:4200/assets/silent-callback.html" },
                 RequirePkce = true,
-                RequireClientSecret = false,
-
-                RedirectUris = { "https://simplenetflix.vercel.app" },
-                PostLogoutRedirectUris = { "https://simplenetflix.vercel.app" },
-                AllowedCorsOrigins = { "https://simplenetflix.vercel.app" },
-
-                AllowedScopes = {
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    "movies",
-                },
-
                 AllowAccessTokensViaBrowser = true,
+                AllowedScopes =
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "movies"
+                },
+                AllowedCorsOrigins = { "http://localhost:4200" },
+                RequireClientSecret = false,
+                PostLogoutRedirectUris = new List<string> { "http://localhost:4200/signout-callback" },
                 RequireConsent = false,
+                AccessTokenLifetime = 600
             }
         };
 
