@@ -84,7 +84,9 @@ namespace Identity.API.Configuration
         public static IEnumerable<ApiResource> ApiResources =>
             new List<ApiResource>
             {
-                new ApiResource("movies", "Movie Service")
+                new ApiResource("movies", "Movie Service"){
+                    Scopes = { "movies" }
+                }
             };
         public static IEnumerable<IdentityResource> IdentityResources =>
             new List<IdentityResource>
