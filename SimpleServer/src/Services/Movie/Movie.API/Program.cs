@@ -9,12 +9,15 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        // options.RequireHttpsMetadata = false;
+        // Uncomment this when in local development
+        //options.RequireHttpsMetadata = false;
+
         options.Authority = builder.Configuration["IdentityUrl"];
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
+        options.Audience = "movies";
+        // options.TokenValidationParameters = new TokenValidationParameters
+        // {
+        //     ValidateAudience = false
+        // };
     });
 
 builder.Services.AddEndpointsApiExplorer();

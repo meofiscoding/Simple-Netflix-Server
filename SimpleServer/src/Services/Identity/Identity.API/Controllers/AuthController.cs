@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.Services;
+using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,8 @@ using Identity.API.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Identity.API.Utils;
 using Microsoft.AspNetCore.Authentication;
-using IdentityServer4.Stores;
+using Duende.IdentityServer.Stores;
+using Duende.IdentityServer;
 
 namespace Identity.API.Controllers;
 
@@ -63,7 +64,7 @@ public class AuthController : Controller
         var context = await _interactionService.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
         {
-            var local = context.IdP == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
+            var local = context.IdP == IdentityServerConstants.LocalIdentityProvider;
 
             // this is meant to short circuit the UI and only trigger the one external IdP
             var vm = new LoginViewModel
