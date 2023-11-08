@@ -28,11 +28,11 @@ spec:
               value: crawlDB
             - name: DatabaseSettings__CollectionName
               value: crawledMovies
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "0.1"
-            limits:
-              memory: "128Mi"
-              cpu: "0.3"
+          # resources:
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "0.1"
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "0.3"
 
