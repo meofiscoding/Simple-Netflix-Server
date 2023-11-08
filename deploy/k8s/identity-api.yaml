@@ -35,26 +35,26 @@ spec:
                 secretKeyRef:
                   name: identity-api-secret
                   key: client_id
-            - name: KeyVault__ClientId
-              valueFrom:
-                secretKeyRef:
-                  name: keyvault-secret
-                  key: keyvault_client_id
-            - name: KeyVault__AzureKeyVaultURL
-              valueFrom:
-                secretKeyRef:
-                  name: keyvault-secret
-                  key: keyvault_url
-            - name: KeyVault__ClientSecret
-              valueFrom:
-                secretKeyRef:
-                  name: keyvault-secret
-                  key: keyvault_client_secret
-            - name: KeyVault__AzureClientTenantId
-              valueFrom:
-                secretKeyRef:
-                  name: keyvault-secret
-                  key: keyvault_client_tenant_id
+            # - name: KeyVault__ClientId
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: keyvault-secret
+            #       key: keyvault_client_id
+            # - name: KeyVault__AzureKeyVaultURL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: keyvault-secret
+            #       key: keyvault_url
+            # - name: KeyVault__ClientSecret
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: keyvault-secret
+            #       key: keyvault_client_secret
+            # - name: KeyVault__AzureClientTenantId
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: keyvault-secret
+            #       key: keyvault_client_tenant_id
             - name: Google__ClientSecret
               valueFrom:
                 secretKeyRef:
