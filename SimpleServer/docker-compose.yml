@@ -3,6 +3,9 @@ version: '3.4'
 services:
   moviedb:
     image: mongo
+
+  crawlerdb:
+    image: mongo
   
   identitydb:
     image: postgres
@@ -44,4 +47,6 @@ services:
     build:
       context: .
       dockerfile: src/Services/Crawler/CrawlData/Dockerfile
+    depends_on:
+     - crawlerdb
 

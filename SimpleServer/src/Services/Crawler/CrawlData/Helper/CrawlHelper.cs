@@ -96,7 +96,7 @@ namespace CrawlData.Helper
             //chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
             var driver = new ChromeDriver(chromeOptions);
             // wait until page state is ready
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMinutes(2);
             bool isOnloadExist = true;
             var bodyHtml = "";
             try
@@ -105,7 +105,7 @@ namespace CrawlData.Helper
                 driver.Navigate().GoToUrl(movieUrl);
                 // wait until document state is ready
                 // wait until  excute script that verify playeroptions div is exist
-                wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
+                // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
                 // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("interactive"));
                 bodyHtml = driver.FindElement(By.TagName("body")).GetAttribute("innerHTML");
                 var playerOptions = driver.FindElement(By.Id("playeroptions"));
@@ -114,7 +114,7 @@ namespace CrawlData.Helper
                 {
                     // reload page
                     driver.Navigate().Refresh();
-                    wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
+                    // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.getElementById('playeroptions')") != null);
                     // wait.Until(x => ((IJavaScriptExecutor)x).ExecuteScript("return document.readyState").Equals("interactive"));
                     // wait tuntil div with id playeroptions exist
                     playerOptions = driver.FindElement(By.Id("playeroptions"));
@@ -186,7 +186,7 @@ namespace CrawlData.Helper
                 driver.Quit();
                 //throw new Exception($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
                 // TODO: Implement logging the error
-                Log.Warning($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
+                Log.Error($"Get playlist url of movie {movieUrl} got error: {ex.Message} when onLoad element is {isOnloadExist} with body html is {bodyHtml}");
                 return "";
             }
         }
@@ -287,7 +287,7 @@ namespace CrawlData.Helper
             catch (Exception ex)
             {
                 // throw exception url invalid, can not call HTTP GET
-                Log.Warning($"Url {url} got error: {ex.Message}");
+                Log.Error($"Url {url} got error: {ex.Message}");
                 return "";
             }
         }
