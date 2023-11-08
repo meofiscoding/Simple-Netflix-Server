@@ -91,7 +91,7 @@ namespace CrawlData.Helper
         private static async Task<string> GetPlayListUrlOfMovie(string movieUrl)
         {
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments("headless");
+            chromeOptions.AddArguments("--headless", "--disable-gpu","--no-sandbox", "--disable-dev-shm-usage");
             chromeOptions.PageLoadStrategy = PageLoadStrategy.None;
             //chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
             var driver = new ChromeDriver(chromeOptions);
@@ -229,7 +229,7 @@ namespace CrawlData.Helper
                 var remainStreamingUrls = Enumerable
                     .Range(
                         // start from number of first li value in ulEpisode
-                        int.Parse(CustomRegex.EpisodesRegex().Match(ulEpisode.Descendants("li").FirstOrDefault()?.InnerText ?? "").Value), 
+                        int.Parse(CustomRegex.EpisodesRegex().Match(ulEpisode.Descendants("li").FirstOrDefault()?.InnerText ?? "").Value),
                         availableEpisode
                     )
                     .Where(x => string.IsNullOrEmpty(movie.StreamingUrls.GetValueOrDefault(x.ToString())))
