@@ -9,9 +9,8 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        // Uncomment this when in local development
-        //options.RequireHttpsMetadata = false;
-
+        // Uncomment this when in development
+        // options.RequireHttpsMetadata = false;
         options.Authority = builder.Configuration["IdentityUrl"];
         options.Audience = "movies";
         // options.TokenValidationParameters = new TokenValidationParameters

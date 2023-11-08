@@ -10,6 +10,7 @@ on:
       - .github/workflows/ocelotapigw-deploy.yml
       - .github/workflows/composite/deploy/action.yml
       - deploy/k8s/apigw.yaml
+      - SimpleServer/src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/**
 
 env:
   NAMESPACE: ingress-nginx

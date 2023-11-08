@@ -10,6 +10,7 @@ on:
       - .github/workflows/movie-api-deploy.yml
       - .github/workflows/composite/deploy/action.yml
       - deploy/k8s/movie-api.yaml
+      - SimpleServer/src/Services/Movie/**
 
 env:
   NAMESPACE: ingress-nginx

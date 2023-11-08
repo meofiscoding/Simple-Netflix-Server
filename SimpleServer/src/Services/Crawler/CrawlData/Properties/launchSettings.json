@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CrawlData": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
