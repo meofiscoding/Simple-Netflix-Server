@@ -1,0 +1,50 @@
+name: crawl-service
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+
+    paths:
+      - SimpleServer/src/Services/Crawler/CrawlData/**
+      - .github/workflows/crawl-service.yml
+
+  pull_request:
+    branches:
+      - dev
+
+    paths:
+      - SimpleServer/src/Services/Crawler/CrawlData/**
+      - .github/workflows/crawl-service.yml
+env:
+  SERVICE: crawldata
+  IMAGE: crawldata
+
+jobs:
+    
+  BuildContainersForPR_Linux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.0
+      - uses: ./.github/workflows/composite/build
+        with:
+          service: ${{ env.SERVICE }}
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+
+  BuildLinux:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: ./.github/workflows/composite/build-push
+        with:
+          service: ${{ env.SERVICE }}
+          registry_host: ${{ secrets.REGISTRY_HOST }}
+          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+          image_name: ${{ env.IMAGE }}
+          registry_username: ${{ secrets.USERNAME }}
+          registry_password: ${{ secrets.PASSWORD }}
