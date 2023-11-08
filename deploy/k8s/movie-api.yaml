@@ -23,7 +23,7 @@ spec:
             - containerPort: 80
           env:
             - name: IdentityUrl
-              value: http://identity-api-service
+              value: https://frontend.20.211.61.204.nip.io
             # - name: ASPNETCORE_ENVIRONMENT
             #   value: Development
             - name: ASPNETCORE_URLS
@@ -33,6 +33,10 @@ spec:
                 secretKeyRef:
                   name: movie-secret
                   key: connection_string
+            - name: DatabaseSettings__DatabaseName
+              value: simpleNetflixMovie
+            - name: DatabaseSettings__CollectionName
+              value: movies
           resources:
             requests:
               memory: "64Mi"

@@ -61,7 +61,7 @@ spec:
                   name: identity-api-secret
                   key: client_secret
             - name: IdentityUrl
-              value: http://identity-api-service
+              value: https://frontend.20.211.61.204.nip.io
           resources:
             requests:
               memory: "100Mi"
