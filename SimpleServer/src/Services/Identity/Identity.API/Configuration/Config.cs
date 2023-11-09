@@ -1,6 +1,6 @@
 using System;
-using IdentityServer4;
-using IdentityServer4.Models;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
 
 namespace Identity.API.Configuration
 {
@@ -33,46 +33,47 @@ namespace Identity.API.Configuration
                 AllowOfflineAccess = true,
                 RequireConsent = false
             },
-            // new Client()
-            // {
-            //     ClientId = "angular",
-
-            //     AllowedGrantTypes = GrantTypes.Code,
-            //     RequirePkce = true,
-            //     RequireClientSecret = false,
-
-            //     RedirectUris = { "http://localhost:4200" },
-            //     PostLogoutRedirectUris = { "http://localhost:4200" },
-            //     AllowedCorsOrigins = { "http://localhost:4200" },
-
-            //     AllowedScopes = {
-            //         IdentityServerConstants.StandardScopes.OpenId,
-            //         "movies",
-            //     },
-
-            //     AllowAccessTokensViaBrowser = true,
-            //     RequireConsent = false,
-            // },
             new Client()
             {
-                ClientId = "angular",
-
+                ClientName = "Angular-Client",
+                ClientId = "angular-client",
                 AllowedGrantTypes = GrantTypes.Code,
+                RedirectUris = new List<string>{ "https://simplenetflix.vercel.app/signin-callback", "https://simplenetflix.vercel.app/assets/silent-callback.html" },
                 RequirePkce = true,
-                RequireClientSecret = false,
-
-                RedirectUris = { "https://simplenetflix.vercel.app" },
-                PostLogoutRedirectUris = { "https://simplenetflix.vercel.app" },
-                AllowedCorsOrigins = { "https://simplenetflix.vercel.app" },
-
-                AllowedScopes = {
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    "movies",
-                },
-
                 AllowAccessTokensViaBrowser = true,
+                AllowedScopes =
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "movies"
+                },
+                AllowedCorsOrigins = { "https://simplenetflix.vercel.app" },
+                RequireClientSecret = false,
+                PostLogoutRedirectUris = new List<string> { "https://simplenetflix.vercel.app/signout-callback" },
                 RequireConsent = false,
+                AccessTokenLifetime = 600
             }
+            
+            // new Client()
+            // {
+            //     ClientName = "Angular-Client",
+            //     ClientId = "angular-client",
+            //     AllowedGrantTypes = GrantTypes.Code,
+            //     RedirectUris = new List<string>{ "http://localhost:4200/signin-callback", "http://localhost:4200/assets/silent-callback.html" },
+            //     RequirePkce = true,
+            //     AllowAccessTokensViaBrowser = true,
+            //     AllowedScopes =
+            //     {
+            //         IdentityServerConstants.StandardScopes.OpenId,
+            //         IdentityServerConstants.StandardScopes.Profile,
+            //         "movies"
+            //     },
+            //     AllowedCorsOrigins = { "http://localhost:4200" },
+            //     RequireClientSecret = false,
+            //     PostLogoutRedirectUris = new List<string> { "http://localhost:4200/signout-callback" },
+            //     RequireConsent = false,
+            //     AccessTokenLifetime = 600
+            // }
         };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -84,7 +85,9 @@ namespace Identity.API.Configuration
         public static IEnumerable<ApiResource> ApiResources =>
             new List<ApiResource>
             {
-                new ApiResource("movies", "Movie Service")
+                new ApiResource("movies", "Movie Service"){
+                    Scopes = { "movies" }
+                }
             };
         public static IEnumerable<IdentityResource> IdentityResources =>
             new List<IdentityResource>

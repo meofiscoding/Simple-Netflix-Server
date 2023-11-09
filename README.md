@@ -6,9 +6,10 @@
 
 | Image | Docker Build Status | AKS Deploy Status |
 | ------------- | ------------- | ------------- |
-| Identity API |[![identity-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api.yml) | [![Deploy identity-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api-deploy.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api-deploy.yml) |
+| Identity Service |[![identity-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api.yml) | [![Deploy identity-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api-deploy.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/identity-api-deploy.yml) |
 | Movie API | [![movie-api](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/movie-api.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/movie-api.yml) | [![Deploy movie-api to k8s](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/movie-api-deploy.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/movie-api-deploy.yml) |
 | API gateway | [![ocelot-apigw](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/ocelotapigw.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/ocelotapigw.yml) | [![Deploy api gateway to k8s](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/ocelotapigw-deploy.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/ocelotapigw-deploy.yml) |
+| Crawl Service | [![crawl-service](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/crawl-service.yml/badge.svg)](https://github.com/meofiscoding/Simple-Netflix-Server/actions/workflows/crawl-service.yml) |
 
 
 ![Preview](https://github.com/meofiscoding/Simple-Netflix-Server/blob/main/assets/preview_landing2.png)

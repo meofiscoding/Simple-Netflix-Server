@@ -12,10 +12,11 @@ builder.Services.AddAuthentication("Bearer")
         // Uncomment this when in development
         // options.RequireHttpsMetadata = false;
         options.Authority = builder.Configuration["IdentityUrl"];
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
+        options.Audience = "movies";
+        // options.TokenValidationParameters = new TokenValidationParameters
+        // {
+        //     ValidateAudience = false
+        // };
     });
 
 builder.Services.AddEndpointsApiExplorer();

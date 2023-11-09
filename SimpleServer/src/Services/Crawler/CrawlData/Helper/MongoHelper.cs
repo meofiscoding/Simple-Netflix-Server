@@ -1,4 +1,5 @@
 using System;
+using CrawlData.Infrastructor;
 using CrawlData.Model;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
@@ -9,38 +10,36 @@ namespace CrawlData.Helper
 {
     public class MongoHelper
     {
-        private readonly IMongoDatabase db;
+        private readonly IMongoCrawlerDBContext _context;
+        protected IMongoCollection<MovieItem> _movieCollection;
 
-        public MongoHelper(IConfiguration configuration)
+        public MongoHelper(IMongoCrawlerDBContext context)
         {
-            var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-            db = client.GetDatabase(configuration.GetValue<string>("DatabaseSettings:DatabaseName"));
-            Movies = db.GetCollection<MovieItem>(configuration.GetValue<string>("DatabaseSettings:CollectionName"));
+            _context = context;
+            _movieCollection = _context.GetCollection<MovieItem>();
         }
-
-        public IMongoCollection<MovieItem> Movies { get; set; }
 
         // Upsert movie to database
         public async Task UpsertMovieAsync(MovieItem movie)
         {
             movie.Id ??= ObjectId.GenerateNewId().ToString();
             var filter = Builders<MovieItem>.Filter.Eq(x => x.Id, movie.Id);
-            await Movies.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
+            await _movieCollection.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
         }
 
         // Get movie by name
         public async Task<MovieItem> GetMovieByNameAsync(string movieName)
         {
             var filter = Builders<MovieItem>.Filter.Eq(x => x.MovieName, movieName);
-            return (await Movies.FindAsync(filter)).FirstOrDefault();
+            return (await _movieCollection.FindAsync(filter)).FirstOrDefault();
         }
 
         public async Task<List<MovieItem>> GetAllMovie()
         {
-            return (await Movies.FindAsync(_ => true)).ToList();
+            return (await _movieCollection.FindAsync(_ => true)).ToList();
         }
 
-        public static void UpdateMovie(MovieItem movie)
+        public void UpdateMovie(MovieItem movie)
         {
             var filter = Builders<MovieItem>.Filter.Eq(x => x.Id, movie.Id);
             var update = Builders<MovieItem>.Update
@@ -48,6 +47,7 @@ namespace CrawlData.Helper
                 .Set(x => x.IsAvailable, movie.IsAvailable)
                 .Set(x => x.StreamingUrls, movie.StreamingUrls)
                 .Set(x => x.UpdatedAt, DateTime.Now);
+            _movieCollection.UpdateOne(filter, update);
         }
     }
 }

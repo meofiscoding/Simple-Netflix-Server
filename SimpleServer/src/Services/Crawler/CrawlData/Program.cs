@@ -1,8 +1,10 @@
-﻿using CrawlData;
-using CrawlData.Enum;
+﻿﻿using CrawlData.Enum;
 using CrawlData.Helper;
+using CrawlData.Infrastructor;
 using CrawlData.Model;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -12,7 +14,33 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-MongoHelper database = new(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
+var builder = Host.CreateDefaultBuilder()
+    .ConfigureServices((hostContext, services) =>
+    {
+        services.Configure<DatabaseSettings>(config =>
+        {
+            config.ConnectionString = hostContext.Configuration
+                .GetSection("DatabaseSettings:ConnectionString").Value
+                ?? throw new("ConnectionString is null");
+
+            config.DatabaseName = hostContext.Configuration
+                .GetSection("DatabaseSettings:DatabaseName").Value
+                ?? throw new("DatabaseName is null");
+
+            config.CollectionName = hostContext.Configuration
+                .GetSection("DatabaseSettings:CollectionName").Value
+                ?? throw new("CollectionName is null");
+        });
+        services.AddTransient<MongoHelper>();
+        services.AddScoped<IMongoCrawlerDBContext, MongoCrawlerDBContext>();
+    }).UseConsoleLifetime();
+
+var host = builder.Build();
+
+
+MongoHelper database = host.Services.GetRequiredService<MongoHelper>();
+
+// MongoHelper database = new(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
 
 List<MovieItem> movies = CrawlHelper.CrawlMovieInfo("https://phimmoiyyy.net/");
 if (movies == null || movies.Count == 0)

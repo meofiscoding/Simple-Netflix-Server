@@ -3,7 +3,6 @@ using Identity.API;
 using Identity.API.Configuration;
 using Identity.API.Data;
 using Identity.API.Entity;
-using IdentityServer4;
 using Microsoft.AspNetCore.Identity;
 using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +10,11 @@ using Azure.Security.KeyVault.Secrets;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.HttpOverrides;
-using IdentityServer4.Extensions;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Extensions;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.EntityFramework.DbContexts;
+using Duende.IdentityServer.EntityFramework.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -46,20 +48,50 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
 builder.Services.AddIdentityServer(option =>
     {
+        option.Events.RaiseErrorEvents = true;
+        option.Events.RaiseInformationEvents = true;
+        option.Events.RaiseFailureEvents = true;
+        option.Events.RaiseSuccessEvents = true;
+
+        // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
+        option.EmitStaticAudienceClaim = true;
+        option.KeyManagement.KeyPath = "/home/shared/key";
+        // new key every 30 days
+        option.KeyManagement.RotationInterval = TimeSpan.FromDays(30);
+
+        // announce new key 2 days in advance in discovery
+        option.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
+
+        // keep old key for 7 days in discovery for validation of tokens
+        option.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);
+
+        // don't delete keys after their retention period is over
+        option.KeyManagement.DeleteRetiredKeys = false;
         if (builder.Environment.IsDevelopment())
         {
             option.IssuerUri = configuration["IdentityUrl"];
         }
     }
 )
-.AddInMemoryClients(Config.Clients)
-.AddInMemoryIdentityResources(Config.IdentityResources)
-.AddInMemoryApiResources(Config.ApiResources)
-.AddInMemoryApiScopes(Config.ApiScopes)
-.AddAspNetIdentity<ApplicationUser>()
-.AddSigningCredential(GetIdentityServerCertificate());
+//.AddInMemoryClients(Config.Clients)
+//.AddInMemoryIdentityResources(Config.IdentityResources)
+//.AddInMemoryApiResources(Config.ApiResources)
+//.AddInMemoryApiScopes(Config.ApiScopes)
+.AddOperationalStore(options =>
+{
+    options.ConfigureDbContext = builder => builder.UseNpgsql(configuration.GetConnectionString("IdentityDB"),
+        sql => sql.MigrationsAssembly(migrationsAssembly));
+})
+.AddConfigurationStore(options =>
+{
+    options.ConfigureDbContext = builder => builder.UseNpgsql(configuration.GetConnectionString("IdentityDB"),
+        sql => sql.MigrationsAssembly(migrationsAssembly));
+})
+.AddAspNetIdentity<ApplicationUser>();
+// .AddSigningCredential(GetIdentityServerCertificate());
 // .AddDeveloperSigningCredential(); // Not recommended for production - you need to store your key material somewhere secure
 
 builder.Services.AddHealthChecks()
@@ -123,6 +155,46 @@ app.UseIdentityServer();
 
 app.MapDefaultControllerRoute();
 
+InitializeDatabase(app);
+
+static void InitializeDatabase(IApplicationBuilder app)
+{
+    using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+    {
+        serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+        var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        context.Database.Migrate();
+        if (!context.Clients.Any())
+        {
+            foreach (var client in Config.Clients)
+            {
+                context.Clients.Add(client.ToEntity());
+            }
+            context.SaveChanges();
+        }
+
+        if (!context.IdentityResources.Any())
+        {
+            foreach (var resource in Config.IdentityResources)
+            {
+                context.IdentityResources.Add(resource.ToEntity());
+            }
+            context.SaveChanges();
+        }
+
+        if (!context.ApiScopes.Any())
+        {
+            foreach (var resource in Config.ApiScopes)
+            {
+                context.ApiScopes.Add(resource.ToEntity());
+            }
+            context.SaveChanges();
+        }
+    }
+}
+
+
 // Apply database migration automatically. Note that this approach is not
 // recommended for production scenarios. Consider generating SQL scripts from
 // migrations instead.
@@ -131,43 +203,42 @@ using (var scope = app.Services.CreateScope())
     await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
 }
 
+// X509Certificate2 GetIdentityServerCertificate()
+// {
+//     string keyVaultUrl = configuration["KeyVault:AzureKeyVaultURL"];
+//     string clientId = configuration["KeyVault:ClientId"];
+//     string clientSecret = configuration["KeyVault:ClientSecret"];
+//     string tenantId = configuration["KeyVault:AzureClientTenantId"];
 
-X509Certificate2 GetIdentityServerCertificate()
-{
-    string keyVaultUrl = configuration["KeyVault:AzureKeyVaultURL"];
-    string clientId = configuration["KeyVault:ClientId"];
-    string clientSecret = configuration["KeyVault:ClientSecret"];
-    string tenantId = configuration["KeyVault:AzureClientTenantId"];
+//     // Create a new SecretClient using ClientSecretCredential​
+//     var client = new SecretClient(new Uri(keyVaultUrl), new ClientSecretCredential(tenantId, clientId, clientSecret));
 
-    // Create a new SecretClient using ClientSecretCredential​
-    var client = new SecretClient(new Uri(keyVaultUrl), new ClientSecretCredential(tenantId, clientId, clientSecret));
+//     try
+//     {
+//         // get certificate from key vault
+//         var secret = client.GetSecret("IdenittyServer4Certificate");
+//         var pemContent = secret.Value.Value;
+//         // Separate the private key and certificate portions
+//         string[] pemParts = pemContent.Split(new string[] { "-----END PRIVATE KEY-----" }, StringSplitOptions.RemoveEmptyEntries);
+//         string privateKeyPem = pemParts[0] + "-----END PRIVATE KEY-----";
+//         string certificatePem = pemParts[1];
 
-    try
-    {
-        // get certificate from key vault
-        var secret = client.GetSecret("IdenittyServer4Certificate");
-        var pemContent = secret.Value.Value;
-        // Separate the private key and certificate portions
-        string[] pemParts = pemContent.Split(new string[] { "-----END PRIVATE KEY-----" }, StringSplitOptions.RemoveEmptyEntries);
-        string privateKeyPem = pemParts[0] + "-----END PRIVATE KEY-----";
-        string certificatePem = pemParts[1];
+//         // Load the private key into a RSA private key
+//         var privateKey = RSA.Create();
+//         privateKey.ImportFromPem(privateKeyPem);
 
-        // Load the private key into a RSA private key
-        var privateKey = RSA.Create();
-        privateKey.ImportFromPem(privateKeyPem);
+//         // Load the certificate
+//         var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(certificatePem));
 
-        // Load the certificate
-        var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(certificatePem));
-
-        // Attach the private key to the certificate
-        return certificate.CopyWithPrivateKey(privateKey);
-    }
-    catch (System.Exception ex)
-    {
-        // handle case where certificate is not found in key vault
-        throw new System.Exception(ex.Message);
-    }
-}
+//         // Attach the private key to the certificate
+//         return certificate.CopyWithPrivateKey(privateKey);
+//     }
+//     catch (System.Exception ex)
+//     {
+//         // handle case where certificate is not found in key vault
+//         throw new System.Exception(ex.Message);
+//     }
+// }
 
 await app.RunAsync();
 
