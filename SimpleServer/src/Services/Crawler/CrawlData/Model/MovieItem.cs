@@ -25,7 +25,10 @@ namespace CrawlData.Model
 
         public List<Tag> Tags { get; set; } = new List<Tag>();
 
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable { get => AvailableEpisode == StreamingUrls.Count; }
+
+        // Keep track how many episode pushed to GCS
+        public int AvailableEpisode { get; set; }
 
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }

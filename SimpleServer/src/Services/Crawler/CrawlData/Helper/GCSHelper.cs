@@ -1,3 +1,4 @@
+using System.Net;
 using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
 
@@ -5,7 +6,7 @@ namespace CrawlData.Helper
 {
     public static class GCSHelper
     {
-        public static string UploadFile(string bucketName, string filePath, string objectName)
+        public static string UploadFile(string filePath, string objectName)
         {
             var storage = StorageClient.Create();
             Stream fileStream;
@@ -28,29 +29,43 @@ namespace CrawlData.Helper
                 // read stream from local file
                 fileStream = File.OpenRead(filePath);
             }
-            storage.UploadObject(bucketName, objectName, null, fileStream);
+            storage.UploadObject(Consts.BUCKET_NAME, objectName, null, fileStream);
             Console.WriteLine($"Uploaded {objectName}.");
-            return MakePublic(bucketName, objectName);
+            return MakePublic(objectName);
         }
 
-        public static string UploadFile(string bucketName, Stream content, string objectName)
+        public static string UploadFile(Stream content, string objectName)
         {
             var storage = StorageClient.Create();
-            storage.UploadObject(bucketName, objectName, null, content);
+            storage.UploadObject(Consts.BUCKET_NAME, objectName, null, content);
             Console.WriteLine($"Uploaded {objectName}.");
-            return MakePublic(bucketName, objectName);
+            return MakePublic(objectName);
         }
 
 
-        public static string MakePublic(string bucketName = "your-unique-bucket-name", string objectName = "your-object-name")
+        public static string MakePublic(string objectName = "your-object-name")
         {
             var storage = StorageClient.Create();
-            var storageObject = storage.GetObject(bucketName, objectName);
+            var storageObject = storage.GetObject(Consts.BUCKET_NAME, objectName);
             storageObject.Acl ??= new List<ObjectAccessControl>();
             storage.UpdateObject(storageObject, new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
             Console.WriteLine(objectName + " is now public and can be fetched from " + storageObject.SelfLink);
 
             return storageObject.SelfLink;
+        }
+
+        public static bool IsFileExist(string objectName = "your-object-name")
+        {
+            var storage = StorageClient.Create();
+            try
+            {
+                storage.GetObject(Consts.BUCKET_NAME, objectName);
+                return true;
+            }
+            catch (Google.GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
+            {
+                return false;
+            }
         }
     }
 }

@@ -36,32 +36,32 @@ namespace CrawlData.Helper
             {
                 try
                 {
-                    var result = await CrawlHelper.CrawlMovieDetailAsync(movie);
-
-                    if (result.StreamingUrls == null || result.Poster == null)
-                    {
-                        Log.Error($"Error when crawling movie detail for movie {result.MovieName}");
-                        return;
-                    }
-
                     // convert movie name from Biệt Đội Đánh Thuê 4 to Biet-doi-danh-thue-4
-                    movie.MovieName = ConvertMovieNameToUrlFriendly(result.MovieName);
+                    movie.MovieName = ConvertMovieNameToUrlFriendly(movie.MovieName);
 
-                    if (result.MovieCategory == Category.Movies)
+                    if (movie.MovieCategory == Category.Movies)
                     {
-                        await HLSHandler.UploadHLSStream(result.StreamingUrls["0"], result.MovieName);
+                        await HLSHandler.UploadHLSStream(movie.StreamingUrls["0"], movie.MovieName);
                     }
                     else
                     {
+                        // get all streaming url that has key > AvailableEpisode
+                        var streamingUrls = movie.StreamingUrls.Where(x => int.Parse(x.Key) > movie.AvailableEpisode).ToDictionary(x => x.Key, x => x.Value);
+                        // if stramingUrls.Count > 5 => get first 5 streaming url
+                        streamingUrls = streamingUrls.Count > Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY ? streamingUrls.Take(Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY).ToDictionary(x => x.Key, x => x.Value) : streamingUrls;
                         // upload movie streaming url in dictionary to GCS
-                        foreach (var (key, value) in result.StreamingUrls)
+                        foreach (var (key, value) in streamingUrls)
                         {
-                            await HLSHandler.UploadHLSStream(value, result.MovieName, $"episode-{key}");
+                            await HLSHandler.UploadHLSStream(value, movie.MovieName, $"episode-{key}");
                         }
                     }
 
-                    // upload movie poster tp GCS
-                    GCSHelper.UploadFile(Consts.bucketName, result.Poster, $"{result.MovieName}/poster.jpg");
+                    // Check if poster is exist on CGS
+                    if (!GCSHelper.IsFileExist($"{movie.MovieName}/poster.jpg"))
+                    {
+                        // upload movie poster tp GCS
+                        GCSHelper.UploadFile(movie.Poster, $"{movie.MovieName}/poster.jpg");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -107,6 +107,90 @@ namespace CrawlData.Helper
         public static List<MovieItem> GetMoviesWithStreamingUrls(List<MovieItem> movies, Category category)
         {
             return movies.Where(x => x.MovieCategory == category && x.StreamingUrls.Count > 0 && x.StreamingUrls.All(y => !string.IsNullOrEmpty(y.Value)) && !x.IsAvailable).ToList();
+        }
+
+        public static List<MovieItem> GetMoviesToPushToGCS(List<MovieItem> moviesWithNonNullStreamingUrls, List<MovieItem> tvShowsWithFullNonNullStreamingUrls)
+        {
+            var numberOfMvoviesWithNonNullStreamingUrls = moviesWithNonNullStreamingUrls.Count;
+            var moviesToPushToGCS = new List<MovieItem>();
+            if (numberOfMvoviesWithNonNullStreamingUrls >= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY)
+            {
+                // Get first 5 url of movie from Movies category to push to GCS
+                moviesToPushToGCS = moviesWithNonNullStreamingUrls.Take(Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY).ToList();
+            }
+            else if (numberOfMvoviesWithNonNullStreamingUrls > 0 && numberOfMvoviesWithNonNullStreamingUrls < Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY)
+            {
+                moviesToPushToGCS = moviesWithNonNullStreamingUrls;
+                // get tvshow from tvShowsWithFullNonNullStreamingUrls that has less episode than Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+                MovieItem tvShowToPushToGCS = tvShowsWithFullNonNullStreamingUrls.Find(tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode <= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY);
+                if (tvShowToPushToGCS != null)
+                {
+                    moviesToPushToGCS.Add(tvShowToPushToGCS);
+                }
+            }
+            else
+            {
+                if (tvShowsWithFullNonNullStreamingUrls.Count > 0)
+                {
+                    // get tvshow from tvShowsWithFullNonNullStreamingUrls that its streamingUrls.Count - AvailableEpiside <= Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+                    List<MovieItem> tvShowToPushToGCS = tvShowsWithFullNonNullStreamingUrls.FindAll(tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode <= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY);
+                    // get number of unavailable episode of each tvShow in tvShowToPushToGCS
+                    Dictionary<MovieItem, int> unavailableEpisodeOfTvShow = tvShowToPushToGCS.ToDictionary(tvShow => tvShow, tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode);
+                    // Handlecase if number of episode of tvShowToPushToGCS is greater than Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+                    // find combination of element in unavailableEpisodeOfTvShow that sum of unavailable episode is equal to Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+                    var combinationOfTvShowToPushToGCS = FindCombinationOfTvShowToPushToGCS(unavailableEpisodeOfTvShow);
+                    if (combinationOfTvShowToPushToGCS != null)
+                    {
+                        moviesToPushToGCS = combinationOfTvShowToPushToGCS;
+                    }
+                }
+            }
+
+            return moviesToPushToGCS;
+        }
+
+        public static List<MovieItem>? FindCombinationOfTvShowToPushToGCS(Dictionary<MovieItem, int> unavailableEpisodeOfTvShow)
+        {
+            // If there is an element that already has number of unavailable episode equal to Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+            if (unavailableEpisodeOfTvShow.Any(x => x.Value == Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY))
+            {
+                // return first element that has number of unavailable episode equal to Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+                return new List<MovieItem>() { unavailableEpisodeOfTvShow.First(x => x.Value == Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY).Key };
+            }
+            else if (unavailableEpisodeOfTvShow.Count == 1)
+            {
+                return new List<MovieItem>() { unavailableEpisodeOfTvShow.First().Key };
+            }
+            else
+            {
+                // find combination of element in unavailableEpisodeOfTvShow that sum of unavailable episode is equal to Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
+                var combinationOfTvShowToPushToGCS = new List<MovieItem>();
+                var sumOfUnavailableEpisode = 0;
+                // sort unavailableEpisodeOfTvShow by value
+                var sortedUnavailableEpisodeOfTvShow = unavailableEpisodeOfTvShow.OrderBy(x => x.Value).ToList();
+                for (int i = 0; i < sortedUnavailableEpisodeOfTvShow.Count; i++)
+                {
+                    // If sum is greater than Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY + Consts.ACCEPTABLE_ERROR_RANGE
+                    // Case i == 0 => return sortedUnavailableEpisodeOfTvShow[i].Key
+                    // Case i > 0 => return combinationOfTvShowToPushToGCS that sum of unavailable episode is in the acceptable error range
+                    sumOfUnavailableEpisode += sortedUnavailableEpisodeOfTvShow[i].Value;
+                    combinationOfTvShowToPushToGCS.Add(sortedUnavailableEpisodeOfTvShow[i].Key);
+
+                    if (sumOfUnavailableEpisode > Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY + Consts.ACCEPTABLE_ERROR)
+                    {
+                        if (i == 0)
+                        {
+                            return new List<MovieItem>() { sortedUnavailableEpisodeOfTvShow[i].Key };
+                        }
+                        else
+                        {
+                            combinationOfTvShowToPushToGCS.Remove(sortedUnavailableEpisodeOfTvShow[i].Key);
+                            return combinationOfTvShowToPushToGCS;
+                        }
+                    }
+                }
+                return null;
+            }
         }
     }
 }

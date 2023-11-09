@@ -1,4 +1,5 @@
-﻿using CrawlData.Enum;
+﻿using CrawlData;
+using CrawlData.Enum;
 using CrawlData.Helper;
 using CrawlData.Model;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,8 @@ if (movies == null || movies.Count == 0)
 var moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
 // get movies with category is TVShows which all streamingUrls value is not null
 var tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
-while (moviesWithNonNullStreamingUrls.Count < 5 && (tvShowsWithFullNonNullStreamingUrls.Count != 1 || (tvShowsWithFullNonNullStreamingUrls[0].StreamingUrls.Count < 5 && tvShowsWithFullNonNullStreamingUrls[0].StreamingUrls.Count + moviesWithNonNullStreamingUrls.Count < 5)))
+// loop until tvShowsWithFullNonNullStreamingUrls have an element that its number of streamingUrls + moviesWithNonNullStreamingUrls.Count = numberOfMoviesToPushEachDay
+while (!tvShowsWithFullNonNullStreamingUrls.Any(tvShow => tvShow.StreamingUrls.Count + moviesWithNonNullStreamingUrls.Count >= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY))
 {
     foreach (var movie in movies)
     {
@@ -41,5 +43,13 @@ while (moviesWithNonNullStreamingUrls.Count < 5 && (tvShowsWithFullNonNullStream
 }
 
 // TODO: Only push 5 item of movie to GCS in each day
-// Push movie asset to GCS
-// await MovieHelper.PushMovieAssetToGCS(movies);
+// Movie can be both in Movies and TVShows category
+if (moviesWithNonNullStreamingUrls.Count == 0 && tvShowsWithFullNonNullStreamingUrls.Count == 0)
+{
+    Log.Error("No movie to push to GCS today!");
+}
+else
+{
+    var moviesToPushToGCS = MovieHelper.GetMoviesToPushToGCS(moviesWithNonNullStreamingUrls, tvShowsWithFullNonNullStreamingUrls);
+    await MovieHelper.PushMovieAssetToGCS(moviesToPushToGCS);
+}
