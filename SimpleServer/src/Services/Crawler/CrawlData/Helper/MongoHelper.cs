@@ -39,5 +39,15 @@ namespace CrawlData.Helper
         {
             return (await Movies.FindAsync(_ => true)).ToList();
         }
+
+        public static void UpdateMovie(MovieItem movie)
+        {
+            var filter = Builders<MovieItem>.Filter.Eq(x => x.Id, movie.Id);
+            var update = Builders<MovieItem>.Update
+                .Set(x => x.AvailableEpisode, movie.AvailableEpisode)
+                .Set(x => x.IsAvailable, movie.IsAvailable)
+                .Set(x => x.StreamingUrls, movie.StreamingUrls)
+                .Set(x => x.UpdatedAt, DateTime.Now);
+        }
     }
 }

@@ -41,7 +41,10 @@ namespace CrawlData.Helper
 
                     if (movie.MovieCategory == Category.Movies)
                     {
-                        await HLSHandler.UploadHLSStream(movie.StreamingUrls["0"], movie.MovieName);
+                        movie.StreamingUrls["0"] = await HLSHandler.UploadHLSStream(movie.StreamingUrls["0"], movie.MovieName);
+                        // update availableEpisode and IsAvailable property
+                        movie.AvailableEpisode = 1;
+                        movie.IsAvailable = true;
                     }
                     else
                     {
@@ -52,16 +55,20 @@ namespace CrawlData.Helper
                         // upload movie streaming url in dictionary to GCS
                         foreach (var (key, value) in streamingUrls)
                         {
-                            await HLSHandler.UploadHLSStream(value, movie.MovieName, $"episode-{key}");
+                            movie.StreamingUrls[key] = await HLSHandler.UploadHLSStream(value, movie.MovieName, $"episode-{key}");
                         }
+                        // update availableEpisode and IsAvailable property
+                        movie.AvailableEpisode += streamingUrls.Count;
+                        movie.IsAvailable = movie.AvailableEpisode == movie.StreamingUrls.Count;
                     }
 
                     // Check if poster is exist on CGS
-                    if (!GCSHelper.IsFileExist($"{movie.MovieName}/poster.jpg"))
+                    if (!GCSHelper.IsFileExist($"{movie.MovieName}/poster.jpg") && !string.IsNullOrEmpty(movie.Poster))
                     {
                         // upload movie poster tp GCS
-                        GCSHelper.UploadFile(movie.Poster, $"{movie.MovieName}/poster.jpg");
+                        movie.Poster = GCSHelper.UploadFile(movie.Poster, $"{movie.MovieName}/poster.jpg");
                     }
+                    MongoHelper.UpdateMovie(movie);
                 }
                 catch (Exception ex)
                 {
