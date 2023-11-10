@@ -6,6 +6,9 @@ services:
 
   crawlerdb:
     image: mongo
+
+  rabbitmq:
+    image: rabbitmq:management
   
   # identitydb:
   #   image: postgres
