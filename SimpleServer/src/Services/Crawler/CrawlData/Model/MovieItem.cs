@@ -27,6 +27,9 @@ namespace CrawlData.Model
 
         public bool IsAvailable { get; set; }
 
+        // Keep track how many episode pushed to GCS
+        public int AvailableEpisode { get; set; }
+
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 }

@@ -13,7 +13,7 @@ namespace CrawlData.Utils
 
             // Fetch the HLS playlist
             string playlistMaster = await client.GetStringAsync(hlsUrl) ?? throw new ArgumentException("No source parameter");
-            string playlist = "";
+            string playlist;
 
             // Handle case playlist is a master playlist
             if (playlistMaster.Contains("#EXT-X-STREAM-INF"))
@@ -35,7 +35,7 @@ namespace CrawlData.Utils
             string playlistName = (episode == null ? "" : $"{episode}/") + $"hls/{playlistUri.AbsoluteUri.Split('/').Last()}";
 
             // TODO: Upload the playlist to Google Cloud Storage
-            string playlistUrl = GCSHelper.UploadFile(Consts.bucketName, new MemoryStream(Encoding.UTF8.GetBytes(playlist)), $"{movieName}/{playlistName}");
+            string playlistUrl = GCSHelper.UploadFile(new MemoryStream(Encoding.UTF8.GetBytes(playlist)), $"{movieName}/{playlistName}");
 
             // TODO: Edit reference to segment in playlistMaster to point to playlistUrl
             // Replace the last line of the playlistMaster with the playlistUrl
@@ -45,7 +45,7 @@ namespace CrawlData.Utils
             Stream playlistMasterContent = new MemoryStream(Encoding.UTF8.GetBytes(playlistMaster));
 
             // TODO: Upload the playlistMaster to Google Cloud Storage and return the URL
-            return GCSHelper.UploadFile(Consts.bucketName, playlistMasterContent, episode == null ? $"{movieName}/{hlsUrl.Split('/').Last()}" : $"{movieName}/{episode}/{hlsUrl.Split('/').Last()}");
+            return GCSHelper.UploadFile(playlistMasterContent, episode == null ? $"{movieName}/{hlsUrl.Split('/').Last()}" : $"{movieName}/{episode}/{hlsUrl.Split('/').Last()}");
         }
 
         private static void ParseHLSPlaylist(string playlist, string baseUrl, string prefix)
@@ -82,7 +82,7 @@ namespace CrawlData.Utils
                     var segmentUrl = new Uri(new Uri(baseUrl), segmentName).AbsoluteUri;
                     segmentUrls.Add(segmentUrl);
                     // TODO: Push all segment to Google Cloud Storage
-                    GCSHelper.UploadFile(Consts.bucketName, segmentUrl, $"{prefix}/{segmentName}");
+                    GCSHelper.UploadFile(segmentUrl, $"{prefix}/{segmentName}");
                 }
             }
 

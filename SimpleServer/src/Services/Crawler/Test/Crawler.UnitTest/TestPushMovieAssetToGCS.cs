@@ -33,8 +33,8 @@ namespace Crawler.UnitTest
             await MovieHelper.PushMovieAssetToGCS(new List<MovieItem> { item });
 
             // Get number of file inside folder Biet-Doi-Danh-Thuê-4/hls on GCS
-            var filesInHLSFolder = storage.ListObjects(Consts.bucketName, "Biet-Doi-Danh-Thuê-4/hls").ToList();
-            var filesInMoviesFolder = storage.ListObjects(Consts.bucketName, "Biet-Doi-Danh-Thuê-4").ToList();
+            var filesInHLSFolder = storage.ListObjects("Biet-Doi-Danh-Thuê-4/hls").ToList();
+            var filesInMoviesFolder = storage.ListObjects("Biet-Doi-Danh-Thuê-4").ToList();
 
             // Assert
             Assert.Multiple(() =>
