@@ -14,8 +14,8 @@ namespace CrawlData.Job
         }
         public Task Execute(IJobExecutionContext context)
         {
-            // _crawlerService.CrawlMovieData();
-            _crawlerService.TestCronJob();
+            _crawlerService.CrawlMovieData();
+            // _crawlerService.TestCronJob();
             return Task.CompletedTask;
         }
     }
