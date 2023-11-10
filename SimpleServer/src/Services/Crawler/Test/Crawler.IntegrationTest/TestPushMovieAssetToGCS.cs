@@ -4,7 +4,7 @@ using CrawlData.Helper;
 using CrawlData.Model;
 using Google.Cloud.Storage.V1;
 
-namespace Crawler.UnitTest
+namespace Crawler.IntegrationTest
 {
     public class TestPushMovieAssetToGCS
     {

@@ -1,7 +1,8 @@
 ﻿using CrawlData.Helper;
 using CrawlData.Model;
+using EventBus.Message.Common.Enum;
 
-namespace Crawler.UnitTest;
+namespace Crawler.IntegrationTest;
 
 public class TestCrawlData
 {
@@ -21,7 +22,7 @@ public class TestCrawlData
         // Arrange
         MovieItem item = new()
         {
-            MovieCategory = CrawlData.Enum.Category.Movies,
+            MovieCategory = Category.Movies,
             UrlDetail = inputUrl
         };
 
@@ -72,7 +73,7 @@ public class TestCrawlData
         // Arrange
         MovieItem movie = new()
         {
-            MovieCategory = CrawlData.Enum.Category.TVShows,
+            MovieCategory = Category.TVShows,
             UrlDetail = inputUrl,
             Status = status
         };
@@ -100,7 +101,7 @@ public class TestCrawlData
         // Arrange
         MovieItem movie = new()
         {
-            MovieCategory = CrawlData.Enum.Category.TVShows,
+            MovieCategory = Category.TVShows,
             UrlDetail = "https://phimmoiyyy.net/phim-bo/cuoc-chien-sinh-ton-644141",
             Status = "Tập 13 Vietsub",
             StreamingUrls = new Dictionary<string, string>{

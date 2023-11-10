@@ -2,25 +2,33 @@ using EventBus.Message.Common.Enum;
 using CrawlData.Helper;
 using CrawlData.Model;
 using Serilog;
+using MassTransit;
+using AutoMapper;
+using EventBus.Message.Events;
 
 namespace CrawlData.Service
 {
     public class CrawlerService : ICrawlerService
     {
-        private readonly MongoHelper _database ;
-        public CrawlerService( MongoHelper database)
+        private readonly MongoHelper _database;
+        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IMapper _mapper;
+        public CrawlerService(MongoHelper database, IPublishEndpoint publishEndpoint, IMapper mapper)
         {
             _database = database;
+            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public void TestCronJob(){
+        public void TestCronJob()
+        {
             Console.WriteLine("TestCronJob");
         }
 
         public async Task CrawlMovieData()
         {
-            // CRAWL MOVIE INFOs
-            List<MovieItem> movies = CrawlHelper.CrawlMovieInfo(Consts.MOVIE_WEBSITE_URL);
+            CRAWL MOVIE INFOs
+             List<MovieItem> movies = CrawlHelper.CrawlMovieInfo(Consts.MOVIE_WEBSITE_URL);
             if (movies == null || movies.Count == 0)
             {
                 Log.Error("No movie found!");
@@ -60,9 +68,28 @@ namespace CrawlData.Service
             else
             {
                 var moviesToPushToGCS = MovieHelper.GetMoviesToPushToGCS(moviesWithNonNullStreamingUrls, tvShowsWithFullNonNullStreamingUrls);
-                await MovieHelper.PushMovieAssetToGCS(moviesToPushToGCS, _database);
+                var result = await MovieHelper.PushMovieAssetToGCS(moviesToPushToGCS, _database);
+                // Send event to MassTransit-RabbitMQ
+                await PublishMoviesAsync(result);
             }
         }
 
+        private async Task PublishMoviesAsync(List<MovieItem> moviesToPushToGCS)
+        {
+            try
+            {
+                // map each MovieItem from list moviesToPushToGCS to TransferMovieListEvent 
+                // and publish each TransferMovieListEvent to MassTransit-RabbitMQ
+                foreach (var movie in moviesToPushToGCS)
+                {
+                    var moviePublishedEvent = _mapper.Map<TransferMovieListEvent>(movie);
+                    await _publishEndpoint.Publish(moviePublishedEvent);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error($"PublishMoviesAsync error: {ex.Message}");
+            }
+        }
     }
 }

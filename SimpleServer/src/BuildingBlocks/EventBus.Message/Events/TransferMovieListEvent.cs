@@ -3,7 +3,7 @@ using EventBus.Message.Common.Enum;
 
 namespace EventBus.Message.Events
 {
-    public class MovieCrawlExportEvent : IntegrationEvent
+    public class TransferMovieListEvent : IntegrationEvent
     {
         public string MovieName { get; set; } = string.Empty;
 

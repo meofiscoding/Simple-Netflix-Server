@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Impl;
 using Serilog;
+using AutoMapper;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -38,6 +39,7 @@ var builder = Host.CreateDefaultBuilder()
         services.AddScoped<IMongoCrawlerDBContext, MongoCrawlerDBContext>();
         services.AddScoped<CrawlJob>();
         services.AddScoped<ICrawlerService, CrawlerService>();
+        services.AddAutoMapper(typeof(Program));
         // MassTransit-RabbitMQ Configuration
         services.AddMassTransit(config =>
         {
@@ -82,6 +84,7 @@ static async Task ScheduleJob(IServiceProvider serviceProvider)
             .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(2, 0)) // Set the desired time
         )
         .Build();
+
 
     await scheduler.ScheduleJob(job, trigger);
 }
