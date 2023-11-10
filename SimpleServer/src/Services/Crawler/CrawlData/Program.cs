@@ -47,7 +47,7 @@ var serviceProvider = host.Services.CreateScope().ServiceProvider;
 await ScheduleJob(serviceProvider);
 Console.ReadLine();
 
-async Task ScheduleJob(IServiceProvider serviceProvider)
+static async Task ScheduleJob(IServiceProvider serviceProvider)
 {
     // Use the binary serializer for Quartz.NET
     var props = new NameValueCollection
@@ -59,16 +59,19 @@ async Task ScheduleJob(IServiceProvider serviceProvider)
     var scheduler = await factory.GetScheduler();
     scheduler.JobFactory = new CrawlJobFactory(serviceProvider);
 
-    await  scheduler.Start();
+    await scheduler.Start();
     var job = JobBuilder.Create<CrawlJob>()
         .WithIdentity("CrawlJob", "CrawlGroup")
         .Build();
+    // Schedule the job to run every day at 2:00 AM
     var trigger = TriggerBuilder.Create()
         .WithIdentity("CrawlTrigger", "CrawlGroup")
         .StartNow()
-        .WithSimpleSchedule(x => x
-            .WithIntervalInSeconds(10)
-            .RepeatForever())
+        .WithDailyTimeIntervalSchedule(x => x
+            .OnEveryDay()
+            .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(2, 0)) // Set the desired time
+        )
         .Build();
+
     await scheduler.ScheduleJob(job, trigger);
-}   
+}
