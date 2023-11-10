@@ -30,7 +30,7 @@ namespace CrawlData.Helper
             }
         }
 
-        public static async Task PushMovieAssetToGCS(List<MovieItem> movies)
+        public static async Task PushMovieAssetToGCS(List<MovieItem> movies, MongoHelper _database)
         {
             foreach (var movie in movies)
             {
@@ -68,7 +68,8 @@ namespace CrawlData.Helper
                         // upload movie poster tp GCS
                         movie.Poster = GCSHelper.UploadFile(movie.Poster, $"{movie.MovieName}/poster.jpg");
                     }
-                    MongoHelper.UpdateMovie(movie);
+
+                    _database.UpdateMovie(movie);
                 }
                 catch (Exception ex)
                 {

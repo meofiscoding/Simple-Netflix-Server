@@ -13,7 +13,7 @@ namespace CrawlData.Utils
 
             // Fetch the HLS playlist
             string playlistMaster = await client.GetStringAsync(hlsUrl) ?? throw new ArgumentException("No source parameter");
-            string playlist = "";
+            string playlist;
 
             // Handle case playlist is a master playlist
             if (playlistMaster.Contains("#EXT-X-STREAM-INF"))

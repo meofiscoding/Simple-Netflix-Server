@@ -1,10 +1,12 @@
-﻿﻿using CrawlData.Enum;
+﻿using System.Collections.Specialized;
 using CrawlData.Helper;
 using CrawlData.Infrastructor;
-using CrawlData.Model;
-using Microsoft.Extensions.Configuration;
+using CrawlData.Job;
+using CrawlData.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
+using Quartz.Impl;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -33,51 +35,40 @@ var builder = Host.CreateDefaultBuilder()
         });
         services.AddTransient<MongoHelper>();
         services.AddScoped<IMongoCrawlerDBContext, MongoCrawlerDBContext>();
+        services.AddScoped<CrawlJob>();
+        services.AddScoped<ICrawlerService, CrawlerService>();
     }).UseConsoleLifetime();
 
 var host = builder.Build();
 
-
 MongoHelper database = host.Services.GetRequiredService<MongoHelper>();
 
-// MongoHelper database = new(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build());
+var serviceProvider = host.Services.CreateScope().ServiceProvider;
+await ScheduleJob(serviceProvider);
+Console.ReadLine();
 
-List<MovieItem> movies = CrawlHelper.CrawlMovieInfo("https://phimmoiyyy.net/");
-if (movies == null || movies.Count == 0)
+async Task ScheduleJob(IServiceProvider serviceProvider)
 {
-    Log.Error("No movie found!");
-    return;
-}
-
-var moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
-// get movies with category is TVShows which all streamingUrls value is not null
-var tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
-// loop until tvShowsWithFullNonNullStreamingUrls have an element that its number of streamingUrls + moviesWithNonNullStreamingUrls.Count = numberOfMoviesToPushEachDay
-while (!tvShowsWithFullNonNullStreamingUrls.Any(tvShow => tvShow.StreamingUrls.Count + moviesWithNonNullStreamingUrls.Count >= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY))
-{
-    foreach (var movie in movies)
+    // Use the binary serializer for Quartz.NET
+    var props = new NameValueCollection
     {
-        // get movie from database that has the same name as the movie
-        var movieFromDB = await database.GetMovieByNameAsync(movie.MovieName);
-        var result = await CrawlHelper.CrawlMovieDetailAsync(movieFromDB ?? movie);
-        // add the movie to the database
-        await database.UpsertMovieAsync(result);
-        Console.WriteLine($"Movie {result.MovieName} added to the database successfully!!");
-    }
-    // get all movies from the database
-    movies = await database.GetAllMovie();
-    moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
-    tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
-}
+        {"quartz.serializer.type", "binary"}
+    };
 
-// TODO: Only push 5 item of movie to GCS in each day
-// Movie can be both in Movies and TVShows category
-if (moviesWithNonNullStreamingUrls.Count == 0 && tvShowsWithFullNonNullStreamingUrls.Count == 0)
-{
-    Log.Error("No movie to push to GCS today!");
-}
-else
-{
-    var moviesToPushToGCS = MovieHelper.GetMoviesToPushToGCS(moviesWithNonNullStreamingUrls, tvShowsWithFullNonNullStreamingUrls);
-    await MovieHelper.PushMovieAssetToGCS(moviesToPushToGCS);
-}
+    var factory = new StdSchedulerFactory(props);
+    var scheduler = await factory.GetScheduler();
+    scheduler.JobFactory = new CrawlJobFactory(serviceProvider);
+
+    await  scheduler.Start();
+    var job = JobBuilder.Create<CrawlJob>()
+        .WithIdentity("CrawlJob", "CrawlGroup")
+        .Build();
+    var trigger = TriggerBuilder.Create()
+        .WithIdentity("CrawlTrigger", "CrawlGroup")
+        .StartNow()
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(10)
+            .RepeatForever())
+        .Build();
+    await scheduler.ScheduleJob(job, trigger);
+}   
