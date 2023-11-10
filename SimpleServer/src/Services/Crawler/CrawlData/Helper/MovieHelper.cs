@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
-using CrawlData.Enum;
+using EventBus.Message.Common.Enum;
 using CrawlData.Model;
 using CrawlData.Utils;
 using Serilog;

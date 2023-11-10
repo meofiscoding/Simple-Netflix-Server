@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Web;
-using CrawlData.Enum;
+using EventBus.Message.Common.Enum;
 using CrawlData.Model;
 using CrawlData.Utils;
 using HtmlAgilityPack;

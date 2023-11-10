@@ -1,6 +1,6 @@
 using System;
 
-namespace CrawlData.Enum
+namespace EventBus.Message.Common.Enum
 {
     public enum Category
     {

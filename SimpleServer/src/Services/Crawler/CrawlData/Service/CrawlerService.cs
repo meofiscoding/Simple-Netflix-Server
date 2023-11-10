@@ -1,4 +1,4 @@
-using CrawlData.Enum;
+using EventBus.Message.Common.Enum;
 using CrawlData.Helper;
 using CrawlData.Model;
 using Serilog;

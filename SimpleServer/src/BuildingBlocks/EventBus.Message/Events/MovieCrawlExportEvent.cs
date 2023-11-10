@@ -1,14 +1,10 @@
+using System;
 using EventBus.Message.Common.Enum;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
-namespace CrawlData.Model
+namespace EventBus.Message.Events
 {
-    public class MovieItem
+    public class MovieCrawlExportEvent : IntegrationEvent
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
         public string MovieName { get; set; } = string.Empty;
 
         public string? Poster { get; set; }
@@ -24,12 +20,5 @@ namespace CrawlData.Model
         public string? Description { get; set; }
 
         public List<Tag> Tags { get; set; } = new List<Tag>();
-
-        public bool IsAvailable { get; set; }
-
-        // Keep track how many episode pushed to GCS
-        public int AvailableEpisode { get; set; }
-
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }
 }

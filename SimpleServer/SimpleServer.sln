@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{5DB32E24-8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crawler.UnitTest", "src\Services\Crawler\Test\Crawler.UnitTest\Crawler.UnitTest.csproj", "{4D711337-BCEA-4DC1-875C-AD36B6C1CFBA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.Message", "src\BuildingBlocks\EventBus.Message\EventBus.Message.csproj", "{F871AE12-11F5-45DE-B74E-73510C4C9E3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{4D711337-BCEA-4DC1-875C-AD36B6C1CFBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D711337-BCEA-4DC1-875C-AD36B6C1CFBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D711337-BCEA-4DC1-875C-AD36B6C1CFBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F871AE12-11F5-45DE-B74E-73510C4C9E3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F871AE12-11F5-45DE-B74E-73510C4C9E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F871AE12-11F5-45DE-B74E-73510C4C9E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F871AE12-11F5-45DE-B74E-73510C4C9E3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +114,7 @@ Global
 		{57ABA6D6-A8B1-4BA3-9F6A-F725C022508D} = {BACAB1F0-CED6-4098-B1FB-141F55A2B76D}
 		{5DB32E24-821A-4265-8866-5FA3DD7E5E54} = {BACAB1F0-CED6-4098-B1FB-141F55A2B76D}
 		{4D711337-BCEA-4DC1-875C-AD36B6C1CFBA} = {5DB32E24-821A-4265-8866-5FA3DD7E5E54}
+		{F871AE12-11F5-45DE-B74E-73510C4C9E3B} = {D6B1FD89-8AD1-46A3-A89C-6A73DEFE7D81}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9B02C29-4D8B-4687-AB7D-9DF5642002D9}
