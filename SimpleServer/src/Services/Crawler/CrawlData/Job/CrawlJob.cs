@@ -1,4 +1,5 @@
 using System;
+using AutoMapper;
 using CrawlData.Service;
 using Microsoft.Extensions.Options;
 using Quartz;

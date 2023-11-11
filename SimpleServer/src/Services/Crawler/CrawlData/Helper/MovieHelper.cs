@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
-using CrawlData.Enum;
+using EventBus.Message.Common.Enum;
 using CrawlData.Model;
 using CrawlData.Utils;
 using Serilog;
@@ -30,8 +30,9 @@ namespace CrawlData.Helper
             }
         }
 
-        public static async Task PushMovieAssetToGCS(List<MovieItem> movies, MongoHelper _database)
+        public static async Task<List<MovieItem>> PushMovieAssetToGCS(List<MovieItem> movies, MongoHelper _database)
         {
+            List<MovieItem> result = new();
             foreach (var movie in movies)
             {
                 try
@@ -70,12 +71,14 @@ namespace CrawlData.Helper
                     }
 
                     _database.UpdateMovie(movie);
+                    result.Add(movie);
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, $"Error when crawling streaming url for movie {movie.MovieName}");
                 }
             }
+            return result;
         }
 
         private static string ConvertMovieNameToUrlFriendly(string movieName)

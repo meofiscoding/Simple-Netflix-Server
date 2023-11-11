@@ -1,4 +1,4 @@
-using CrawlData.Enum;
+using EventBus.Message.Common.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -9,6 +9,7 @@ namespace CrawlData.Model
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        
         public string MovieName { get; set; } = string.Empty;
 
         public string? Poster { get; set; }
