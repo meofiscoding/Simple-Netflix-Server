@@ -27,8 +27,8 @@ namespace CrawlData.Service
 
         public async Task CrawlMovieData()
         {
-            CRAWL MOVIE INFOs
-             List<MovieItem> movies = CrawlHelper.CrawlMovieInfo(Consts.MOVIE_WEBSITE_URL);
+            //CRAWL MOVIE INFOs
+            List<MovieItem> movies = CrawlHelper.CrawlMovieInfo(Consts.MOVIE_WEBSITE_URL);
             if (movies == null || movies.Count == 0)
             {
                 Log.Error("No movie found!");

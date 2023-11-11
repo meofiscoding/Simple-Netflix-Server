@@ -13,8 +13,6 @@ namespace EventBus.Message.Events
 
         public Dictionary<string, string> StreamingUrls { get; set; } = new Dictionary<string, string>();
 
-        public string? UrlDetail { get; set; }
-
         public Category MovieCategory { get; set; }
 
         public string? Description { get; set; }
