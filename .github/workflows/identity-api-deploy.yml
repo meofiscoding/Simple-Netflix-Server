@@ -1,56 +1,56 @@
-name: Deploy identity-api
+# name: Deploy identity-api
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
 
-    paths:
-      - .github/workflows/identity-api-deploy.yml
-      - .github/workflows/composite/deploy/action.yml
-      - deploy/k8s/identity-api.yaml
-      - SimpleServer/src/Services/Identity/**
+#     paths:
+#       - .github/workflows/identity-api-deploy.yml
+#       - .github/workflows/composite/deploy/action.yml
+#       - deploy/k8s/identity-api.yaml
+#       - SimpleServer/src/Services/Identity/**
 
-env:
-  NAMESPACE: ingress-nginx
+# env:
+#   NAMESPACE: ingress-nginx
 
-jobs:
-  deploy-to-k8s:
-    permissions:
-      actions: read
-      # contents: read
-      id-token: write
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy-to-k8s:
+#     permissions:
+#       actions: read
+#       # contents: read
+#       id-token: write
+#     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4.1.1
+#     steps:
+#       - uses: actions/checkout@v4.1.1
 
-      # Logs in with your Azure credentials
-      - name: Azure login
-        uses: azure/login@v1.4.6
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#       # Logs in with your Azure credentials
+#       - name: Azure login
+#         uses: azure/login@v1.4.6
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Print Current Directory
-        run: |
-          pwd  # This command prints the current working directory
-          ls   # This command lists the contents of the current directory
+#       - name: Print Current Directory
+#         run: |
+#           pwd  # This command prints the current working directory
+#           ls   # This command lists the contents of the current directory
 
-      - uses: ./.github/workflows/composite/deploy
-        with:
-          azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
-          cluster_name: ${{ secrets.CLUSTER_NAME }}
-          resource_group: ${{ secrets.RESOURCE_GROUP }}
-          manifest_path: |
-            deploy/k8s/identity-api.yaml
-            deploy/k8s/postgresql.yaml
-            deploy/k8s/postgres-secret.yaml
-            deploy/k8s/postgres-configmap.yaml
-          registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
-          namespace: ${{ env.NAMESPACE }}
-          image_name: identity.api
-          deployment_name: identity-api-deployment
-          service_name: identity-api-service
+#       - uses: ./.github/workflows/composite/deploy
+#         with:
+#           azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+#           cluster_name: ${{ secrets.CLUSTER_NAME }}
+#           resource_group: ${{ secrets.RESOURCE_GROUP }}
+#           manifest_path: |
+#             deploy/k8s/identity-api.yaml
+#             deploy/k8s/postgresql.yaml
+#             deploy/k8s/postgres-secret.yaml
+#             deploy/k8s/postgres-configmap.yaml
+#           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
+#           namespace: ${{ env.NAMESPACE }}
+#           image_name: identity.api
+#           deployment_name: identity-api-deployment
+#           service_name: identity-api-service
