@@ -75,11 +75,11 @@ namespace Movie.UnitTests.Application
                 {
                     Assert.That(result, Has.Count.EqualTo(1));
                     Assert.That(result[0], Has.Count.EqualTo(5));
-                    Assert.That(result[0][0].Id, Is.EqualTo("0"));
-                    Assert.That(result[0][1].Id, Is.EqualTo("1"));
-                    Assert.That(result[0][2].Id, Is.EqualTo("2"));
-                    Assert.That(result[0][3].Id, Is.EqualTo("3"));
-                    Assert.That(result[0][4].Id, Is.EqualTo("4"));
+                    Assert.That(result[0][0].GetId(), Is.EqualTo("0"));
+                    Assert.That(result[0][1].GetId(), Is.EqualTo("1"));
+                    Assert.That(result[0][2].GetId(), Is.EqualTo("2"));
+                    Assert.That(result[0][3].GetId(), Is.EqualTo("3"));
+                    Assert.That(result[0][4].GetId(), Is.EqualTo("4"));
                 });
             }
             catch (System.Exception ex)
@@ -117,7 +117,7 @@ namespace Movie.UnitTests.Application
             {
                 Assert.That(result, Has.Count.EqualTo(1));
                 Assert.That(result[0], Has.Count.EqualTo(1));
-                Assert.That(result[0][0].Id, Is.EqualTo("1"));
+                Assert.That(result[0][0].GetId(), Is.EqualTo("1"));
                 Assert.That(result[0][0].BackdropPath, Is.EqualTo("backdropPath"));
                 Assert.That(result[0][0].Genres, Is.EqualTo(new List<string>(){ "genre1", "genre2"}));
                 Assert.That(result[0][0].OriginalTitle, Is.EqualTo("originalTitle"));

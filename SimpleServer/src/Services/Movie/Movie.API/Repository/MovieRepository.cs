@@ -34,5 +34,10 @@ namespace Movie.API.Repository
 
             return result;
         }
+
+        public Task AddMovieAsync(MovieInformation movie)
+        {
+            return _context.Movies.InsertOneAsync(movie);
+        }
     }
 }

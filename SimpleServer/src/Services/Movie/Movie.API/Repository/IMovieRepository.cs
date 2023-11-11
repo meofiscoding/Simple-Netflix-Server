@@ -5,6 +5,7 @@ namespace Movie.API.Repository
 {
     public interface IMovieRepository
     {
-       public Task<List<List<MovieInformation>>> GetAllMoviesAsync(); 
+        Task AddMovieAsync(MovieInformation movie);
+        public Task<List<List<MovieInformation>>> GetAllMoviesAsync(); 
     }
 }
