@@ -39,12 +39,12 @@ namespace Payment.API.Service.Stripe
                         {
                             PriceData = new SessionLineItemPriceDataOptions
                             {
-                                UnitAmount = (long)product.Price,
+                                UnitAmount = (long)(product.Price * 100),
                                 Currency = "usd",
                                 ProductData = new SessionLineItemPriceDataProductDataOptions
                                 {
                                     Name = product.Plan.ToString(),
-                                    Description = $"{product.Resolution} {product.VideoQuality} {product.Devices.ConvertAll(x => x.Name).Aggregate((x, y) => x + ", " + y)}"
+                                    Description = $"{product.Resolution} {product.VideoQuality}"
                                 }
                             },
                             Quantity = 1

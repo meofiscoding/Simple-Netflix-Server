@@ -1,11 +1,13 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Payment.API.Data;
 using Payment.API.Entity;
 using Payment.API.Mapper;
 using Payment.API.Model;
+using Payment.API.Service.Stripe;
 
 namespace Payment.API.Controllers
 {
@@ -14,10 +16,22 @@ namespace Payment.API.Controllers
     public class SubcriptionController : ControllerBase
     {
         private readonly PaymentDBContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<SubcriptionController> _logger;
+        private readonly IStripeService _stripeService;
+        private readonly string _frontendSuccessUrl;
+        private readonly string _frontendCanceledUrl;
 
-        public SubcriptionController(PaymentDBContext context)
+        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, IConfiguration configuration)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
+            _stripeService = stripeService;
+            var request = _httpContextAccessor.HttpContext!.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+            _frontendSuccessUrl = baseUrl + "/orders/success";
+            _frontendCanceledUrl = baseUrl + "/orders/canceled";
         }
 
         // GET: api/pricingPlans
@@ -36,11 +50,21 @@ namespace Payment.API.Controllers
 
         // POST: api/subscription
         [HttpPost("subscription")]
-        public async Task<ActionResult<Subcription>> PostSubcription([FromBody] int planId)
+        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] int planId)
         {
-            var subcription = await _context.Subcriptions.FindAsync(planId);
+            var subcription = await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
 
-            return subcription ?? (ActionResult<Subcription>)NotFound();
+            try
+            {
+                var sessionId = await _stripeService.CheckOut(subcription);
+                // TODO: Insert userpayment to Database
+                return TypedResults.Ok(sessionId);
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError($"Error when checkout due to: {ex.Message}");
+                return TypedResults.BadRequest();
+            }
         }
     }
 }
