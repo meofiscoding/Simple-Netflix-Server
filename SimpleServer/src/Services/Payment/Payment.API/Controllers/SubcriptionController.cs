@@ -8,6 +8,7 @@ using Payment.API.Entity;
 using Payment.API.Mapper;
 using Payment.API.Model;
 using Payment.API.Service.Stripe;
+using Stripe.Checkout;
 
 namespace Payment.API.Controllers
 {
@@ -63,6 +64,56 @@ namespace Payment.API.Controllers
             catch (System.Exception ex)
             {
                 _logger.LogError($"Error when checkout due to: {ex.Message}");
+                return TypedResults.BadRequest();
+            }
+        }
+
+        // POST: api/subscription/success
+        /// <summary>
+        /// this API is going to be hit when order is placed successfully @Stripe
+        /// </summary>
+        /// <returns>A redirect to the front end success page</returns>
+        [HttpGet("subscription/success")]
+        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutSuccess([FromQuery] string sessionId)
+        {
+            try
+            {
+                var sessionService = new SessionService();
+                var session = sessionService.Get(sessionId);
+
+
+                //var total = session.AmountTotal.Value; <- total from Stripe side also
+                //var customerEmail = session.CustomerDetails.Email;
+                // TODO: save user payment to database
+                // CustomerModel customer = new CustomerModel(session.Id, session.CustomerDetails.Name, session.CustomerDetails.Email, session.CustomerDetails.Phone);
+
+                // Save the customer details to your database.
+                // await _customerData.InsertCustomerInDb(customer);
+
+                return TypedResults.Redirect(_frontendSuccessUrl, true, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error into order Controller on route /success " + ex.Message);
+                return TypedResults.BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// this API is going to be hit when order is a failure
+        /// </summary>
+        /// <returns>A redirect to the front end success page</returns>
+        [HttpGet("canceled")]
+        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
+        {
+            try
+            {
+                // Insert here failure data in data base
+                return TypedResults.Redirect(_frontendCanceledUrl, true, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error into order Controller on route /canceled " + ex.Message);
                 return TypedResults.BadRequest();
             }
         }

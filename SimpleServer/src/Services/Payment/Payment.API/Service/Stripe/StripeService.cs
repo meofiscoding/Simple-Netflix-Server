@@ -43,8 +43,8 @@ namespace Payment.API.Service.Stripe
                                 Currency = "usd",
                                 ProductData = new SessionLineItemPriceDataProductDataOptions
                                 {
-                                    Name = product.Plan.ToString(),
-                                    Description = $"{product.Resolution} {product.VideoQuality}"
+                                    Name = $"Subsciption Plan: {product.Plan}",
+                                    Description = $"Monthly price with Resolution: {product.Resolution}\n Quality:{product.VideoQuality}"
                                 }
                             },
                             Quantity = 1
