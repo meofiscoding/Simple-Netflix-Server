@@ -4,7 +4,7 @@ namespace Payment.API.Enum
 {
     public enum DeviceEnum
     {
-        Phone,
+        Mobile,
         Tablet,
         Computer,
         TV
