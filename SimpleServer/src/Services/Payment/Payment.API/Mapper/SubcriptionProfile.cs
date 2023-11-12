@@ -9,6 +9,8 @@ namespace Payment.API.Mapper
         public SubcriptionProfile()
         {
             CreateMap<Entity.Subcription, Model.Subcriptions>()
+                // map id from source to Id in destination
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 // map string value of plantypeEnum from source to PlanType in destination
                 .ForMember(dest => dest.PlanType, opt => opt.MapFrom(src =>src.Plan.ToString()))
                 // map price from source to $"{price}$" in destination
