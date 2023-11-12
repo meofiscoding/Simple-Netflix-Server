@@ -56,7 +56,7 @@ namespace Payment.API
                             {
                                 new Device
                                 {
-                                    Name = nameof(DeviceEnum.Phone)
+                                    Name = nameof(DeviceEnum.Mobile)
                                 }
                             }
                         },
@@ -108,7 +108,7 @@ namespace Payment.API
         private static decimal GenerateRandomPrice(int multiplier)
         {
             Random random = new();
-            int basePrice = random.Next(1, 10);
+            int basePrice = random.Next(multiplier, 10);
             return basePrice * multiplier;
         }
     }
