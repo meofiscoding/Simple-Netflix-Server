@@ -1,4 +1,4 @@
-namespace Payment.API.Models
+namespace Payment.API.Entity
 {
     public class Quality
     {

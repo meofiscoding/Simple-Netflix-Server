@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Payment.API.Data;
 using Payment.API.Enum;
-using Payment.API.Models;
+using Payment.API.Entity;
 using Polly;
 
 namespace Payment.API

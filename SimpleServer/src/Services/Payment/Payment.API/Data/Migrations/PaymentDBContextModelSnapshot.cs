@@ -22,7 +22,7 @@ namespace Payment.API.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Payment.API.Models.Device", b =>
+            modelBuilder.Entity("Payment.API.Entity.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,7 +44,7 @@ namespace Payment.API.Data.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.PlanType", b =>
+            modelBuilder.Entity("Payment.API.Entity.PlanType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace Payment.API.Data.Migrations
                     b.ToTable("PricingPlans");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.Quality", b =>
+            modelBuilder.Entity("Payment.API.Entity.Quality", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +78,7 @@ namespace Payment.API.Data.Migrations
                     b.ToTable("Qualities");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.Subcription", b =>
+            modelBuilder.Entity("Payment.API.Entity.Subcription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,7 +104,7 @@ namespace Payment.API.Data.Migrations
                     b.ToTable("Subcriptions");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.UserPayment", b =>
+            modelBuilder.Entity("Payment.API.Entity.UserPayment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,16 +135,16 @@ namespace Payment.API.Data.Migrations
                     b.ToTable("UserPayment");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.Device", b =>
+            modelBuilder.Entity("Payment.API.Entity.Device", b =>
                 {
-                    b.HasOne("Payment.API.Models.Subcription", null)
+                    b.HasOne("Payment.API.Entity.Subcription", null)
                         .WithMany("Devices")
                         .HasForeignKey("SubcriptionId");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.UserPayment", b =>
+            modelBuilder.Entity("Payment.API.Entity.UserPayment", b =>
                 {
-                    b.HasOne("Payment.API.Models.Subcription", "Subcription")
+                    b.HasOne("Payment.API.Entity.Subcription", "Subcription")
                         .WithMany()
                         .HasForeignKey("SubcriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -153,7 +153,7 @@ namespace Payment.API.Data.Migrations
                     b.Navigation("Subcription");
                 });
 
-            modelBuilder.Entity("Payment.API.Models.Subcription", b =>
+            modelBuilder.Entity("Payment.API.Entity.Subcription", b =>
                 {
                     b.Navigation("Devices");
                 });

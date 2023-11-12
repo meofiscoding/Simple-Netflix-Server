@@ -1,6 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
-using Payment.API.Models;
+using Payment.API.Entity;
 
 namespace Payment.API.Data
 {
