@@ -26,8 +26,8 @@ namespace Payment.API.Service.Stripe
                 var options = new SessionCreateOptions
                 {
                     // Stripe calls these user defined endpoints
-                    SuccessUrl = $"{baseUrl}/success?session_id={{CHECKOUT_SESSION_ID}}",
-                    CancelUrl = $"{baseUrl}/failed",
+                    SuccessUrl = $"{baseUrl}/subscription/success?session_id={{CHECKOUT_SESSION_ID}}",
+                    CancelUrl = $"{baseUrl}/subscription/canceled",
 
                     PaymentMethodTypes = new List<string>
                     {

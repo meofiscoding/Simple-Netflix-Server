@@ -14,6 +14,6 @@ namespace Payment.API.Data
         public DbSet<Device> Devices { get; set; }
         public DbSet<PlanType> PricingPlans { get; set; }
         public DbSet<Quality> Qualities { get; set; }
-        public DbSet<UserPayment> UserPayment { get; set; }
+        public DbSet<UserPayment> UserPayments { get; set; }
     }
 }

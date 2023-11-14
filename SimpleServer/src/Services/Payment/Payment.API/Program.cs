@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using MassTransit;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
@@ -27,6 +28,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Register services
 builder.Services.AddScoped<IStripeService, StripeService>();
+
+// MassTransit-RabbitMQ Configuration
+builder.Services.AddMassTransit(
+    config =>
+    {
+        config.UsingRabbitMq((ctx, cfg) =>
+        {
+            cfg.Host(configuration["EventBusSettings:HostAddress"]);
+            // cfg.UseHealthCheck(ctx);
+        });
+    });
 
 // Add authentication
 builder.Services.AddAuthentication("Bearer")

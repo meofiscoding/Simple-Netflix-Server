@@ -1,5 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using EventBus.Message.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +20,16 @@ namespace Payment.API.Controllers
     [Authorize]
     public class SubcriptionController : ControllerBase
     {
+        private readonly IPublishEndpoint _publishEndpoint;
         private readonly PaymentDBContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SubcriptionController> _logger;
         private readonly IStripeService _stripeService;
         private readonly string _frontendSuccessUrl;
         private readonly string _frontendCanceledUrl;
+        public Subcription Subcription { get; set; }
 
-        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, IConfiguration configuration)
+        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, IPublishEndpoint publishEndpoint)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -33,21 +37,19 @@ namespace Payment.API.Controllers
             _stripeService = stripeService;
             var request = _httpContextAccessor.HttpContext!.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
-            _frontendSuccessUrl = baseUrl + "/orders/success";
-            _frontendCanceledUrl = baseUrl + "/orders/canceled";
+            _frontendSuccessUrl = baseUrl + "/movies";
+            _frontendCanceledUrl = baseUrl + "/payment/canceled";
+            _publishEndpoint = publishEndpoint;
         }
 
         // GET: api/pricingPlans
         [HttpGet("pricingPlans")]
-        [Authorize(Roles = "User")]
         public async Task<ActionResult<IEnumerable<Subcriptions>>> GetSubcriptions()
         {
             if (_context.Subcriptions == null)
             {
                 return NotFound();
             }
-            var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-
             // return a list of subcriptions
             return await _context.Subcriptions
                 .ProjectTo<Subcriptions>(new MapperConfiguration(cfg => cfg.AddProfile<SubcriptionProfile>()))
@@ -56,14 +58,12 @@ namespace Payment.API.Controllers
 
         // POST: api/subscription
         [HttpPost("subscription")]
-        [Authorize(Roles = "User")]
         public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] int planId)
         {
-            var subcription = await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
-
+            Subcription= await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
             try
             {
-                var sessionId = await _stripeService.CheckOut(subcription);
+                var sessionId = await _stripeService.CheckOut(Subcription);
                 return TypedResults.Ok(sessionId);
             }
             catch (System.Exception ex)
@@ -79,7 +79,6 @@ namespace Payment.API.Controllers
         /// </summary>
         /// <returns>A redirect to the front end success page</returns>
         [HttpGet("subscription/success")]
-        [Authorize(Roles = "User")]
         public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutSuccess([FromQuery] string sessionId)
         {
             try
@@ -87,14 +86,23 @@ namespace Payment.API.Controllers
                 var sessionService = new SessionService();
                 var session = sessionService.Get(sessionId);
 
+                // get current user
+                var userId = _httpContextAccessor.HttpContext!.User.FindFirst("sub")!.Value;
 
-                //var total = session.AmountTotal.Value; <- total from Stripe side also
-                //var customerEmail = session.CustomerDetails.Email;
+                // send MembershipActivatedEvent to RabbitMQ
+                var eventMessage = new MembershipActivatedEvent(){
+                    UserId = userId,
+                };
+                await _publishEndpoint.Publish(eventMessage);
+
                 // TODO: save user payment to database
-                // CustomerModel customer = new CustomerModel(session.Id, session.CustomerDetails.Name, session.CustomerDetails.Email, session.CustomerDetails.Phone);
-
-                // Save the customer details to your database.
-                // await _customerData.InsertCustomerInDb(customer);
+                var userPayment = new UserPayment(){
+                    Subcription = Subcription,
+                    UserId = userId,
+                    Amount = Subcription.Price
+                };
+                _context.UserPayments.Add(userPayment);
+                await _context.SaveChangesAsync();
 
                 return TypedResults.Redirect(_frontendSuccessUrl, true, true);
             }
@@ -109,8 +117,7 @@ namespace Payment.API.Controllers
         /// this API is going to be hit when order is a failure
         /// </summary>
         /// <returns>A redirect to the front end success page</returns>
-        [HttpGet("canceled")]
-        [Authorize(Roles = "User")]
+        [HttpGet("subscription/canceled")]
         public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
         {
             try
