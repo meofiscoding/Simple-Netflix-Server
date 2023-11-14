@@ -1,5 +1,6 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace Payment.API.Controllers
 {
     [Route("api/")]
     [ApiController]
+    [Authorize]
     public class SubcriptionController : ControllerBase
     {
         private readonly PaymentDBContext _context;
@@ -37,12 +39,15 @@ namespace Payment.API.Controllers
 
         // GET: api/pricingPlans
         [HttpGet("pricingPlans")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<IEnumerable<Subcriptions>>> GetSubcriptions()
         {
             if (_context.Subcriptions == null)
             {
                 return NotFound();
             }
+            var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+
             // return a list of subcriptions
             return await _context.Subcriptions
                 .ProjectTo<Subcriptions>(new MapperConfiguration(cfg => cfg.AddProfile<SubcriptionProfile>()))
@@ -51,6 +56,7 @@ namespace Payment.API.Controllers
 
         // POST: api/subscription
         [HttpPost("subscription")]
+        [Authorize(Roles = "User")]
         public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] int planId)
         {
             var subcription = await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
@@ -58,7 +64,6 @@ namespace Payment.API.Controllers
             try
             {
                 var sessionId = await _stripeService.CheckOut(subcription);
-                // TODO: Insert userpayment to Database
                 return TypedResults.Ok(sessionId);
             }
             catch (System.Exception ex)
@@ -74,6 +79,7 @@ namespace Payment.API.Controllers
         /// </summary>
         /// <returns>A redirect to the front end success page</returns>
         [HttpGet("subscription/success")]
+        [Authorize(Roles = "User")]
         public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutSuccess([FromQuery] string sessionId)
         {
             try
@@ -104,6 +110,7 @@ namespace Payment.API.Controllers
         /// </summary>
         /// <returns>A redirect to the front end success page</returns>
         [HttpGet("canceled")]
+        [Authorize(Roles = "User")]
         public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
         {
             try
