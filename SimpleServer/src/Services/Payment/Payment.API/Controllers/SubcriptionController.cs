@@ -20,7 +20,6 @@ namespace Payment.API.Controllers
     [Authorize]
     public class SubcriptionController : ControllerBase
     {
-        private readonly IPublishEndpoint _publishEndpoint;
         private readonly PaymentDBContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SubcriptionController> _logger;
@@ -29,7 +28,7 @@ namespace Payment.API.Controllers
         private readonly string _frontendCanceledUrl;
         public Subcription Subcription { get; set; }
 
-        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, IPublishEndpoint publishEndpoint)
+        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -39,7 +38,6 @@ namespace Payment.API.Controllers
             var baseUrl = $"{request.Scheme}://{request.Host}";
             _frontendSuccessUrl = baseUrl + "/movies";
             _frontendCanceledUrl = baseUrl + "/payment/canceled";
-            _publishEndpoint = publishEndpoint;
         }
 
         // GET: api/pricingPlans
@@ -90,10 +88,10 @@ namespace Payment.API.Controllers
                 var userId = _httpContextAccessor.HttpContext!.User.FindFirst("sub")!.Value;
 
                 // send MembershipActivatedEvent to RabbitMQ
-                var eventMessage = new MembershipActivatedEvent(){
-                    UserId = userId,
-                };
-                await _publishEndpoint.Publish(eventMessage);
+                // var eventMessage = new MembershipActivatedEvent(){
+                //     UserId = userId,
+                // };
+                // await _publishEndpoint.Publish(eventMessage);
 
                 // TODO: save user payment to database
                 var userPayment = new UserPayment(){

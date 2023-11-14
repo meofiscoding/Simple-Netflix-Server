@@ -29,17 +29,6 @@ builder.Services.AddSwaggerGen();
 // Register services
 builder.Services.AddScoped<IStripeService, StripeService>();
 
-// MassTransit-RabbitMQ Configuration
-builder.Services.AddMassTransit(
-    config =>
-    {
-        config.UsingRabbitMq((ctx, cfg) =>
-        {
-            cfg.Host(configuration["EventBusSettings:HostAddress"]);
-            // cfg.UseHealthCheck(ctx);
-        });
-    });
-
 // Add authentication
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", opt =>
