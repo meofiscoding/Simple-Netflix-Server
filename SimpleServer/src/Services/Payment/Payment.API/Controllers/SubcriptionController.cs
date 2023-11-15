@@ -1,5 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using EventBus.Message.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,6 @@ using Payment.API.Data;
 using Payment.API.Entity;
 using Payment.API.Mapper;
 using Payment.API.Model;
-using Payment.API.RabbitMQ;
 using Payment.API.Service.Stripe;
 using Stripe.Checkout;
 
@@ -20,7 +21,6 @@ namespace Payment.API.Controllers
     public class SubcriptionController : ControllerBase
     {
         private readonly PaymentDBContext _context;
-        private readonly IMessageProducer _messagePublisher;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SubcriptionController> _logger;
         private readonly IStripeService _stripeService;
@@ -28,7 +28,7 @@ namespace Payment.API.Controllers
         private readonly string _frontendCanceledUrl;
         public Subcription Subcription { get; set; }
 
-        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, IMessageProducer messagePublisher)
+        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -38,7 +38,6 @@ namespace Payment.API.Controllers
             var baseUrl = $"{request.Scheme}://{request.Host}";
             _frontendSuccessUrl = baseUrl + "/movies";
             _frontendCanceledUrl = baseUrl + "/payment/canceled";
-            _messagePublisher = messagePublisher;
         }
 
         // GET: api/pricingPlans
@@ -89,7 +88,10 @@ namespace Payment.API.Controllers
                 var userId = _httpContextAccessor.HttpContext!.User.FindFirst("sub")!.Value;
 
                 // send MembershipActivatedEvent to RabbitMQ
-                _messagePublisher.SendMessage(userId);
+                // var eventMessage = new MembershipActivatedEvent(){
+                //     UserId = userId,
+                // };
+                // await _publishEndpoint.Publish(eventMessage);
 
                 // TODO: save user payment to database
                 var userPayment = new UserPayment(){
