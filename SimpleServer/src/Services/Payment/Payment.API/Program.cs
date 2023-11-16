@@ -1,15 +1,26 @@
-﻿using System.Text;
-using MassTransit;
-using Microsoft.AspNetCore.HttpOverrides;
+﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Payment.API;
 using Payment.API.Data;
+using Payment.API.GrpcService;
+using Payment.API.GrpcService.Protos;
 using Payment.API.Service.Stripe;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
+//  Configure Kestrel
+builder.WebHost.ConfigureKestrel(options =>
+  {
+      options.Limits.MinRequestBodyDataRate = null;
+
+      options.ListenAnyIP(5031,
+            listenOptions => listenOptions.Protocols = HttpProtocols.Http1);
+
+      options.ListenAnyIP(50051,
+         listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
+  });
 IdentityModelEventSource.ShowPII = true;
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddHttpContextAccessor();
@@ -28,6 +39,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Register services
 builder.Services.AddScoped<IStripeService, StripeService>();
+// Grpc Configuration
+builder.Services.AddGrpcClient<PaymentProtoService.PaymentProtoServiceClient>
+            (o => o.Address = new Uri(builder.Configuration["GrpcUrl"] ?? throw new Exception("GrpcUrl is missing")));
+builder.Services.AddScoped<PaymentGrpcService>();
 
 // Add authentication
 builder.Services.AddAuthentication("Bearer")

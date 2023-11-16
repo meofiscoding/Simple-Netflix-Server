@@ -29,6 +29,7 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.59.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,4 +38,7 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
   </ItemGroup>
+   <ItemGroup>
+    <Protobuf Include="GrpcService/Protos/payment.proto" GrpcServices="Client" />
+</ItemGroup>
 </Project>

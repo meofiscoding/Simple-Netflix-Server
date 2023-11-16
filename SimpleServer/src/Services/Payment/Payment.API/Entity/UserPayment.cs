@@ -15,6 +15,6 @@ namespace Payment.API.Entity
         // set expire date to 1 month from now
         public DateTime ExpireDate { get; set; } = DateTime.UtcNow.AddMonths(1);
 
-        public decimal Amount { get; set; }
+        public bool IsCancelled { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace Payment.API.Service.Stripe
                 var options = new SessionCreateOptions
                 {
                     // Stripe calls these user defined endpoints
-                    SuccessUrl = $"{baseUrl}/subscription/success?session_id={{CHECKOUT_SESSION_ID}}",
+                    SuccessUrl = $"{baseUrl}/subscription/success?sessionId={{CHECKOUT_SESSION_ID}}",
                     CancelUrl = $"{baseUrl}/subscription/canceled",
 
                     PaymentMethodTypes = new List<string>
@@ -39,7 +39,7 @@ namespace Payment.API.Service.Stripe
                         {
                             PriceData = new SessionLineItemPriceDataOptions
                             {
-                                UnitAmount = (long)(product.Price * 100),
+                                UnitAmount = product.Price * 100,
                                 Currency = "usd",
                                 ProductData = new SessionLineItemPriceDataProductDataOptions
                                 {
@@ -54,7 +54,7 @@ namespace Payment.API.Service.Stripe
                     InvoiceCreation = new SessionInvoiceCreationOptions
                     {
                         Enabled = true,
-                    }
+                    },
                 };
 
                 var service = new SessionService();

@@ -1,21 +1,20 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using EventBus.Message.Events;
-using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Payment.API.Data;
 using Payment.API.Entity;
+using Payment.API.GrpcService;
 using Payment.API.Mapper;
 using Payment.API.Model;
 using Payment.API.Service.Stripe;
+using Stripe;
 using Stripe.Checkout;
 
 namespace Payment.API.Controllers
 {
-    [Route("api/")]
     [ApiController]
     [Authorize]
     public class SubcriptionController : ControllerBase
@@ -24,24 +23,19 @@ namespace Payment.API.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SubcriptionController> _logger;
         private readonly IStripeService _stripeService;
-        private readonly string _frontendSuccessUrl;
-        private readonly string _frontendCanceledUrl;
-        public Subcription Subcription { get; set; }
+        private readonly PaymentGrpcService _paymentGrpcService;
 
-        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService)
+        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, PaymentGrpcService paymentGrpcService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _stripeService = stripeService;
-            var request = _httpContextAccessor.HttpContext!.Request;
-            var baseUrl = $"{request.Scheme}://{request.Host}";
-            _frontendSuccessUrl = baseUrl + "/movies";
-            _frontendCanceledUrl = baseUrl + "/payment/canceled";
+            _paymentGrpcService = paymentGrpcService;
         }
 
         // GET: api/pricingPlans
-        [HttpGet("pricingPlans")]
+        [HttpGet("api/pricingPlans")]
         public async Task<ActionResult<IEnumerable<Subcriptions>>> GetSubcriptions()
         {
             if (_context.Subcriptions == null)
@@ -54,14 +48,27 @@ namespace Payment.API.Controllers
                 .ToListAsync();
         }
 
-        // POST: api/subscription
-        [HttpPost("subscription")]
-        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] int planId)
+        // GET: api/pricingPlan/5
+        [HttpGet("api/pricingPlan/{id}")]
+        public async Task<ActionResult<SubcriptionsCheckOutModel>> GetSubcription(int id)
         {
-            Subcription= await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
+            var subcription = await _context.Subcriptions.FindAsync(id) ?? throw new Exception("Plan not found");
+            return new SubcriptionsCheckOutModel()
+            {
+                PlanType = subcription.Plan.ToString(),
+                Price = subcription.Price
+            };
+        }
+
+        // POST: api/subscription
+        [HttpPost("api/subscription")]
+        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] UserPaymentModel model)
+        {
+            var subcription = await _context.Subcriptions.FindAsync(model.PricingPlanId) ?? throw new Exception("Plan not found");
+            // store userId and pricingPlanId temporarily to use in checkout success
             try
             {
-                var sessionId = await _stripeService.CheckOut(Subcription);
+                var sessionId = await _stripeService.CheckOut(subcription);
                 return TypedResults.Ok(sessionId);
             }
             catch (System.Exception ex)
@@ -71,63 +78,74 @@ namespace Payment.API.Controllers
             }
         }
 
-        // POST: api/subscription/success
-        /// <summary>
-        /// this API is going to be hit when order is placed successfully @Stripe
-        /// </summary>
-        /// <returns>A redirect to the front end success page</returns>
-        [HttpGet("subscription/success")]
-        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutSuccess([FromQuery] string sessionId)
+        [HttpPost("api/create-payment-intent")]
+        public async Task<IActionResult> CreatePaymentIntent([FromBody] int amount)
         {
-            try
+            var options = new PaymentIntentCreateOptions
             {
-                var sessionService = new SessionService();
-                var session = sessionService.Get(sessionId);
+                Amount = amount * 100,
+                Currency = "usd",
+                PaymentMethodTypes = new List<string>
+                {
+                    "card",
+                }
+            };
 
-                // get current user
-                var userId = _httpContextAccessor.HttpContext!.User.FindFirst("sub")!.Value;
+            var service = new PaymentIntentService();
+            var paymentIntent = await service.CreateAsync(options);
 
-                // send MembershipActivatedEvent to RabbitMQ
-                // var eventMessage = new MembershipActivatedEvent(){
-                //     UserId = userId,
-                // };
-                // await _publishEndpoint.Publish(eventMessage);
+            return Ok(paymentIntent);
+        }
 
-                // TODO: save user payment to database
-                var userPayment = new UserPayment(){
-                    Subcription = Subcription,
-                    UserId = userId,
-                    Amount = Subcription.Price
-                };
-                _context.UserPayments.Add(userPayment);
-                await _context.SaveChangesAsync();
-
-                return TypedResults.Redirect(_frontendSuccessUrl, true, true);
-            }
-            catch (Exception ex)
+        // POST: subscription/success
+        [HttpPost("subscription/success")]
+        public async Task<IActionResult> CheckoutSuccess([FromBody] int planId)
+        {
+            // get subcription
+            Subcription Subcription = await _context.Subcriptions.FindAsync(planId);
+            if (Subcription == null)
             {
-                _logger.LogError("error into order Controller on route /success " + ex.Message);
-                return TypedResults.BadRequest();
+                return NotFound();
             }
+
+            // get current userId
+            var userId = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("nameidentifier"))?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            // Communicate with IdentityGrpcService to update user membership
+            var response = await _paymentGrpcService.UpdateUserMembership(userId, true);
+
+            // TODO: save user payment to database
+            var userPayment = new UserPayment()
+            {
+                Subcription = Subcription,
+                UserId = userId,
+            };
+            _context.UserPayments.Add(userPayment);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         /// <summary>
         /// this API is going to be hit when order is a failure
         /// </summary>
         /// <returns>A redirect to the front end success page</returns>
-        [HttpGet("subscription/canceled")]
-        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
-        {
-            try
-            {
-                // Insert here failure data in data base
-                return TypedResults.Redirect(_frontendCanceledUrl, true, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("error into order Controller on route /canceled " + ex.Message);
-                return TypedResults.BadRequest();
-            }
-        }
+        // [HttpGet("subscription/canceled")]
+        // public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
+        // {
+        //     try
+        //     {
+        //         // Insert here failure data in data base
+
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError("error into order Controller on route /canceled " + ex.Message);
+        //         return TypedResults.BadRequest();
+        //     }
+        // }
     }
 }

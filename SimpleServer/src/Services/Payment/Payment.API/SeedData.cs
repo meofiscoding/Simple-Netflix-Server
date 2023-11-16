@@ -105,7 +105,7 @@ namespace Payment.API
             });
         }
 
-        private static decimal GenerateRandomPrice(int multiplier)
+        private static int GenerateRandomPrice(int multiplier)
         {
             Random random = new();
             int basePrice = random.Next(multiplier, 10);
