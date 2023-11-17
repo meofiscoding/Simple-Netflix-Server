@@ -12,7 +12,7 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MinRequestBodyDataRate = null;
 
-    options.ListenAnyIP(50050,
+    options.ListenAnyIP(80,
        listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
 });
 var configuration = builder.Configuration;
@@ -35,9 +35,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     .AddDefaultTokenProviders();
 // Add Grpc Service
 builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
 var app = builder.Build();
 // Map Grpc Service
 app.MapGrpcService<UserService>();
+app.MapGrpcReflectionService();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();
