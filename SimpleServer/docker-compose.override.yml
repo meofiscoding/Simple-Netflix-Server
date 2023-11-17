@@ -83,6 +83,13 @@ services:
       - DatabaseSettings__CollectionName=crawledMovies
     volumes:
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      
+  identity.grpc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
 volumes:
   simplenetflix-moviedb:
   # simplenetflix-identitydb:
