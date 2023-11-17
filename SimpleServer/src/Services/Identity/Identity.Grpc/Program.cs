@@ -1,5 +1,6 @@
 ﻿using Identity.Grpc.Data;
 using Identity.Grpc.Entity;
+using Identity.Grpc.Service;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -32,13 +33,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
     })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
-// Add services to the container.
-builder.Services.AddGrpc();
 // Add Grpc Service
 builder.Services.AddGrpc();
 var app = builder.Build();
 // Map Grpc Service
-//app.MapGrpcService<UserService>();
+app.MapGrpcService<UserService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();

@@ -16,7 +16,7 @@ using Stripe.Checkout;
 namespace Payment.API.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class SubcriptionController : ControllerBase
     {
         private readonly PaymentDBContext _context;
