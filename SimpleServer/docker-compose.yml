@@ -55,7 +55,7 @@ services:
      - crawlerdb
 
   identity.grpc:
-    image: ${REGISTRY:-simpleNetflix}/identity:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-simpleNetflix}/identity.grpc:${PLATFORM:-linux}-${TAG:-latest}
     # ${DOCKER_REGISTRY-}identity
     build:
       context: .
