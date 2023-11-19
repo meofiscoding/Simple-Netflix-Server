@@ -17,6 +17,7 @@ env:
 
 jobs:
   deploy-to-k8s:
+    environment: production
     permissions:
       actions: read
       # contents: read
