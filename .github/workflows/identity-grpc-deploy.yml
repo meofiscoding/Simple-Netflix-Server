@@ -7,9 +7,9 @@ on:
       - main
 
     paths:
-      - .github/workflows/identity-api-deploy.yml
+      - .github/workflows/identity-grpc-deploy.yml
       - .github/workflows/composite/deploy/action.yml
-      - deploy/k8s/identity-api.yaml
+      - deploy/k8s/identity-grpc.yaml
       - SimpleServer/src/Services/Identity/**
 
 env:
