@@ -11,16 +11,16 @@ using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 //  Configure Kestrel
-// builder.WebHost.ConfigureKestrel(options =>
-//   {
-//       options.Limits.MinRequestBodyDataRate = null;
+builder.WebHost.ConfigureKestrel(options =>
+  {
+      options.Limits.MinRequestBodyDataRate = null;
 
-//       options.ListenAnyIP(80,
-//             listenOptions => listenOptions.Protocols = HttpProtocols.Http1);
+      options.ListenAnyIP(80,
+            listenOptions => listenOptions.Protocols = HttpProtocols.Http1);
 
-    //   options.ListenAnyIP(50051,
-    //      listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
-//   });
+      options.ListenAnyIP(50051,
+         listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
+  });
 IdentityModelEventSource.ShowPII = true;
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddHttpContextAccessor();
