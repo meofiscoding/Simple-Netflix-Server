@@ -1,4 +1,4 @@
-name: movie-api
+name: payment-api
  
 on: 
   workflow_dispatch:
