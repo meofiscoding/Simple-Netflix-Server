@@ -27,6 +27,17 @@ data:
              "movies"
            ]
          }
+       },
+       {
+        "DownstreamPathTemplate": "/",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "identity-grpc-service",
+            "Port": 80
+          }
+        ],
+        "UpstreamPathTemplate": "/identity-grpc",
        }
      ]
     }

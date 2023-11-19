@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Payment.API;
 using Payment.API.Data;
 using Payment.API.GrpcService;
