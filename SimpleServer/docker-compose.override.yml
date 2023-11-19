@@ -24,17 +24,17 @@ services:
         - "5672:5672"
         - "15672:15672"
 
-  # identitydb:
-  #   container_name: identitydb
-  #   environment:
-  #     - POSTGRES_USER=meofadmin
-  #     - POSTGRES_PASSWORD=123456
-  #     - POSTGRES_DB=IdentityDB
-  #   ports:
-  #     - "5432:5432"
-  #   restart: always
-  #   volumes:
-  #     - simplenetflix-identitydb:/var/lib/postgresql/data
+  paymentdb:
+    container_name: paymentdb
+    environment:
+      - POSTGRES_USER=meofadmin
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=paymentDB
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - simplenetflix-paymentdb:/var/lib/postgresql/data
 
   ocelotapigw:
     environment:
@@ -52,7 +52,7 @@ services:
   #     - ASPNETCORE_ENVIRONMENT=Development
   #     - ASPNETCORE_URLS=http://+:443;http://+:80
   #     - ASPNETCORE_URLS=http://0.0.0.0:80
-  #     - ConnectionStrings__IdentityDB=User ID=meofadmin;Password=123456;Server=identitydb;Port=5432;Database=IdentityDB
+  #     - ConnectionStrings__paymentDB=User ID=meofadmin;Password=123456;Server=paymentdb;Port=5432;Database=paymentDB
   #     - MovieApiClient=http://docker.for.mac.localhost:8000
   #     - IdentityUrl=http://identity.api:80
   #   ports:
@@ -90,7 +90,19 @@ services:
     ports:
       - "80"
 
+  payment.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "443"
+    volumes:
+      - ~/.aspnet/https:/root/.aspnet/https:ro
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+
 volumes:
   simplenetflix-moviedb:
-  # simplenetflix-identitydb:
+  simplenetflix-paymentdb:
   simplenetflix-crawlerdb:
+

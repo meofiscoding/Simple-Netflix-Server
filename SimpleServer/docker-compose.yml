@@ -61,3 +61,11 @@ services:
       context: .
       dockerfile: src/Services/Identity/Identity.Grpc/Dockerfile
 
+
+  payment.api:
+    image: ${REGISTRY:-simpleNetflix}/payment.api:${PLATFORM:-linux}-${TAG:-latest}
+    # ${DOCKER_REGISTRY-}payment
+    build:
+      context: .
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+
