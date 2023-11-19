@@ -40,7 +40,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:443;http://+:80
-      - IdentityUrl=http://identity.api:80
     ports:
       - "5001:80"
     volumes:
