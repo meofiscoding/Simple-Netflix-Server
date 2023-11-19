@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Payment.API;
 using Payment.API.Data;
 using Payment.API.GrpcService;
@@ -16,7 +15,7 @@ builder.WebHost.ConfigureKestrel(options =>
   {
       options.Limits.MinRequestBodyDataRate = null;
 
-      options.ListenAnyIP(5031,
+      options.ListenAnyIP(80,
             listenOptions => listenOptions.Protocols = HttpProtocols.Http1);
 
       options.ListenAnyIP(50051,
