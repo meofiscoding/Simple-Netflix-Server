@@ -1,7 +1,7 @@
 ﻿{
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/pricingPlans",
+      "DownstreamPathTemplate": "/api/pricingPlan/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -12,7 +12,7 @@
       "UpstreamHttpMethod": [
         "GET"
       ],
-      "UpstreamPathTemplate": "/payment/planform/{everything}",
+      "UpstreamPathTemplate": "/payment/plan/{everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "IdentityApiKey",
         "AllowedScopes": [
@@ -105,12 +105,9 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          // Uncomment this to use the local api
-          "Host": "localhost",
-          "Port": 8000
           // Uncomment this to use the docker container
-          // "Host": "movie.api",
-          // "Port": 80
+          "Host": "movie.api",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/movies",

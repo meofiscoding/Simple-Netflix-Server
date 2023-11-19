@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-api-deployment
+  namespace: ingress-nginx
+  labels:
+    app: payment-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-api
+  template:
+    metadata:
+      labels:
+        app: payment-api
+    spec:
+      containers:
+        - name: paymentapi
+          image: 281901/payment.api:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: IdentityUrl
+              value: https://netflix-identity.azurewebsites.net
+            - name: ASPNETCORE_URLS
+              value: "http://+:50051;http://+:80"
+            - name: Stripe__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: secret_key
+            - name: ConnectionStrings__PaymentDB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-configmap
+                  key: connection_string
+            - name: GrpcUrl
+              value: http://identity-grpc-service:80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "0.1"
+            limits:
+              memory: "128Mi"
+              cpu: "0.3"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-api-service
+  namespace: ingress-nginx
+spec:
+  type: ClusterIP
+  selector:
+    app: payment-api
+  ports:
+    - protocol: TCP
+      port: 80

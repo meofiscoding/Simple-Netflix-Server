@@ -25,7 +25,7 @@ spec:
             - containerPort: 80
           env:
             - name: IdentityUrl
-              value: https://frontend.20.211.61.204.nip.io
+              value: https://netflix-identity.azurewebsites.net
             - name: ASPNETCORE_ENVIRONMENT
               value: Production
             - name: OCELOT_CONFIG_PATH
