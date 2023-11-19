@@ -4,4 +4,4 @@ metadata:
   name: postgres-configmap
   namespace: ingress-nginx
 data:
-  connection_string: User ID=postgres;Password=123456;Server=postgres-service ;Port=5432;Database=IdentityDB;
+  connection_string: User ID=postgres;Password=123456;Server=postgres-service ;Port=5432;Database=PaymentDB;

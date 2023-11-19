@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawl-service-deployment
+  labels:
+    app: crawl-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crawl-service
+  template:
+    metadata:
+      labels:
+        app: crawl-service
+    spec:
+      containers:
+        - name: crawldata
+          image: 281901/crawldata:dev
+          imagePullPolicy: Always
+          env:
+            - name: DatabaseSettings__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: crawlerdb-secret
+                  key: connection_string
+            - name: DatabaseSettings__DatabaseName
+              value: crawlDB
+            - name: DatabaseSettings__CollectionName
+              value: crawledMovies
+          # resources:
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "0.1"
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "0.3"
+

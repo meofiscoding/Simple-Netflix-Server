@@ -3,8 +3,14 @@ version: '3.4'
 services:
   moviedb:
     image: mongo
+
+  crawlerdb:
+    image: mongo
+
+  rabbitmq:
+    image: rabbitmq:management
   
-  identitydb:
+  paymentdb:
     image: postgres
 
   ocelotapigw:
@@ -16,16 +22,16 @@ services:
       context: .
       dockerfile: src/ApiGateways/Web.Bff.SimpleNetflix/OcelotApiGw/Dockerfile
 
-  identity.api:
-    image:
-     ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
-    # uncomment the following lines to run the identity.api locally
-    #  ${DOCKER_REGISTRY-}identityapi
-    build:
-      context: .
-      dockerfile: src/Services/Identity/Identity.API/Dockerfile
-    depends_on:
-      - identitydb
+  # identity.api:
+  #   image:
+  #    ${REGISTRY:-simpleNetflix}/identity.api:${PLATFORM:-linux}-${TAG:-latest}
+  #   # uncomment the following lines to run the identity.api locally
+  #   #  ${DOCKER_REGISTRY-}identityapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/Services/Identity/Identity.API/Dockerfile
+  #   depends_on:
+  #     - identitydb
 
   movie.api:
     image:
@@ -37,4 +43,31 @@ services:
       dockerfile: src/Services/Movie/Movie.API/Dockerfile
     depends_on:
       - moviedb
+
+
+  crawldata:
+    image: ${REGISTRY:-simpleNetflix}/crawldata:${PLATFORM:-linux}-${TAG:-latest}
+    # ${DOCKER_REGISTRY-}crawldata
+    build:
+      context: .
+      dockerfile: src/Services/Crawler/CrawlData/Dockerfile
+    depends_on:
+     - crawlerdb
+
+  identity.grpc:
+    image: ${REGISTRY:-simpleNetflix}/identity.grpc:${PLATFORM:-linux}-${TAG:-latest}
+    # ${DOCKER_REGISTRY-}identity
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.Grpc/Dockerfile
+
+
+  payment.api:
+    image: ${REGISTRY:-simpleNetflix}/payment.api:${PLATFORM:-linux}-${TAG:-latest}
+    # ${DOCKER_REGISTRY-}payment
+    build:
+      context: .
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+    depends_on:
+      - paymentdb
 

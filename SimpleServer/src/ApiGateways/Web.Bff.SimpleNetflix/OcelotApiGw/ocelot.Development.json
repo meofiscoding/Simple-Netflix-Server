@@ -1,14 +1,110 @@
 ﻿{
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/pricingPlan/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/payment/plan/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "payment"
+        ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/pricingPlans",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/payment/planform",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "payment"
+        ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/subscription",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/payment/subscriptions",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "payment"
+        ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/create-payment-intent",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/payment/checkout",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "payment"
+        ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/subscription/success",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5031
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/payment/success",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "payment"
+        ]
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/movie",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          // Uncomment this to use the local api
-          // "Host": "localhost",
-          // "Port": 8000
-
           // Uncomment this to use the docker container
           "Host": "movie.api",
           "Port": 80
@@ -17,8 +113,7 @@
       "UpstreamPathTemplate": "/movies",
       "UpstreamHttpMethod": [
         "GET",
-        "POST",
-        "PUT"
+        "POST"
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "IdentityApiKey",
@@ -27,8 +122,5 @@
         ]
       }
     }
-  ],
-  "GlobalConfiguration": {
-    "BaseUrl": "http:localhost:5001"
-  }
+  ]
 }

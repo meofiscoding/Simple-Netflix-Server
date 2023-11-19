@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Logging;
+﻿using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
@@ -16,9 +15,9 @@ builder.Services
         options.Authority = builder.Configuration["IdentityUrl"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false
+            ValidateAudience = true,
+            ValidAudiences = new[] { "payment", "movies" }
         };
-        // options.Configuration = new OpenIdConnectConfiguration();
     });
 
 builder.Services.AddOcelot();
@@ -47,8 +46,8 @@ app.UseCors(builder =>
     builder.AllowAnyMethod();
 });
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseOcelot().Wait();
 app.MapControllers();
 app.Run();

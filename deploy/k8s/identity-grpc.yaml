@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-grpc-deployment
+  namespace: ingress-nginx
+  labels:
+    app: identity-grpc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: identity-grpc
+  template:
+    metadata:
+      labels:
+        app: identity-grpc
+    spec:
+      containers:
+        - name: identity-grpc
+          image: 281901/identity.grpc:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: identity-port
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://+:443;http://+:80"
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "0.1"
+            limits:
+              memory: "200Mi"
+              cpu: "0.3"
+---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: identity-grpc-service
+#   labels:
+#     app: identity-grpc-service
+# spec:
+#   selector:
+#     app: identity-grpc
+#   ports:
+#     - protocol: TCP
+#       port: 5002
+#       targetPort: 80
+#   type: LoadBalancer
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-grpc-service
+  namespace: ingress-nginx
+  labels:
+    app: identity-grpc
+spec:
+  type: ClusterIP
+  selector:
+    app: identity-grpc
+  ports:
+    - protocol: TCP
+      port: 80

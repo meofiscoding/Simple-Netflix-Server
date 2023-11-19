@@ -5,28 +5,106 @@ metadata:
 data:
   ocelot.Production.json: |-
     {
-     "Routes": [
-       {
-         "DownstreamPathTemplate": "/api/movie",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "movie-api-service",
-             "Port": 80
-           }
-         ],
-         "UpstreamPathTemplate": "/movies",
-         "UpstreamHttpMethod": [
-           "GET",
-           "POST",
-           "PUT"
-         ],
-         "AuthenticationOptions": {
-           "AuthenticationProviderKey": "IdentityApiKey",
-           "AllowedScopes": [
-             "movies"
-           ]
-         }
-       }
-     ]
+      "Routes": [
+        {
+          "DownstreamPathTemplate": "/api/pricingPlan/{everything}",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "payment-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/payment/plan/{everything}",
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "payment"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/pricingPlans",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "payment-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/payment/planform",
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "payment"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/subscription",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "payment-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "POST"
+          ],
+          "UpstreamPathTemplate": "/payment/subscriptions",
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "payment"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/create-payment-intent",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "payment-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "POST"
+          ],
+          "UpstreamPathTemplate": "/payment/checkout",
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "payment"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/subscription/success",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "payment-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "POST"
+          ],
+          "UpstreamPathTemplate": "/payment/success",
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "payment"
+            ]
+          }
+        },
+      ]
     }
