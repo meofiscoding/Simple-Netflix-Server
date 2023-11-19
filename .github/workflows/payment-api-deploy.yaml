@@ -10,7 +10,7 @@ on:
       - .github/workflows/payment-api-deploy.yml
       - .github/workflows/composite/deploy/action.yml
       - deploy/k8s/payment-service.yaml
-      - SimpleServer/src/Services/Payment/Payment.API/**
+      - SimpleServer/src/Services/Payment/Payment.API/** 
 
 env:
   NAMESPACE: ingress-nginx
