@@ -45,12 +45,9 @@ jobs:
           cluster_name: ${{ secrets.CLUSTER_NAME }}
           resource_group: ${{ secrets.RESOURCE_GROUP }}
           manifest_path: |
-            deploy/k8s/identity-api.yaml
-            deploy/k8s/postgresql.yaml
-            deploy/k8s/postgres-secret.yaml
-            deploy/k8s/postgres-configmap.yaml
+            deploy/k8s/identity-grpc.yaml
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
-          image_name: identity.api
-          deployment_name: identity-api-deployment
-          service_name: identity-api-service
+          image_name: identity.grpc
+          deployment_name: identity-grpc-deployment
+          service_name: identity-grpc-service

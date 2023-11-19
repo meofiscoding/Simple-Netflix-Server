@@ -47,6 +47,6 @@ jobs:
             deploy/k8s/payment-service.yaml
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
-          image_name: movie.api
-          deployment_name: movie-api-deployment
-          service_name: movie-api-service
+          image_name: payment.api
+          deployment_name: payment-api-deployment
+          service_name: payment-api-service
