@@ -1,0 +1,43 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq-cluster
+spec:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+  rabbitmq:
+    additionalConfig: |
+      log.console.level = info
+      collect_statistics_interval = 10000
+      default_permissions.configure = .*
+      default_permissions.read = .*
+      default_permissions.write = .*
+      default_user = guest
+      default_pass = guest
+      default_user_tags.administrator = true
+  service:
+    type: ClusterIP
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Policy
+metadata:
+  name: ha-policy
+  namespace: default
+spec:
+  name: transient # name of the policy
+  vhost: "/" # default to '/' if not provided
+  pattern: "" # regex used to match queues and exchanges
+  applyTo: "all" # set to 'queues', 'exchanges', or 'all'
+  definition:
+    ha-mode:
+     all
+    ha-sync-mode:
+     automatic
+  rabbitmqClusterReference:
+    name: rabbitmqcluster-prod #name of the rabbitmqcluster

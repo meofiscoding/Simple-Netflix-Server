@@ -9,9 +9,7 @@ namespace Movie.API.Mapper
     {
         public MovieProfile()
         {
-            CreateMap<MovieInformation, TransferMovieListEvent>()
-                // auto map all properties except the CountWatched property
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<MovieInformation, TransferMovieListEvent>().ReverseMap();
         }
     }
 }

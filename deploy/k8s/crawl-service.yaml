@@ -17,6 +17,8 @@ spec:
       containers:
         - name: crawldata
           image: 281901/crawldata:dev
+          stdin: true
+          tty: true
           imagePullPolicy: Always
           env:
             - name: DatabaseSettings__ConnectionString
@@ -28,6 +30,8 @@ spec:
               value: crawlDB
             - name: DatabaseSettings__CollectionName
               value: crawledMovies
+            - name: EventBusSettings__HostAddress
+              value: ampq://guest:guest@rabbitmq-cluster:5672
           # resources:
           #   requests:
           #     memory: "64Mi"

@@ -13,7 +13,7 @@ services:
     container_name: crawlerdb
     restart: always
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - simplenetflix-crawlerdb:/data/db
 
@@ -21,8 +21,8 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-        - "5672:5672"
-        - "15672:15672"
+      - "5673:5673"
+      - "15672:15672"
 
   paymentdb:
     container_name: paymentdb
@@ -66,7 +66,8 @@ services:
       - ASPNETCORE_URLS=http://+:443;http://+:80
       - DatabaseSettings__ConnectionString=mongodb://moviedb:27017
       - DatabaseSettings__DatabaseName=sampleDB
-      - DatabaseSettings__CollectionName=movies
+      - DatabaseSettings__CollectionName=movies 
+      - EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672
       - IdentityUrl=http://identity.api:80
     ports:
       - "8000:80"
@@ -79,10 +80,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings__ConnectionString=mongodb://crawlerdb:27017
       - DatabaseSettings__DatabaseName=crawlDB
+      - EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672
       - DatabaseSettings__CollectionName=crawledMovies
     volumes:
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
-      
+
   identity.grpc:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -104,4 +106,5 @@ volumes:
   simplenetflix-moviedb:
   simplenetflix-paymentdb:
   simplenetflix-crawlerdb:
+
 
