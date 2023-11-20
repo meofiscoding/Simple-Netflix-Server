@@ -1,7 +1,7 @@
-apiVersion: batch/v1beta1
-kind: CronJob
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: crawl-service-cronjob
+  name: crawl-service-deployment
   labels:
     app: crawl-service
 spec:
@@ -17,6 +17,8 @@ spec:
       containers:
         - name: crawldata
           image: 281901/crawldata:dev
+          stdin: true
+          tty: true
           imagePullPolicy: Always
           env:
             - name: DatabaseSettings__ConnectionString
