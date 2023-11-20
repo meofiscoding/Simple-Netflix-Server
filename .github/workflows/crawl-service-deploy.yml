@@ -7,10 +7,10 @@ on:
       - main
 
     paths:
-      - .github/workflows/movie-api-deploy.yml
+      - .github/workflows/crawl-service-deploy.yml
       - .github/workflows/composite/deploy/action.yml
-      - deploy/k8s/movie-api.yaml
-      - SimpleServer/src/Services/Movie/**
+      - deploy/k8s/crawl-service.yaml
+      - SimpleServer/src/Services/Crawler/CrawlData/**
 
 env:
   NAMESPACE: ingress-nginx
@@ -40,10 +40,11 @@ jobs:
           cluster_name: ${{ secrets.CLUSTER_NAME }}
           resource_group: ${{ secrets.RESOURCE_GROUP }}
           manifest_path: |
-            deploy/k8s/movie-secret.yaml
-            deploy/k8s/movie-api.yaml
+            deploy/k8s/rabbitmq-cluster-service.yaml
+            deploy/k8s/crawlerdb-secret.yaml
+            deploy/k8s/crawl-service-deploy.yaml
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
-          image_name: movie.api
-          deployment_name: movie-api-deployment
-          service_name: movie-api-service
+          image_name: crawldata
+          deployment_name: crawldata-deployment
+          service_name: crawldata-service

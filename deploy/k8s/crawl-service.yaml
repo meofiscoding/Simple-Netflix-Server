@@ -28,6 +28,8 @@ spec:
               value: crawlDB
             - name: DatabaseSettings__CollectionName
               value: crawledMovies
+            - name: EventBusSettings__HostAddress
+              value: ampq://guest:guest@rabbitmq-cluster:5672
           # resources:
           #   requests:
           #     memory: "64Mi"

@@ -1,6 +1,6 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 
 RUN apt-get update \
   && apt-get install --no-install-recommends -y ca-certificates fonts-liberation libasound2 \
@@ -14,12 +14,13 @@ RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_am
   && apt-get install --no-install-recommends -y ./google-chrome-stable_current_amd64.deb \
   && rm google-chrome-stable_current_amd64.deb \
   && apt-get clean
-  
+
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/Services/Crawler/CrawlData/CrawlData.csproj", "src/Services/Crawler/CrawlData/"]
+COPY ["src/BuildingBlocks/EventBus.Message/EventBus.Message.csproj", "src/BuildingBlocks/EventBus.Message/"]
 RUN dotnet restore "src/Services/Crawler/CrawlData/CrawlData.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Crawler/CrawlData"
