@@ -87,6 +87,5 @@ static async Task ScheduleJob(IServiceProvider serviceProvider)
         )
         .Build();
 
-
     await scheduler.ScheduleJob(job, trigger);
 }
