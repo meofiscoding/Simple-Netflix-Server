@@ -1,13 +1,13 @@
 version: '3.4'
 
 services:
-  # moviedb:
-  #   container_name: moviedb
-  #   restart: always
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - simplenetflix-moviedb:/data/db
+  moviedb:
+    container_name: moviedb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - simplenetflix-moviedb:/data/db
 
   crawlerdb:
     container_name: crawlerdb
@@ -24,56 +24,56 @@ services:
       - "5673:5673"
       - "15672:15672"
 
-  # paymentdb:
-  #   container_name: paymentdb
-  #   environment:
-  #     - POSTGRES_USER=meofadmin
-  #     - POSTGRES_PASSWORD=123456
-  #     - POSTGRES_DB=paymentDB
-  #   ports:
-  #     - "5432:5432"
-  #   restart: always
-  #   volumes:
-  #     - simplenetflix-paymentdb:/var/lib/postgresql/data
+  paymentdb:
+    container_name: paymentdb
+    environment:
+      - POSTGRES_USER=meofadmin
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=paymentDB
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - simplenetflix-paymentdb:/var/lib/postgresql/data
 
-  # ocelotapigw:
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_URLS=http://+:443;http://+:80
-  #   ports:
-  #     - "5001:80"
-  #   volumes:
-  #     - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
-  #     - ~/.aspnet/https:/root/.aspnet/https:ro
+  ocelotapigw:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:443;http://+:80
+    ports:
+      - "5001:80"
+    volumes:
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - ~/.aspnet/https:/root/.aspnet/https:ro
 
-  # # identity.api:
-  # #   environment:
-  # #     - ASPNETCORE_ENVIRONMENT=Development
-  # #     - ASPNETCORE_URLS=http://+:443;http://+:80
-  # #     - ASPNETCORE_URLS=http://0.0.0.0:80
-  # #     - ConnectionStrings__paymentDB=User ID=meofadmin;Password=123456;Server=paymentdb;Port=5432;Database=paymentDB
-  # #     - MovieApiClient=http://docker.for.mac.localhost:8000
-  # #     - IdentityUrl=http://identity.api:80
-  # #   ports:
-  # #     - "5002:80"
-  # #   volumes:
-  # #     - ~/.microsoft/usersecrets/9201287f-9e32-478f-903b-c2bee2bcb15a:/root/.microsoft/usersecrets/9201287f-9e32-478f-903b-c2bee2bcb15a
-  # #     - ~/.aspnet/https:/root/.aspnet/https:ro
-
-  # movie.api:
+  # identity.api:
   #   environment:
   #     - ASPNETCORE_ENVIRONMENT=Development
   #     - ASPNETCORE_URLS=http://+:443;http://+:80
-  #     - DatabaseSettings__ConnectionString=mongodb://moviedb:27017
-  #     - DatabaseSettings__DatabaseName=sampleDB
-  #     - DatabaseSettings__CollectionName=movies 
-  #     - EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672
+  #     - ASPNETCORE_URLS=http://0.0.0.0:80
+  #     - ConnectionStrings__paymentDB=User ID=meofadmin;Password=123456;Server=paymentdb;Port=5432;Database=paymentDB
+  #     - MovieApiClient=http://docker.for.mac.localhost:8000
   #     - IdentityUrl=http://identity.api:80
   #   ports:
-  #     - "8000:80"
+  #     - "5002:80"
   #   volumes:
-  #     - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+  #     - ~/.microsoft/usersecrets/9201287f-9e32-478f-903b-c2bee2bcb15a:/root/.microsoft/usersecrets/9201287f-9e32-478f-903b-c2bee2bcb15a
   #     - ~/.aspnet/https:/root/.aspnet/https:ro
+
+  movie.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:443;http://+:80
+      - DatabaseSettings__ConnectionString=mongodb://moviedb:27017
+      - DatabaseSettings__DatabaseName=sampleDB
+      - DatabaseSettings__CollectionName=movies 
+      - EventBusSettings__HostAddress=amqp://guest:guest@rabbitmq:5672
+      - IdentityUrl=http://identity.api:80
+    ports:
+      - "8000:80"
+    volumes:
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+      - ~/.aspnet/https:/root/.aspnet/https:ro
 
   crawldata:
     environment:
@@ -85,26 +85,26 @@ services:
     volumes:
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
-  # identity.grpc:
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #   ports:
-  #     - "80"
+  identity.grpc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
 
-  # payment.api:
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_URLS=https://+:443;http://+:80
-  #   ports:
-  #     - "80"
-  #     - "443"
-  #   volumes:
-  #     - ~/.aspnet/https:/root/.aspnet/https:ro
-  #     - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
+  payment.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "443"
+    volumes:
+      - ~/.aspnet/https:/root/.aspnet/https:ro
+      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
 volumes:
-  # simplenetflix-moviedb:
-  # simplenetflix-paymentdb:
+  simplenetflix-moviedb:
+  simplenetflix-paymentdb:
   simplenetflix-crawlerdb:
 
 
