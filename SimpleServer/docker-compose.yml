@@ -48,6 +48,8 @@ services:
   crawldata:
     image: ${REGISTRY:-simpleNetflix}/crawldata:${PLATFORM:-linux}-${TAG:-latest}
     # ${DOCKER_REGISTRY-}crawldata
+    stdin_open: true
+    tty: true
     build:
       context: .
       dockerfile: src/Services/Crawler/CrawlData/Dockerfile
