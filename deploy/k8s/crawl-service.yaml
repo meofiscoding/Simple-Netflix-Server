@@ -5,27 +5,31 @@ metadata:
   labels:
     app: crawl-service
 spec:
-  jobTemplate:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crawl-service
+  template:
+    metadata:
+      labels:
+        app: crawl-service
     spec:
-      template:
-        spec:
-          containers:
-            - name: crawl-service
-              image: 281901/crawldata:dev
-              imagePullPolicy: Always
-              env:
-                - name: DatabaseSettings__ConnectionString
-                  valueFrom:
-                    secretKeyRef:
-                      name: crawlerdb-secret
-                      key: connection_string
-                - name: DatabaseSettings__DatabaseName
-                  value: crawlDB
-                - name: DatabaseSettings__CollectionName
-                  value: crawledMovies
-                - name: EventBusSettings__HostAddress
-                  value: ampq://guest:guest@rabbitmq-cluster:5672
-          restartPolicy: OnFailure
+      containers:
+        - name: crawldata
+          image: 281901/crawldata:dev
+          imagePullPolicy: Always
+          env:
+            - name: DatabaseSettings__ConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: crawlerdb-secret
+                  key: connection_string
+            - name: DatabaseSettings__DatabaseName
+              value: crawlDB
+            - name: DatabaseSettings__CollectionName
+              value: crawledMovies
+            - name: EventBusSettings__HostAddress
+              value: ampq://guest:guest@rabbitmq-cluster:5672
           # resources:
           #   requests:
           #     memory: "64Mi"
