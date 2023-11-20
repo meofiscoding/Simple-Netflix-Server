@@ -81,6 +81,8 @@ static async Task ScheduleJob(IServiceProvider serviceProvider)
         .StartNow()
         .WithDailyTimeIntervalSchedule(x => x
             .OnEveryDay()
+            // set timezone in VietNam
+            .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
             .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(2, 0)) // Set the desired time
         )
         .Build();
