@@ -21,6 +21,10 @@ spec:
           stdin: true
           tty: true
           imagePullPolicy: Always
+          volumeMounts:
+            - name: google-credential-volumes
+              mountPath: /etc/gcp
+              readOnly: true
           env:
             - name: DatabaseSettings__ConnectionString
               valueFrom:
@@ -31,8 +35,17 @@ spec:
               value: crawlDB
             - name: DatabaseSettings__CollectionName
               value: crawledMovies
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/gcp/google-credential.json
             - name: EventBusSettings__HostAddress
               value: rabbitmq://guest:guest@rabbitmq-cluster:5672
+      volumes:
+        - name: google-credential-volumes
+          secret:
+            secretName: google-credential
+            items:
+              - key: credential_json
+                path: google-credential.json
           # resources:
           #   requests:
           #     memory: "64Mi"

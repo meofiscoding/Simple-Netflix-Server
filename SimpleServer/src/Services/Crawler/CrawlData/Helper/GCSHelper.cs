@@ -1,4 +1,5 @@
 using System.Net;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
 
@@ -8,7 +9,9 @@ namespace CrawlData.Helper
     {
         public static string UploadFile(string filePath, string objectName)
         {
-            var storage = StorageClient.Create();
+            // set google credential
+            GoogleCredential credential = GoogleCredential.FromFile(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
+            var storage = StorageClient.Create(credential);
             Stream fileStream;
             // check if file path is url
             if (filePath.StartsWith("http"))
