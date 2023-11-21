@@ -115,8 +115,9 @@ namespace CrawlData.Helper
             return result.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        public static List<MovieItem> GetMoviesWithStreamingUrls(List<MovieItem> movies, Category category)
+        public static async Task<List<MovieItem>> GetMoviesWithStreamingUrls(Category category, MongoHelper _database)
         {
+            var movies = await _database.GetAllMovie();
             return movies.Where(x => x.MovieCategory == category && x.StreamingUrls.Count > 0 && x.StreamingUrls.All(y => !string.IsNullOrEmpty(y.Value)) && !x.IsAvailable).ToList();
         }
 
@@ -144,9 +145,15 @@ namespace CrawlData.Helper
                 if (tvShowsWithFullNonNullStreamingUrls.Count > 0)
                 {
                     // get tvshow from tvShowsWithFullNonNullStreamingUrls that its streamingUrls.Count - AvailableEpiside <= Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
-                    List<MovieItem> tvShowToPushToGCS = tvShowsWithFullNonNullStreamingUrls.FindAll(tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode <= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY);
+                    List<MovieItem> tvShowsToPushToGCS = tvShowsWithFullNonNullStreamingUrls.FindAll(tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode <= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY);
+                    // get tvshow from tvShowsWithFullNonNullStreamingUrls that has min number of unavailable episode
+                    if (tvShowsToPushToGCS.Count == 0)
+                    {
+                        MovieItem tvShowToPushToGCS = tvShowsWithFullNonNullStreamingUrls.Find(tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode == tvShowsWithFullNonNullStreamingUrls.Min(x => x.StreamingUrls.Count - x.AvailableEpisode));
+                        return new List<MovieItem>() { tvShowToPushToGCS };
+                    }
                     // get number of unavailable episode of each tvShow in tvShowToPushToGCS
-                    Dictionary<MovieItem, int> unavailableEpisodeOfTvShow = tvShowToPushToGCS.ToDictionary(tvShow => tvShow, tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode);
+                    Dictionary<MovieItem, int> unavailableEpisodeOfTvShow = tvShowsToPushToGCS.ToDictionary(tvShow => tvShow, tvShow => tvShow.StreamingUrls.Count - tvShow.AvailableEpisode);
                     // Handlecase if number of episode of tvShowToPushToGCS is greater than Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
                     // find combination of element in unavailableEpisodeOfTvShow that sum of unavailable episode is equal to Consts.Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY
                     var combinationOfTvShowToPushToGCS = FindCombinationOfTvShowToPushToGCS(unavailableEpisodeOfTvShow);

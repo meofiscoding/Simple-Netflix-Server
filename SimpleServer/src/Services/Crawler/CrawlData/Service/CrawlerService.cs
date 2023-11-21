@@ -25,7 +25,7 @@ namespace CrawlData.Service
             Console.WriteLine("TestCronJob");
         }
 
-        public async Task CrawlMovieData()
+        public async Task CrawlMovieDataAsync()
         {
             //CRAWL MOVIE INFOs
             List<MovieItem> movies = CrawlHelper.CrawlMovieInfo(Consts.MOVIE_WEBSITE_URL);
@@ -35,9 +35,9 @@ namespace CrawlData.Service
                 return;
             }
 
-            var moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
+            List<MovieItem> moviesWithNonNullStreamingUrls = await MovieHelper.GetMoviesWithStreamingUrls(Category.Movies, _database);
             // get movies with category is TVShows which all streamingUrls value is not null
-            var tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
+            List<MovieItem> tvShowsWithFullNonNullStreamingUrls = await MovieHelper.GetMoviesWithStreamingUrls(Category.TVShows, _database);
 
             // CRAWL MOVIE DETAILs
             // loop until tvShowsWithFullNonNullStreamingUrls have an element that its number of streamingUrls + moviesWithNonNullStreamingUrls.Count = numberOfMoviesToPushEachDay
@@ -53,8 +53,8 @@ namespace CrawlData.Service
             //         Console.WriteLine($"Movie {result.MovieName} added to the _database successfully!!");
             //     }
             //     // get all movies from the _database
-            //     movies = await _database.GetAllMovie();
-            //     tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
+            //     tvShowsWithFullNonNullStreamingUrls = await MovieHelper.GetMoviesWithStreamingUrls(Category.TVShows,_database);
+            //     moviesWithNonNullStreamingUrls = await MovieHelper.GetMoviesWithStreamingUrls(Category.Movies, _database);
             // }
 
             // CRAWL MOVIE DETAILs Logic Updated
@@ -66,9 +66,9 @@ namespace CrawlData.Service
                 // add the movie to the _database
                 await _database.UpsertMovieAsync(result);
                 Console.WriteLine($"Movie {result.MovieName} added to the _database successfully!!");
-                moviesWithNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.Movies);
-                tvShowsWithFullNonNullStreamingUrls = MovieHelper.GetMoviesWithStreamingUrls(movies, Category.TVShows);
-                if(tvShowsWithFullNonNullStreamingUrls.Any(tvShow => tvShow.StreamingUrls.Count + moviesWithNonNullStreamingUrls.Count >= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY))
+                moviesWithNonNullStreamingUrls = await MovieHelper.GetMoviesWithStreamingUrls(Category.Movies, _database);
+                tvShowsWithFullNonNullStreamingUrls = await MovieHelper.GetMoviesWithStreamingUrls(Category.TVShows, _database);
+                if (tvShowsWithFullNonNullStreamingUrls.Any(tvShow => tvShow.StreamingUrls.Count + moviesWithNonNullStreamingUrls.Count >= Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY))
                 {
                     break;
                 }

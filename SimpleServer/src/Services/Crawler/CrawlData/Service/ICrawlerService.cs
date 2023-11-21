@@ -4,7 +4,7 @@ namespace CrawlData.Service
 {
     public interface ICrawlerService
     {
-        Task CrawlMovieData();
+        Task CrawlMovieDataAsync();
 
         void TestCronJob();
     }

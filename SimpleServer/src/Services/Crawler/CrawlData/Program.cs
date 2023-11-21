@@ -71,21 +71,28 @@ static async Task ScheduleJob(IServiceProvider serviceProvider)
     var scheduler = await factory.GetScheduler();
     scheduler.JobFactory = new CrawlJobFactory(serviceProvider);
 
-    await scheduler.Start();
+    // await scheduler.Clear();
+    //await scheduler.Start();
+
     var job = JobBuilder.Create<CrawlJob>()
         .WithIdentity("CrawlJob", "CrawlGroup")
         .Build();
     // Schedule the job to run every day at 2:00 AM
     var trigger = TriggerBuilder.Create()
         .WithIdentity("CrawlTrigger", "CrawlGroup")
-        .StartNow()
+        //.StartNow()
         .WithDailyTimeIntervalSchedule(x => x
             .OnEveryDay()
+            // job execute only one
+            .WithRepeatCount(0)
+            // not execute job if not in schedule time
+            .WithMisfireHandlingInstructionDoNothing()
             // set timezone in VietNam
             .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))
-            .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(2, 0)) // Set the desired time
+            .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(3, 0)) // Set the desired time
         )
         .Build();
 
-    await scheduler.ScheduleJob(job, trigger); 
+    await scheduler.Start();
+    await scheduler.ScheduleJob(job, trigger);
 }
