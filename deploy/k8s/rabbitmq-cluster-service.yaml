@@ -2,6 +2,7 @@ apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: rabbitmq-cluster
+  namespace: ingress-nginx
 spec:
   replicas: 1
   resources:
@@ -28,7 +29,7 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Policy
 metadata:
   name: ha-policy
-  namespace: default
+  namespace: ingress-nginx
 spec:
   name: transient # name of the policy
   vhost: "/" # default to '/' if not provided

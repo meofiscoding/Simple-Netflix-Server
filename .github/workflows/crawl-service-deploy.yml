@@ -17,6 +17,7 @@ env:
 
 jobs:
   deploy-to-k8s:
+    environment: production
     permissions:
         actions: read
         # contents: read
@@ -42,7 +43,7 @@ jobs:
           manifest_path: |
             deploy/k8s/rabbitmq-cluster-service.yaml
             deploy/k8s/crawlerdb-secret.yaml
-            deploy/k8s/crawl-service-deploy.yaml
+            deploy/k8s/crawl-service.yaml
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
           image_name: crawldata
