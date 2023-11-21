@@ -61,17 +61,18 @@ namespace CrawlData.Service
             // PUSH MOVIE ASSET TO GCS
             // Only push 5 item of movie to GCS in each day
             // Movie can be both in Movies and TVShows category
-            if (moviesWithNonNullStreamingUrls.Count == 0 && tvShowsWithFullNonNullStreamingUrls.Count == 0)
-            {
-                Log.Error("No movie to push to GCS today!");
-            }
-            else
-            {
-                var moviesToPushToGCS = MovieHelper.GetMoviesToPushToGCS(moviesWithNonNullStreamingUrls, tvShowsWithFullNonNullStreamingUrls);
-                var result = await MovieHelper.PushMovieAssetToGCS(moviesToPushToGCS, _database);
-                // Send event to MassTransit-RabbitMQ
-                await PublishMoviesAsync(result);
-            }
+            // if (moviesWithNonNullStreamingUrls.Count == 0 && tvShowsWithFullNonNullStreamingUrls.Count == 0)
+            // {
+            //     Log.Error("No movie to push to GCS today!");
+            // }
+            // else
+            // {
+            //     var moviesToPushToGCS = MovieHelper.GetMoviesToPushToGCS(moviesWithNonNullStreamingUrls, tvShowsWithFullNonNullStreamingUrls);
+            //     var result = await MovieHelper.PushMovieAssetToGCS(moviesToPushToGCS, _database);
+            //     // Send event to MassTransit-RabbitMQ
+            //     await PublishMoviesAsync(result);
+            // }
+            Console.WriteLine("Done crawling movie data!");
         }
 
         private async Task PublishMoviesAsync(List<MovieItem> moviesToPushToGCS)
