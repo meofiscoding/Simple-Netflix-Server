@@ -2,6 +2,7 @@ using System.Net;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Storage.v1.Data;
 using Google.Cloud.Storage.V1;
+using Serilog;
 
 namespace CrawlData.Helper
 {
@@ -24,7 +25,9 @@ namespace CrawlData.Helper
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Error when get stream from url {filePath}", ex);
+                    Log.Error($"Error when get stream from url {filePath}: {ex.Message}");
+                    // retry to get stream from url
+                    fileStream = HttpClient.GetStreamAsync(filePath).Result;
                 }
             }
             else
