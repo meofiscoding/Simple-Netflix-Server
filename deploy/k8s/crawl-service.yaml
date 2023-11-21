@@ -31,7 +31,7 @@ spec:
             - name: DatabaseSettings__CollectionName
               value: crawledMovies
             - name: EventBusSettings__HostAddress
-              value: ampq://guest:guest@rabbitmq-cluster:5672
+              value: rabbitmq://guest:guest@rabbitmq-cluster:5672
           # resources:
           #   requests:
           #     memory: "64Mi"
