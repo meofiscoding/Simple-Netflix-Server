@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5031
+          "Port": 80
         }
       ],
       "UpstreamHttpMethod": [
@@ -26,7 +26,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5031
+          "Port": 80
         }
       ],
       "UpstreamHttpMethod": [
@@ -46,7 +46,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5031
+          "Port": 80
         }
       ],
       "UpstreamHttpMethod": [
@@ -66,7 +66,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5031
+          "Port": 80
         }
       ],
       "UpstreamHttpMethod": [
@@ -86,7 +86,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5031
+          "Port": 80
         }
       ],
       "UpstreamHttpMethod": [
