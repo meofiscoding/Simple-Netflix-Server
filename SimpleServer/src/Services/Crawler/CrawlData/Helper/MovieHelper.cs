@@ -194,7 +194,7 @@ namespace CrawlData.Helper
                     sumOfUnavailableEpisode += sortedUnavailableEpisodeOfTvShow[i].Value;
                     combinationOfTvShowToPushToGCS.Add(sortedUnavailableEpisodeOfTvShow[i].Key);
 
-                    if (sumOfUnavailableEpisode > Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY)
+                    if (sumOfUnavailableEpisode > Consts.NUMBER_OF_MOVIE_TO_PUSH_EACH_DAY + Consts.ACCEPTABLE_ERROR)
                     {
                         if (i == 0)
                         {
