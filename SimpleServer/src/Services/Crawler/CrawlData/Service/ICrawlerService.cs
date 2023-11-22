@@ -6,6 +6,6 @@ namespace CrawlData.Service
     {
         Task CrawlMovieDataAsync();
 
-        void TestCronJob();
+        Task TestCronJob();
     }
 }

@@ -15,8 +15,8 @@ namespace CrawlData.Job
         }
         public async Task Execute(IJobExecutionContext context)
         {
-            await _crawlerService.CrawlMovieDataAsync();
-            // _crawlerService.TestCronJob();
+            // await _crawlerService.CrawlMovieDataAsync();
+            await _crawlerService.TestCronJob();
             // return Task.CompletedTask;
             
             //retrieve all triggers for the job

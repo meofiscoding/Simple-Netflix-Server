@@ -20,9 +20,31 @@ namespace CrawlData.Service
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public void TestCronJob()
+        public async Task TestCronJob()
         {
-            Console.WriteLine("TestCronJob");
+            List<MovieItem> item = new(){
+                new MovieItem(){
+                    MovieName = "Tết Ở Làng Địa Ngục",
+                    Poster = "https://storage.googleapis.com/simple-netflix/Tet-O-Lang-%C4%90ia-Nguc/poster.jpg",
+                    Status = "Tập 10 HD",
+                    StreamingUrls = new Dictionary<string, string>{
+                        {"1", "https://www.googleapis.com/storage/v1/b/simple-netflix/o/Tet-O-Lang-%C4%90ia-Nguc%2Fepisode-1%2Findex.m3u8"},
+                        {"2", "https://www.googleapis.com/storage/v1/b/simple-netflix/o/Tet-O-Lang-%C4%90ia-Nguc%2Fepisode-2%2Findex.m3u8"},
+                        {"3", "https://www.googleapis.com/storage/v1/b/simple-netflix/o/Tet-O-Lang-%C4%90ia-Nguc%2Fepisode-3%2Findex.m3u8"},
+                        {"4", "https://www.googleapis.com/storage/v1/b/simple-netflix/o/Tet-O-Lang-%C4%90ia-Nguc%2Fepisode-4%2Findex.m3u8"},
+                        {"5", "https://www.googleapis.com/storage/v1/b/simple-netflix/o/Tet-O-Lang-%C4%90ia-Nguc%2Fepisode-5%2Findex.m3u8"}
+                    },
+                    UrlDetail = "https://phimmoiyyy.net/phim-bo/tet-o-lang-dia-nguc-154213",
+                    MovieCategory = Category.Movies,
+                    Description = "Tết Ở Làng Địa Ngục (Netflix) Full HD Trọn bộTết Ở Làng Địa Ngục các hậu duệ của một băng cướp khét tiếng điều tra hàng loạt án mạng tàn bạo ở làng của họ. Liệu đây là nghiệp chướng hay “tác phẩm” của kẻ báo thù?",
+                    Tags = new List<Tag>(){Tag.Hot, Tag.NewSeries},
+                    IsAvailable = false,
+                    AvailableEpisode = 5,
+                    UpdatedAt = DateTime.Now
+                }
+            };
+            await PublishMoviesAsync(item);
+            Console.WriteLine("TestCronJob Done!");
         }
 
         public async Task CrawlMovieDataAsync()

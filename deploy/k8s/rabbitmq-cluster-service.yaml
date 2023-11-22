@@ -22,6 +22,7 @@ spec:
       default_user = guest
       default_pass = guest
       default_user_tags.administrator = true
+      loopback_users = none
   service:
     type: ClusterIP
 ---
