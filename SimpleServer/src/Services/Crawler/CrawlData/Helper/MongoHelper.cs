@@ -46,7 +46,8 @@ namespace CrawlData.Helper
                 .Set(x => x.AvailableEpisode, movie.AvailableEpisode)
                 .Set(x => x.IsAvailable, movie.IsAvailable)
                 .Set(x => x.StreamingUrls, movie.StreamingUrls)
-                .Set(x => x.UpdatedAt, DateTime.Now);
+                .Set(x => x.UpdatedAt, DateTime.Now)
+                .Set(x => x.Poster, movie.Poster);
             _movieCollection.UpdateOne(filter, update);
         }
     }
