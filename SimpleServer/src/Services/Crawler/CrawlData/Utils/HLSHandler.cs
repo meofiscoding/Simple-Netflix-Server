@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using CrawlData.Helper;
+using Serilog;
 
 namespace CrawlData.Utils
 {
@@ -80,6 +81,11 @@ namespace CrawlData.Utils
                 {
                     string segmentName = lines[++i];
                     var segmentUrl = new Uri(new Uri(baseUrl), segmentName).AbsoluteUri;
+                    // if segment Url is incorrect (contain more than 1 http), then return
+                    if (segmentUrl.Split("http").Length > 2)
+                    {
+                        return;
+                    }
                     segmentUrls.Add(segmentUrl);
                     // TODO: Push all segment to Google Cloud Storage
                     GCSHelper.UploadFile(segmentUrl, $"{prefix}/{segmentName}");
@@ -88,7 +94,7 @@ namespace CrawlData.Utils
 
             if (segmentUrls.Count == 0)
             {
-                throw new ArgumentException("No segments found in playlist");
+                Log.Error("No segments found in playlist");
             }
         }
     }
