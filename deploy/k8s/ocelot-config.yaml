@@ -106,5 +106,125 @@ data:
             ]
           }
         },
+         {
+          "DownstreamPathTemplate": "/api/tag/{everything}",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "movie-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamPathTemplate": "/tag/{everything}",
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "movies"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/movies/search?{everything}",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "movie-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamPathTemplate": "/movies/search?{everything}",
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "movies"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/categories",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "movie-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamPathTemplate": "/movies/categories",
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "movies"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/tags",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "movie-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamPathTemplate": "/movies/tags",
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "movies"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/movies/{everything}",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "movie-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamPathTemplate": "/movies/{everything}",
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "movies"
+            ]
+          }
+        },
+        {
+          "DownstreamPathTemplate": "/api/category/{everything}",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "movie-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamPathTemplate": "/category/{everything}",
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "movies"
+            ]
+          }
+        }
       ]
     }
