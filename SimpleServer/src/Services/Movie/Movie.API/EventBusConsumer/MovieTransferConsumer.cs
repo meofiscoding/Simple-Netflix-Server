@@ -23,8 +23,8 @@ namespace Movie.API.EventBusConsumer
         {
             // Add context.Message to database
             var movie = _mapper.Map<MovieInformation>(context.Message);
-            // Add movie to database
-            await _movieService.AddMovieAsync(movie);
+            // Upsert movie to database
+            await _movieService.UpsertMovieAsync(movie);
             _logger.LogInformation($"Movie added to database: {movie.MovieName}");
         }
     }
