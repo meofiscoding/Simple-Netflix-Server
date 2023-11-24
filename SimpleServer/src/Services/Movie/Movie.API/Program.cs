@@ -12,14 +12,9 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        // Uncomment this when in development
-        // options.RequireHttpsMetadata = false;
+        options.RequireHttpsMetadata = false;
         options.Authority = builder.Configuration["IdentityUrl"];
         options.Audience = "movies";
-        // options.TokenValidationParameters = new TokenValidationParameters
-        // {
-        //     ValidateAudience = false
-        // };
     });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -54,7 +49,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

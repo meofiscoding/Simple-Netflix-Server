@@ -13,7 +13,7 @@ namespace Movie.API.Infrastructure.Data
             var database = client.GetDatabase(configuration.GetValue<string>("DatabaseSettings:DatabaseName"));
             Movies = database.GetCollection<MovieInformation>(configuration.GetValue<string>("DatabaseSettings:CollectionName"));
             // seed data
-            SeedMovies();
+            // SeedMovies();
         }
 
         public MovieContext()

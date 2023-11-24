@@ -37,6 +37,8 @@ spec:
               value: simpleNetflixMovie
             - name: DatabaseSettings__CollectionName
               value: movies
+            - name: EventBusSettings__HostAddress
+              value: rabbitmq://guest:guest@rabbitmq-cluster:5672
           resources:
             requests:
               memory: "64Mi"
