@@ -2,7 +2,6 @@
 using EventBus.Message.Events;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Entities;
 
 namespace Movie.API.Models
 {
