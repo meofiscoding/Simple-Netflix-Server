@@ -4,6 +4,7 @@ using Movie.API.Models;
 using MongoDB.Driver;
 using EventBus.Message.Common.Enum;
 using MongoDB.Bson;
+using Diacritics.Extensions;
 
 namespace Movie.API.Repository
 {
@@ -115,7 +116,20 @@ namespace Movie.API.Repository
             // TODO: implement full-text search
             if (!string.IsNullOrEmpty(queryModel.Query))
             {
-                filter &= filterBuilder.Regex(nameof(MovieInformation.MovieName), new BsonRegularExpression(queryModel.Query, "i"));
+                var allMovies = (await _context.Movies.FindAsync(_ => true)).ToList();
+                // remove diacritics
+                var query = queryModel.Query.RemoveDiacritics();
+                var filteredMovies = allMovies
+                    .Where(
+                        movie => movie.MovieName
+                            .RemoveDiacritics()
+                            // remove whitespaces
+                            .Replace(" ", "")
+                            .Contains(queryModel.Query, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .Select(movie => movie.Id)
+                    .ToList();
+                filter &= filterBuilder.In(nameof(MovieInformation.Id), filteredMovies);
             }
 
             if (filter == filterBuilder.Empty)
