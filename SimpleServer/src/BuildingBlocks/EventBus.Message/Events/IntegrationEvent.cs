@@ -4,7 +4,7 @@ namespace EventBus.Message.Events
 {
     public class IntegrationEvent
     {
-        public Guid Id { get; } = Guid.NewGuid();
+        // public virtual Guid Id { get; } = Guid.NewGuid();
 
         public DateTime CreationDate { get; } = DateTime.UtcNow;
 
@@ -13,9 +13,9 @@ namespace EventBus.Message.Events
 
         }
 
-        public IntegrationEvent(Guid id, DateTime creationDate)
+        public IntegrationEvent(DateTime creationDate)
         {
-            Id = id;
+            // Id = id;
             CreationDate = creationDate;
         }
     }
