@@ -47,4 +47,4 @@ jobs:
           namespace: ${{ env.NAMESPACE }}
           image_name: movie.api
           deployment_name: movie-api-deployment
-          service_name: movie-api-service
+          service_name: movie-api-service 
