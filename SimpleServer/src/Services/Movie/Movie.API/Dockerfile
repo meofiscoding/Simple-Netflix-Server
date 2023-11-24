@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/Services/Movie/Movie.API/Movie.API.csproj", "src/Services/Movie/Movie.API/"]
 COPY ["src/Services/Common/Services.Common/Services.Common.csproj", "src/Services/Common/Services.Common/"]
+COPY ["src/BuildingBlocks/EventBus.Message/EventBus.Message.csproj", "src/BuildingBlocks/EventBus.Message/"]
 RUN dotnet restore "src/Services/Movie/Movie.API/Movie.API.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Movie/Movie.API"
