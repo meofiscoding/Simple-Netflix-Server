@@ -43,7 +43,7 @@ jobs:
           manifest_path: |
             deploy/k8s/rabbitmq-cluster-service.yaml
             deploy/k8s/crawlerdb-secret.yaml
-            deploy/k8s/google-credentials-secret.yaml
+            deploy/k8s/google-credential-secret.yaml
             deploy/k8s/crawl-service.yaml
           registry_endpoint: ${{ secrets.REGISTRY_ENDPOINT }}
           namespace: ${{ env.NAMESPACE }}
