@@ -12,11 +12,12 @@ namespace Payment.API.GrpcService
             _paymentProtoServiceClient = paymentProtoServiceClient ?? throw new ArgumentNullException(nameof(paymentProtoServiceClient));
         }
 
-        public async Task<PaymentResponse> UpdateUserMembership(string userId, bool success){
+        public async Task<PaymentResponse> UpdateUserMembership(string userEmail, bool success)
+        {
             var paymentRequest = new PaymentRequest
             {
-                UserId = userId,
-                Success = success
+                UserEmail = userEmail,
+                IsPaymentSuccess = success
             };
             return await _paymentProtoServiceClient.UpdateUserMembershipAsync(paymentRequest);
         }

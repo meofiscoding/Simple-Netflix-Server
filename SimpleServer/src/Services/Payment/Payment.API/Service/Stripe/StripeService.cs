@@ -15,14 +15,14 @@ namespace Payment.API.Service.Stripe
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<string> CheckOut(Subcription product)
+        public async Task<string> CheckOut(Subcription product, string userEmail)
         {
             try
             {
                 // Get the base URL for the subscription
-                var request = _httpContextAccessor.HttpContext?.Request ?? throw new Exception("Could not get request to checkout");
-                var baseUrl = $"{request.Scheme}://{request.Host}";
-
+                //var request = _httpContextAccessor.HttpContext?.Request ?? throw new Exception("Could not get request to checkout");
+                //var baseUrl = $"{request.Scheme}://{request.Host}";
+                var baseUrl = "https://localhost:5000";
                 var options = new SessionCreateOptions
                 {
                     // Stripe calls these user defined endpoints
@@ -38,33 +38,25 @@ namespace Payment.API.Service.Stripe
                     {
                         new SessionLineItemOptions
                         {
-                            Price = product.StripePriceId,
-                            //PriceData = new SessionLineItemPriceDataOptions
-                            //{
-                            //    UnitAmount = product.Price * 100,
-                            //    Currency = "usd",
-                            //    ProductData = new SessionLineItemPriceDataProductDataOptions
-                            //    {
-                            //        Name = $"Subsciption Plan: {product.Plan}",
-                            //        Description = $"Monthly price with Resolution: {product.Resolution}\n Quality:{product.VideoQuality}"
-                            //    }
-                            //},
+                            Price = "price_1OGGiEHlvWn5zVy0jA2kj4bC",
                             Quantity = 1
                         }
                     },
                     Mode = "subscription",
-                    SubscriptionData = new SessionSubscriptionDataOptions
-                    {
-                        BillingCycleAnchor = DateTime.UtcNow,
-                    },
-                    InvoiceCreation = new SessionInvoiceCreationOptions
-                    {
-                        Enabled = true,
-                    },
+                    CustomerEmail = userEmail
+
+                    // SubscriptionData = new SessionSubscriptionDataOptions
+                    // {
+                    //     BillingCycleAnchor = DateTime.UtcNow,
+                    // },
+                    // InvoiceCreation = new SessionInvoiceCreationOptions
+                    // {
+                    //     Enabled = true,
+                    // },
                 };
 
                 var service = new SessionService();
-                var session = await service.CreateAsync(options);
+                Session session = await service.CreateAsync(options);
 
                 return session.Id;
             }

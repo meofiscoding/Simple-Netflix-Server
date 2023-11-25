@@ -1,4 +1,3 @@
-using System;
 using Identity.Grpc.Entity;
 using Microsoft.AspNetCore.Identity;
 using Identity.Grpc.Protos;
@@ -17,18 +16,21 @@ namespace Identity.Grpc.Service
 
         public override async Task<PaymentResponse> UpdateUserMembership(PaymentRequest request, ServerCallContext context)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            // get user by email address
+            var user = await _userManager.FindByEmailAsync(request.UserEmail);
+            // var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
             {
                 return new PaymentResponse
                 {
-                    Success = false,
-                    Message = "User not found"
+                    IsUpdateRoleSuccessSuccess = false,
+                    Message = "User not found",
+                    UserId = null
                 };
             }
 
             var result = new IdentityResult();
-            if (request.Success)
+            if (request.IsPaymentSuccess)
             {
                 // if user have role user, then add role user
                 var oldRole = await _userManager.GetRolesAsync(user);
@@ -50,8 +52,9 @@ namespace Identity.Grpc.Service
             }
             return new PaymentResponse
             {
-                Success = result.Succeeded,
-                Message = result.Succeeded ? "User updated" : $"User can not be updated due to {result.Errors}"
+                IsUpdateRoleSuccessSuccess = result.Succeeded,
+                Message = result.Succeeded ? "User updated" : $"User can not be updated due to {result.Errors}",
+                UserId = user.Id
             };
         }
 

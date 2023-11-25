@@ -5,6 +5,6 @@ namespace Payment.API.Service.Stripe
 {
     public interface IStripeService
     {
-        Task<string> CheckOut(Subcription product);
+        Task<string> CheckOut(Subcription product, string userEmail);
     }
 }
