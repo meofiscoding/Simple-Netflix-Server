@@ -90,15 +90,9 @@
         }
       ],
       "UpstreamHttpMethod": [
-        "POST"
+        "GET"
       ],
-      "UpstreamPathTemplate": "/payment/success",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "IdentityApiKey",
-        "AllowedScopes": [
-          "payment"
-        ]
-      }
+      "UpstreamPathTemplate": "/subscription/success"
     },
     {
       "DownstreamPathTemplate": "/api/tag/{everything}",

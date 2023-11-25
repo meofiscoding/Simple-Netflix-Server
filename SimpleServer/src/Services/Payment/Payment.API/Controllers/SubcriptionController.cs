@@ -16,7 +16,6 @@ using Stripe.Checkout;
 namespace Payment.API.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "User")]
     public class SubcriptionController : ControllerBase
     {
         private readonly PaymentDBContext _context;
@@ -36,6 +35,7 @@ namespace Payment.API.Controllers
 
         // GET: api/pricingPlans
         [HttpGet("api/pricingPlans")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<IEnumerable<Subcriptions>>> GetSubcriptions()
         {
             if (_context.Subcriptions == null)
@@ -50,6 +50,7 @@ namespace Payment.API.Controllers
 
         // GET: api/pricingPlan/5
         [HttpGet("api/pricingPlan/{id}")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult<SubcriptionsCheckOutModel>> GetSubcription(int id)
         {
             var subcription = await _context.Subcriptions.FindAsync(id) ?? throw new Exception("Plan not found");
@@ -62,13 +63,16 @@ namespace Payment.API.Controllers
 
         // POST: api/subscription
         [HttpPost("api/subscription")]
-        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] UserPaymentModel model)
+        [Authorize(Roles = "User")]
+        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] int planId)
         {
-            var subcription = await _context.Subcriptions.FindAsync(model.PricingPlanId) ?? throw new Exception("Plan not found");
-            // store userId and pricingPlanId temporarily to use in checkout success
             try
             {
-                var sessionId = await _stripeService.CheckOut(subcription);
+                var subcription = await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
+                // get current userId
+                var userId = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("nameidentifier"))?.Value;
+                var userEmail = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("emailaddress"))?.Value;
+                var sessionId = await _stripeService.CheckOut(subcription, userEmail);
                 return TypedResults.Ok(sessionId);
             }
             catch (System.Exception ex)
@@ -79,6 +83,7 @@ namespace Payment.API.Controllers
         }
 
         [HttpPost("api/create-payment-intent")]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> CreatePaymentIntent([FromBody] int amount)
         {
             var options = new PaymentIntentCreateOptions
@@ -98,35 +103,75 @@ namespace Payment.API.Controllers
         }
 
         // POST: subscription/success
-        [HttpPost("subscription/success")]
-        public async Task<IActionResult> CheckoutSuccess([FromBody] int planId)
+        //[HttpPost("subscription/success")]
+        //public async Task<IActionResult> CheckoutSuccess([FromBody] int planId)
+        //{
+        //    // get subcription
+        //    Subcription Subcription = await _context.Subcriptions.FindAsync(planId);
+        //    if (Subcription == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    // get current userId
+        //    var userId = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("nameidentifier"))?.Value;
+        //    if (userId == null)
+        //    {
+        //        return Unauthorized();
+        //    }
+        //    // Communicate with IdentityGrpcService to update user membership
+        //    var response = await _paymentGrpcService.UpdateUserMembership(userId, true);
+
+        //    // TODO: save user payment to database
+        //    var userPayment = new UserPayment()
+        //    {
+        //        Subcription = Subcription,
+        //        UserId = userId,
+        //    };
+        //    _context.UserPayments.Add(userPayment);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok();
+        //}
+
+        [HttpGet("subscription/success")]
+        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutSuccess([FromQuery] string sessionId)
         {
-            // get subcription
-            Subcription Subcription = await _context.Subcriptions.FindAsync(planId);
-            if (Subcription == null)
+            try
             {
-                return NotFound();
+                // Insert here failure data in data base
+                var service = new SessionService();
+                SessionGetOptions options = new SessionGetOptions
+                {
+                    Expand = new List<string> { "line_items" }
+                };
+                var sessionInfo = service.Get(sessionId, options);
+                var priceId = sessionInfo.LineItems.Data.FirstOrDefault()?.Price.Id
+                    ?? throw new Exception("PriceId not found");
+
+                var subcription = _context.Subcriptions.FirstOrDefault(x => x.StripePriceId == priceId)
+                    ?? throw new Exception("Subscription not found");
+
+                var userEmail = sessionInfo.CustomerEmail;
+
+                // Communicate with IdentityGrpcService to update user membership
+                var response = await _paymentGrpcService.UpdateUserMembership(userEmail, true);
+                var userPayment = new UserPayment()
+                {
+                    Subcription = subcription,
+                    UserId = response.UserId,
+                };
+
+                _context.UserPayments.Add(userPayment);
+                await _context.SaveChangesAsync();
+                // return a redirect to the front end success page
+                return TypedResults.Redirect("http://localhost:4200/subscription/success");
             }
-
-            // get current userId
-            var userId = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("nameidentifier"))?.Value;
-            if (userId == null)
+            catch (Exception ex)
             {
-                return Unauthorized();
+                _logger.LogError("error into order Controller on route /canceled " + ex.Message);
+                return TypedResults.BadRequest();
             }
-            // Communicate with IdentityGrpcService to update user membership
-            var response = await _paymentGrpcService.UpdateUserMembership(userId, true);
-
-            // TODO: save user payment to database
-            var userPayment = new UserPayment()
-            {
-                Subcription = Subcription,
-                UserId = userId,
-            };
-            _context.UserPayments.Add(userPayment);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
 
         /// <summary>

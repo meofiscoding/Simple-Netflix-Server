@@ -12,8 +12,11 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MinRequestBodyDataRate = null;
 
+    // options.ListenAnyIP(50500,
+    //    listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
+    //TODO: Uncomment when deploy
     options.ListenAnyIP(80,
-       listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
+    listenOptions => listenOptions.Protocols = HttpProtocols.Http2);
 });
 var configuration = builder.Configuration;
 // Configure DbContext

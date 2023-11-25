@@ -8,16 +8,18 @@ service PaymentProtoService {
 }
 
 // Input: 
-// User's id (field number 1)
+// User's email (field number 1)
 // Payment status (field number 2)
 message PaymentRequest {
-    string userId = 1;
-    bool success = 2;
+    string userEmail = 1;
+    bool isPaymentSuccess = 2;
 }
 
 // Response:
 // Payment status (field number 1)
 message PaymentResponse {
-    bool success = 1;
+    bool isUpdateRoleSuccessSuccess = 1;
+    string Message = 2;
+    string userId = 3;
 }
 
