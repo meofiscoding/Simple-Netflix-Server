@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Payment.API.Data;
@@ -11,9 +12,11 @@ using Payment.API.Data;
 namespace Payment.API.Data.Migrations
 {
     [DbContext(typeof(PaymentDBContext))]
-    partial class PaymentDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231125075253_stripe_integration")]
+    partial class stripe_integration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
