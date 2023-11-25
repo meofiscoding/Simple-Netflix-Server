@@ -102,11 +102,13 @@ namespace Payment.API
                                 }).ToList()
                         });
                 }
-                context.SaveChanges();
 
                 // check if there are any product on stripe
-                var products = service.List(new ProductListOptions { Limit = 100 });
-                if (products.Data.Count > 0)
+                var products = service.List(new ProductListOptions { Limit = 100 })
+                    // select all available products
+                    .Where(x => x.Active == true);
+
+                if (products.Any())
                 {
                     return Task.CompletedTask;
                 }
@@ -127,8 +129,12 @@ namespace Payment.API
                         },
                         Name = subcription.Plan.ToString(),
                     });
+                    subcription.StripeProductId = product.Id;
+                    subcription.StripePriceId = product.DefaultPriceId;
+                    // update subcription
                 }
 
+                context.SaveChanges();
                 return Task.CompletedTask;
             });
         }

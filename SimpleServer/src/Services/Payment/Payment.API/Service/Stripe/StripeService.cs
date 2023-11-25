@@ -29,6 +29,7 @@ namespace Payment.API.Service.Stripe
                     SuccessUrl = $"{baseUrl}/subscription/success?sessionId={{CHECKOUT_SESSION_ID}}",
                     CancelUrl = $"{baseUrl}/subscription/canceled",
 
+
                     PaymentMethodTypes = new List<string>
                     {
                         "card"
@@ -37,20 +38,25 @@ namespace Payment.API.Service.Stripe
                     {
                         new SessionLineItemOptions
                         {
-                            PriceData = new SessionLineItemPriceDataOptions
-                            {
-                                UnitAmount = product.Price * 100,
-                                Currency = "usd",
-                                ProductData = new SessionLineItemPriceDataProductDataOptions
-                                {
-                                    Name = $"Subsciption Plan: {product.Plan}",
-                                    Description = $"Monthly price with Resolution: {product.Resolution}\n Quality:{product.VideoQuality}"
-                                }
-                            },
+                            Price = product.StripePriceId,
+                            //PriceData = new SessionLineItemPriceDataOptions
+                            //{
+                            //    UnitAmount = product.Price * 100,
+                            //    Currency = "usd",
+                            //    ProductData = new SessionLineItemPriceDataProductDataOptions
+                            //    {
+                            //        Name = $"Subsciption Plan: {product.Plan}",
+                            //        Description = $"Monthly price with Resolution: {product.Resolution}\n Quality:{product.VideoQuality}"
+                            //    }
+                            //},
                             Quantity = 1
                         }
                     },
-                    Mode = "payment",
+                    Mode = "subscription",
+                    SubscriptionData = new SessionSubscriptionDataOptions
+                    {
+                        BillingCycleAnchor = DateTime.UtcNow,
+                    },
                     InvoiceCreation = new SessionInvoiceCreationOptions
                     {
                         Enabled = true,
