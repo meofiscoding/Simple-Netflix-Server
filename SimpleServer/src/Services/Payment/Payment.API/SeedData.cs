@@ -3,6 +3,7 @@ using Payment.API.Data;
 using Payment.API.Enum;
 using Payment.API.Entity;
 using Polly;
+using Stripe;
 
 namespace Payment.API
 {
@@ -10,6 +11,7 @@ namespace Payment.API
     {
         public static async Task InitializeDatabase(IApplicationBuilder app)
         {
+            var service = new ProductService();
             var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope() ?? throw new Exception("Could not create scope");
             var context = serviceScope.ServiceProvider.GetRequiredService<PaymentDBContext>();
             var retry = Policy
@@ -101,6 +103,32 @@ namespace Payment.API
                         });
                 }
                 context.SaveChanges();
+
+                // check if there are any product on stripe
+                var products = service.List(new ProductListOptions { Limit = 100 });
+                if (products.Data.Count > 0)
+                {
+                    return Task.CompletedTask;
+                }
+                // get all subcriptions to create product on stripe
+                var subcriptions = context.Subcriptions.ToList();
+                foreach (var subcription in subcriptions)
+                {
+                    var product = service.Create(new ProductCreateOptions
+                    {
+                        DefaultPriceData = new ProductDefaultPriceDataOptions
+                        {
+                            Currency = "usd",
+                            UnitAmount = subcription.Price * 100,
+                            Recurring = new ProductDefaultPriceDataRecurringOptions
+                            {
+                                Interval = "month"
+                            },
+                        },
+                        Name = subcription.Plan.ToString(),
+                    });
+                }
+
                 return Task.CompletedTask;
             });
         }
