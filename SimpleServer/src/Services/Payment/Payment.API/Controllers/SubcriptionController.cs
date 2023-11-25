@@ -64,11 +64,11 @@ namespace Payment.API.Controllers
         // POST: api/subscription
         [HttpPost("api/subscription")]
         [Authorize(Roles = "User")]
-        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] UserPaymentModel model)
+        public async Task<Results<Ok<string>, BadRequest>> PostSubcription([FromBody] int planId)
         {
             try
             {
-                var subcription = await _context.Subcriptions.FindAsync(model.PricingPlanId) ?? throw new Exception("Plan not found");
+                var subcription = await _context.Subcriptions.FindAsync(planId) ?? throw new Exception("Plan not found");
                 // get current userId
                 var userId = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("nameidentifier"))?.Value;
                 var userEmail = _httpContextAccessor.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type.Contains("emailaddress"))?.Value;
@@ -135,7 +135,7 @@ namespace Payment.API.Controllers
         //}
 
         [HttpGet("subscription/success")]
-        public async Task<IActionResult> Success([FromQuery] string sessionId)
+        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutSuccess([FromQuery] string sessionId)
         {
             try
             {
@@ -164,12 +164,13 @@ namespace Payment.API.Controllers
 
                 _context.UserPayments.Add(userPayment);
                 await _context.SaveChangesAsync();
-                return Ok();
+                // return a redirect to the front end success page
+                return TypedResults.Redirect("http://localhost:4200/subscription/success");
             }
             catch (Exception ex)
             {
                 _logger.LogError("error into order Controller on route /canceled " + ex.Message);
-                return BadRequest();
+                return TypedResults.BadRequest();
             }
         }
 
