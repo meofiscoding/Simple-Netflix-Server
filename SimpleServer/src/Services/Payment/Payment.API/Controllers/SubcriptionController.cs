@@ -19,18 +19,20 @@ namespace Payment.API.Controllers
     public class SubcriptionController : ControllerBase
     {
         private readonly PaymentDBContext _context;
+        private readonly IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SubcriptionController> _logger;
         private readonly IStripeService _stripeService;
         private readonly PaymentGrpcService _paymentGrpcService;
 
-        public SubcriptionController(PaymentDBContext context, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, PaymentGrpcService paymentGrpcService)
+        public SubcriptionController(PaymentDBContext context, IConfiguration config, IHttpContextAccessor httpContextAccessor, ILogger<SubcriptionController> logger, IStripeService stripeService, PaymentGrpcService paymentGrpcService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _stripeService = stripeService;
             _paymentGrpcService = paymentGrpcService;
+            _config = config;
         }
 
         // GET: api/pricingPlans
@@ -82,24 +84,60 @@ namespace Payment.API.Controllers
             }
         }
 
-        [HttpPost("api/create-payment-intent")]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> CreatePaymentIntent([FromBody] int amount)
+        //[HttpPost("api/create-payment-intent")]
+        //[Authorize(Roles = "User")]
+        //public async Task<IActionResult> CreatePaymentIntent([FromBody] int amount)
+        //{
+        //    var options = new PaymentIntentCreateOptions
+        //    {
+        //        Amount = amount * 100,
+        //        Currency = "usd",
+        //        PaymentMethodTypes = new List<string>
+        //        {
+        //            "card",
+        //        }
+        //    };
+
+        //    var service = new PaymentIntentService();
+        //    var paymentIntent = await service.CreateAsync(options);
+
+        //    return Ok(paymentIntent);
+        //}
+
+        // Customer Portal
+        [HttpPost]
+        [Route("api/create-portal-session")]
+        [Authorize(Roles = "Member")]
+        public async Task<IActionResult> CreatePortalSession([FromBody] string userEmail)
         {
-            var options = new PaymentIntentCreateOptions
+            // Sets up a Billing Portal configuration
+            var options = new Stripe.BillingPortal.ConfigurationCreateOptions
             {
-                Amount = amount * 100,
-                Currency = "usd",
-                PaymentMethodTypes = new List<string>
+                BusinessProfile = new Stripe.BillingPortal.ConfigurationBusinessProfileOptions
                 {
-                    "card",
-                }
+                    Headline = "Simple Netflix partners with Stripe for simplified billing.",
+                },
+                Features = new Stripe.BillingPortal.ConfigurationFeaturesOptions
+                {
+                    InvoiceHistory = new Stripe.BillingPortal.ConfigurationFeaturesInvoiceHistoryOptions
+                    {
+                        Enabled = true,
+                    },
+                },
             };
+            var service = new Stripe.BillingPortal.ConfigurationService();
+            await service.CreateAsync(options);
 
-            var service = new PaymentIntentService();
-            var paymentIntent = await service.CreateAsync(options);
+            var customer = await _stripeService.GetCustomerByEmail(userEmail);
+            var sessionServiceOptions = new Stripe.BillingPortal.SessionCreateOptions
+            {
+                Customer = customer.Id,
+                ReturnUrl = "http://localhost:4200/account",
+            };
+            var sessionService = new Stripe.BillingPortal.SessionService();
+            var session = await sessionService.CreateAsync(sessionServiceOptions);
 
-            return Ok(paymentIntent);
+            return Ok(session);
         }
 
         // POST: subscription/success
@@ -162,8 +200,9 @@ namespace Payment.API.Controllers
                     UserId = response.UserId,
                 };
 
-                _context.UserPayments.Add(userPayment);
-                await _context.SaveChangesAsync();
+                // TODO: Uncomment when need to serve explicit service based on user subscription
+                // _context.UserPayments.Add(userPayment);
+                // await _context.SaveChangesAsync();
                 // return a redirect to the front end success page
                 return TypedResults.Redirect("http://localhost:4200/subscription/success");
             }
@@ -173,6 +212,57 @@ namespace Payment.API.Controllers
                 return TypedResults.BadRequest();
             }
         }
+
+        [Route("stripe/webhook")]
+        [HttpPost]
+        public async Task<Results<RedirectHttpResult, BadRequest>> StripeWebHook()
+        {
+            // read webhook secret from configuration
+            string endpointSecret = _config["Stripe:WebhookSecret"]
+                ?? throw new Exception("Stripe:WebhookSecret not found");
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            try
+            {
+                var stripeEvent = EventUtility.ConstructEvent(json,
+                    Request.Headers["Stripe-Signature"], endpointSecret);
+
+                // Handle the event
+                if (stripeEvent.Type == Events.CustomerSubscriptionUpdated)
+                {
+                    // If cancel_at_period_end is true, the subscription is canceled at the end of its billing period.
+                    if (stripeEvent.Data.Object is Subscription subscription)
+                    {
+                        if (subscription.CancelAtPeriodEnd == true)
+                        {
+                            // Communicate with IdentityGrpcService to update user membership
+                            var response = await _paymentGrpcService.UpdateUserMembership(subscription.Customer.Email, false);
+                            // redirect to the front end cancel page
+                            return TypedResults.Redirect("http://localhost:4200/subscription/cancel");
+                        }
+                    }
+                }
+
+                // If user update email information
+                if (stripeEvent.Type == Events.CustomerUpdated)
+                {
+                    if (stripeEvent.Data.Object is Customer customer)
+                    {
+                        // Communicate with IdentityGrpcService to update user membership
+                        var response = await _paymentGrpcService.UpdateUserEmail(customer.Email);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Unhandled event type: {0}", stripeEvent.Type);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error into order Controller on route /webhook " + ex.Message);
+            }
+            return TypedResults.BadRequest();
+        }
+
 
         /// <summary>
         /// this API is going to be hit when order is a failure

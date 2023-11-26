@@ -5,6 +5,7 @@ namespace Payment.API.Model
     public class Subcriptions
     {
         public int Id { get; set; }
+        
         public string PlanType { get; set; } = string.Empty;
 
         public string Price { get; set; } = string.Empty;

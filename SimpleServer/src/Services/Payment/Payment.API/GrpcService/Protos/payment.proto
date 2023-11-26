@@ -5,6 +5,17 @@ option csharp_namespace ="Payment.API.GrpcService.Protos";
 service PaymentProtoService {
     // get user's payment status to update user's role
     rpc UpdateUserMembership (PaymentRequest) returns (PaymentResponse);
+    // Update user email
+    rpc UpdateUserEmail (CustomerRequest) returns (CustomerResponse);
+}
+
+message CustomerRequest{
+    string userEmail = 1;
+}
+
+message CustomerResponse{
+    bool isUpdateEmailSuccess = 1;
+    string message = 2; 
 }
 
 // Input: 
@@ -19,7 +30,6 @@ message PaymentRequest {
 // Payment status (field number 1)
 message PaymentResponse {
     bool isUpdateRoleSuccessSuccess = 1;
-    string Message = 2;
+    string message = 2;
     string userId = 3;
 }
-

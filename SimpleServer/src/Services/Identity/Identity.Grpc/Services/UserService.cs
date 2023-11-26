@@ -58,5 +58,29 @@ namespace Identity.Grpc.Service
             };
         }
 
+        public override async Task<CustomerResponse> UpdateUserEmail(CustomerRequest request, ServerCallContext context)
+        {
+            // get user by email address
+            var user = await _userManager.FindByEmailAsync(request.UserEmail);
+            // var user = await _userManager.FindByIdAsync(request.UserId);
+            if (user == null)
+            {
+                return new CustomerResponse
+                {
+                    IsUpdateEmailSuccess = false,
+                    Message = "User not found",
+                };
+            }
+
+            user.Email = request.UserEmail;
+            user.UserName = request.UserEmail;
+            var result = await _userManager.UpdateAsync(user);
+            return new CustomerResponse
+            {
+                IsUpdateEmailSuccess = result.Succeeded,
+                Message = result.Succeeded ? "User updated" : $"User can not be updated due to {result.Errors}",
+            };
+        }
+
     }
 }
