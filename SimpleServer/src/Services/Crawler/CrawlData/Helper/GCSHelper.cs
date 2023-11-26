@@ -55,9 +55,9 @@ namespace CrawlData.Helper
             var storageObject = storage.GetObject(Consts.BUCKET_NAME, objectName);
             storageObject.Acl ??= new List<ObjectAccessControl>();
             storage.UpdateObject(storageObject, new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
-            Console.WriteLine(objectName + " is now public and can be fetched from " + storageObject.SelfLink);
             // get public url
             var publicUrl = $"https://storage.googleapis.com/{Consts.BUCKET_NAME}/{objectName}";
+            Console.WriteLine(objectName + " is now public and can be fetched from " + publicUrl);
             return publicUrl;
         }
 

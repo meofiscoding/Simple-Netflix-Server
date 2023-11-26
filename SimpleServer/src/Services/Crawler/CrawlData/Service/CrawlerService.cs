@@ -123,6 +123,7 @@ namespace CrawlData.Service
                 {
                     var moviePublishedEvent = _mapper.Map<TransferMovieListEvent>(movie);
                     await _publishEndpoint.Publish(moviePublishedEvent);
+                    Log.Information($"Movie {movie.MovieName} published to MassTransit-RabbitMQ successfully!");
                 }
             }
             catch (System.Exception ex)
