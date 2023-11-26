@@ -35,17 +35,17 @@ namespace CrawlData.Utils
             ParseHLSPlaylist(playlist, playlistUriPrefix, episode == null ? $"{movieName}/hls" : $"{movieName}/{episode}/hls");
             string playlistName = (episode == null ? "" : $"{episode}/") + $"hls/{playlistUri.AbsoluteUri.Split('/').Last()}";
 
-            // TODO: Upload the playlist to Google Cloud Storage
+            // Upload the playlist to Google Cloud Storage
             string playlistUrl = GCSHelper.UploadFile(new MemoryStream(Encoding.UTF8.GetBytes(playlist)), $"{movieName}/{playlistName}");
 
-            // TODO: Edit reference to segment in playlistMaster to point to playlistUrl
+            // Edit reference to segment in playlistMaster to point to playlistUrl
             // Replace the last line of the playlistMaster with the playlistUrl
-            playlistMaster = playlistMaster[..(playlistMaster.LastIndexOf('\n') + 1)] + playlistName;
+            playlistMaster = playlistMaster[..(playlistMaster.LastIndexOf('\n') + 1)] + $"hls/{playlistUri.AbsoluteUri.Split('/').Last()}";
 
             // Get stream content from playlistMaster
             Stream playlistMasterContent = new MemoryStream(Encoding.UTF8.GetBytes(playlistMaster));
 
-            // TODO: Upload the playlistMaster to Google Cloud Storage and return the URL
+            // Upload the playlistMaster to Google Cloud Storage and return the URL
             return GCSHelper.UploadFile(playlistMasterContent, episode == null ? $"{movieName}/{hlsUrl.Split('/').Last()}" : $"{movieName}/{episode}/{hlsUrl.Split('/').Last()}");
         }
 
