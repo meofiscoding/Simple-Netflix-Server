@@ -10,7 +10,7 @@ namespace Watchlist.API.Infrastructure.Data
         {
             var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
             var database = client.GetDatabase(configuration.GetValue<string>("DatabaseSettings:DatabaseName"));
-            WatchLists = database.GetCollection<UserWatchList>("userWatchList");
+            SavedMovies = database.GetCollection<UserWatchList>("userSavedList");
             UnfinishedMovies = database.GetCollection<UserUnfinishedMovies>("userUnfinishedMovies");
         }
 
@@ -19,7 +19,7 @@ namespace Watchlist.API.Infrastructure.Data
         }
 
 
-        public IMongoCollection<UserWatchList> WatchLists { get; }
+        public IMongoCollection<UserWatchList> SavedMovies { get; }
 
         public IMongoCollection<UserUnfinishedMovies> UnfinishedMovies { get; }
     }

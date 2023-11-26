@@ -1,4 +1,5 @@
 ﻿using Watchlist.API.Infrastructure.Data;
+using Watchlist.API.Repository.UnfinishedList;
 using Watchlist.API.Repository.WatchList;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,8 @@ builder.Services.AddSwaggerGen();
 
 // DI for DbContext and Repository
 builder.Services.AddScoped<IWatchListContext, WatchListContext>();
-builder.Services.AddScoped<IWatchListRepository, WatchListRepository>();
+builder.Services.AddScoped<ISavedWatchListRepository, SavedWatchListRepository>();
+builder.Services.AddScoped<IFinishedListRepository, FinishedListRepository>();
 
 var app = builder.Build();
 

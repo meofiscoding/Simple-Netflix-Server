@@ -6,15 +6,15 @@ using Watchlist.API.Repository.WatchList;
 
 namespace Watchlist.API.Controllers
 {
-    //[Authorize(Roles = "Member")]
+    [Authorize(Roles = "Member")]
     [Route("api/watchList")]
-    public class WatchListController : Controller
+    public class SavedWatchListController : Controller
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWatchListRepository _watchListService;
-        private readonly ILogger<WatchListController> _logger;
+        private readonly ILogger<SavedWatchListController> _logger;
 
-        public WatchListController(IWatchListRepository watchListService, ILogger<WatchListController> logger, IHttpContextAccessor httpContextAccessor)
+        public SavedWatchListController(IWatchListRepository watchListService, ILogger<SavedWatchListController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _watchListService = watchListService;
             _logger = logger;

@@ -5,7 +5,7 @@ namespace Watchlist.API.Infrastructure.Data
 {
     public interface IWatchListContext
     {
-        IMongoCollection<UserWatchList> WatchLists { get; }
+        IMongoCollection<UserWatchList> SavedMovies { get; }
         IMongoCollection<UserUnfinishedMovies> UnfinishedMovies { get; }
     }
 }
