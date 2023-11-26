@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.API", "src\Services
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Grpc", "src\Services\Identity\Identity.Grpc\Identity.Grpc.csproj", "{D4025862-FCFB-4FC4-BDDA-42127817C5B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchlist.API", "src\Services\WatchlistService\Watchlist.API\Watchlist.API.csproj", "{19FC313F-7235-41E9-9B3E-46D8736051D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{D4025862-FCFB-4FC4-BDDA-42127817C5B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4025862-FCFB-4FC4-BDDA-42127817C5B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4025862-FCFB-4FC4-BDDA-42127817C5B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19FC313F-7235-41E9-9B3E-46D8736051D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19FC313F-7235-41E9-9B3E-46D8736051D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19FC313F-7235-41E9-9B3E-46D8736051D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19FC313F-7235-41E9-9B3E-46D8736051D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +135,7 @@ Global
 		{B28B8B14-5D5E-4F71-8D29-8F4FA518E63B} = {5DB32E24-821A-4265-8866-5FA3DD7E5E54}
 		{A2136994-728F-4D71-87F9-E11E6DD78790} = {D6B1FD89-8AD1-46A3-A89C-6A73DEFE7D81}
 		{D4025862-FCFB-4FC4-BDDA-42127817C5B0} = {96C41B3F-C50A-499A-8341-6BDC36B37389}
+		{19FC313F-7235-41E9-9B3E-46D8736051D2} = {EBA29E1D-1833-43D8-9B09-A2D80787B656}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9B02C29-4D8B-4687-AB7D-9DF5642002D9}
