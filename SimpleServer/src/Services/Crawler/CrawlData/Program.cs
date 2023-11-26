@@ -80,11 +80,13 @@ static async Task ScheduleJob(IServiceProvider serviceProvider)
     // Schedule the job to run every day at 2:00 AM
     var trigger = TriggerBuilder.Create()
         .WithIdentity("CrawlTrigger", "CrawlGroup")
+        // For testing purpose
         //.StartNow()
+        // TODO: umcomment block code below
         .WithDailyTimeIntervalSchedule(x => x
             .OnEveryDay()
             // job execute only one
-            .WithRepeatCount(0)
+            //.WithRepeatCount(0)
             // not execute job if not in schedule time
             .WithMisfireHandlingInstructionDoNothing()
             // set timezone in VietNam
