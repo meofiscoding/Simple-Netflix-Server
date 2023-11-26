@@ -21,5 +21,14 @@ namespace Payment.API.GrpcService
             };
             return await _paymentProtoServiceClient.UpdateUserMembershipAsync(paymentRequest);
         }
+
+        public async Task<CustomerResponse> UpdateUserEmail(string customerEmail)
+        {
+            var customerRequest = new CustomerRequest
+            {
+                UserEmail = customerEmail,
+            };
+            return await _paymentProtoServiceClient.UpdateUserEmailAsync(customerRequest);
+        }
     }
 }
