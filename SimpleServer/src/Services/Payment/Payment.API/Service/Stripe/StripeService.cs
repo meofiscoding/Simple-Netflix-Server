@@ -1,5 +1,6 @@
 using System;
 using Payment.API.Entity;
+using Stripe;
 using Stripe.Checkout;
 
 namespace Payment.API.Service.Stripe
@@ -63,6 +64,27 @@ namespace Payment.API.Service.Stripe
             catch (System.Exception ex)
             {
                 _logger.LogError("error into Stripe Service on CheckOut() " + ex.Message);
+                throw;
+            }
+        }
+
+        // Get customer info by email
+        public async Task<Customer> GetCustomerByEmail(string email)
+        {
+            try
+            {
+                var service = new CustomerService();
+                var customer = await service.ListAsync(new CustomerListOptions
+                {
+                    Email = email,
+                    Limit = 1,
+                });
+
+                return customer.FirstOrDefault() ?? throw new Exception("Customer not found!");
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError("error into Stripe Service on GetCustomerByEmail() " + ex.Message);
                 throw;
             }
         }

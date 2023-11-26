@@ -87,7 +87,7 @@ data:
           }
         },
         {
-          "DownstreamPathTemplate": "/subscription/success",
+          "DownstreamPathTemplate": "/api/create-portal-session",
           "DownstreamScheme": "http",
           "DownstreamHostAndPorts": [
             {
@@ -98,13 +98,55 @@ data:
           "UpstreamHttpMethod": [
             "POST"
           ],
-          "UpstreamPathTemplate": "/payment/success",
+          "UpstreamPathTemplate":"/payment/customerportal",
           "AuthenticationOptions": {
             "AuthenticationProviderKey": "IdentityApiKey",
             "AllowedScopes": [
               "payment"
             ]
           }
+        },
+        {
+          "DownstreamPathTemplate": "/subscription/success",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "localhost",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/subscription/success"
+        },
+        {
+          "DownstreamPathTemplate": "/subscription/cancel",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "localhost",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/subscription/cancel"
+        },
+        {
+          "DownstreamPathTemplate": "/stripe/webhook",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "payment-api-service",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "POST"
+          ],
+          "UpstreamPathTemplate": "/webhook"
         },
          {
           "DownstreamPathTemplate": "/api/tag/{everything}",
