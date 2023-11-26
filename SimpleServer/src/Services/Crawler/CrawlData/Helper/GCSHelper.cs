@@ -11,8 +11,8 @@ namespace CrawlData.Helper
         public static string UploadFile(string filePath, string objectName)
         {
             // set google credential
-            GoogleCredential credential = GoogleCredential.FromFile(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
-            var storage = StorageClient.Create(credential);
+            //GoogleCredential credential = GoogleCredential.FromFile(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"));
+            var storage = StorageClient.Create();
             Stream fileStream;
             // check if file path is url
             if (filePath.StartsWith("http"))
@@ -56,8 +56,9 @@ namespace CrawlData.Helper
             storageObject.Acl ??= new List<ObjectAccessControl>();
             storage.UpdateObject(storageObject, new UpdateObjectOptions { PredefinedAcl = PredefinedObjectAcl.PublicRead });
             Console.WriteLine(objectName + " is now public and can be fetched from " + storageObject.SelfLink);
-
-            return storageObject.SelfLink;
+            // get public url
+            var publicUrl = $"https://storage.googleapis.com/{Consts.BUCKET_NAME}/{objectName}";
+            return publicUrl;
         }
 
         public static bool IsFileExist(string objectName = "your-object-name")
