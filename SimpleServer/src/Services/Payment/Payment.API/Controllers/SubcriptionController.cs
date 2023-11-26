@@ -123,6 +123,15 @@ namespace Payment.API.Controllers
                     {
                         Enabled = true,
                     },
+                    CustomerUpdate = new Stripe.BillingPortal.ConfigurationFeaturesCustomerUpdateOptions
+                    {
+                        Enabled = true,
+                        AllowedUpdates = new List<string> { "email" }
+                    },
+                    SubscriptionCancel = new Stripe.BillingPortal.ConfigurationFeaturesSubscriptionCancelOptions
+                    {
+                        Enabled = true,
+                    }
                 },
             };
             var service = new Stripe.BillingPortal.ConfigurationService();
