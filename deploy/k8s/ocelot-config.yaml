@@ -96,7 +96,7 @@ data:
             }
           ],
           "UpstreamHttpMethod": [
-            "GET"
+            "POST"
           ],
           "UpstreamPathTemplate":"/payment/customerportal",
           "AuthenticationOptions": {
