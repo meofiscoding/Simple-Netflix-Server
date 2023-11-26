@@ -91,12 +91,12 @@ data:
           "DownstreamScheme": "http",
           "DownstreamHostAndPorts": [
             {
-              "Host": "payment-api-service",
+              "Host": "localhost",
               "Port": 80
             }
           ],
           "UpstreamHttpMethod": [
-            "POST"
+            "GET"
           ],
           "UpstreamPathTemplate":"/payment/customerportal",
           "AuthenticationOptions": {
