@@ -126,17 +126,19 @@ namespace Payment.API.Controllers
                 },
             };
             var service = new Stripe.BillingPortal.ConfigurationService();
-            await service.CreateAsync(options);
+            var billingPortalConfiguration = await service.CreateAsync(options);
 
             var customer = await _stripeService.GetCustomerByEmail(userEmail);
             var sessionServiceOptions = new Stripe.BillingPortal.SessionCreateOptions
             {
                 Customer = customer.Id,
-                ReturnUrl = $"{_config["ClientUrl"]}/account",
+                ReturnUrl = $"{_config["ClientUrl"]}",
+                Configuration = billingPortalConfiguration.Id
             };
             var sessionService = new Stripe.BillingPortal.SessionService();
-            var session = await sessionService.CreateAsync(sessionServiceOptions);
 
+            // create session with billing portal configuration
+            var session = await sessionService.CreateAsync(sessionServiceOptions);
             return Ok(session);
         }
 
