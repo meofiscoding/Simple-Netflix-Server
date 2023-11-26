@@ -81,6 +81,26 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/create-portal-session",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate":"/payment/customerportal",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "payment"
+        ]
+      }
+    },
+    {
       "DownstreamPathTemplate": "/subscription/success",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -93,6 +113,20 @@
         "GET"
       ],
       "UpstreamPathTemplate": "/subscription/success"
+    },
+    {
+      "DownstreamPathTemplate": "/stripe/webhook",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/webhook"
     },
     {
       "DownstreamPathTemplate": "/api/tag/{everything}",
