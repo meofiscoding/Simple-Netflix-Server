@@ -34,6 +34,7 @@ namespace Payment.API
                         {
                             Name = x.ToString()
                         }));
+                    context.SaveChanges();
                 }
 
                 if (!context.Qualities.Any())
@@ -43,6 +44,7 @@ namespace Payment.API
                         {
                             Name = x.ToString()
                         }));
+                    context.SaveChanges();
                 }
 
                 if (!context.Subcriptions.Any())
@@ -101,40 +103,52 @@ namespace Payment.API
                                     Name = x.ToString()
                                 }).ToList()
                         });
+                    context.SaveChanges();
                 }
 
+                var subcriptions = context.Subcriptions.ToList();
                 // check if there are any product on stripe
                 var products = service.List(new ProductListOptions { Limit = 100 })
                     // select all available products
                     .Where(x => x.Active == true);
 
-                if (products.Any())
+                if (!products.Any())
                 {
-                    return Task.CompletedTask;
-                }
-                // get all subcriptions to create product on stripe
-                var subcriptions = context.Subcriptions.ToList();
-                foreach (var subcription in subcriptions)
-                {
-                    var product = service.Create(new ProductCreateOptions
+                    foreach (var subcription in subcriptions)
                     {
-                        DefaultPriceData = new ProductDefaultPriceDataOptions
+                        var product = service.Create(new ProductCreateOptions
                         {
-                            Currency = "usd",
-                            UnitAmount = subcription.Price * 100,
-                            Recurring = new ProductDefaultPriceDataRecurringOptions
+                            DefaultPriceData = new ProductDefaultPriceDataOptions
                             {
-                                Interval = "month"
+                                Currency = "usd",
+                                UnitAmount = subcription.Price * 100,
+                                Recurring = new ProductDefaultPriceDataRecurringOptions
+                                {
+                                    Interval = "month"
+                                },
                             },
-                        },
-                        Name = subcription.Plan.ToString(),
-                    });
-                    subcription.StripeProductId = product.Id;
-                    subcription.StripePriceId = product.DefaultPriceId;
-                    // update subcription
+                            Name = subcription.Plan.ToString(),
+                        });
+                    }
                 }
 
-                context.SaveChanges();
+                // Fetch products from Stripe
+                products = service.List(new ProductListOptions { Limit = 100 })
+                    // select all available products
+                    .Where(x => x.Active == true);
+                // get all subcriptions to create product on stripe
+                for (int i = 0; i < products.Count(); i++)
+                {
+                    var product = products.ElementAt(i);
+                    if (i < subcriptions.Count)
+                    {
+                        subcriptions[i].StripeProductId = product.Id;
+                        subcriptions[i].StripePriceId = product.DefaultPriceId;
+                        context.Subcriptions.Update(subcriptions[i]);
+                        context.SaveChanges();
+                    }
+                }
+
                 return Task.CompletedTask;
             });
         }
