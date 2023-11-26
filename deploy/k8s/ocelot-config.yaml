@@ -87,7 +87,55 @@ data:
           }
         },
         {
+          "DownstreamPathTemplate": "/api/create-portal-session",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "localhost",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate":"/payment/customerportal",
+          "AuthenticationOptions": {
+            "AuthenticationProviderKey": "IdentityApiKey",
+            "AllowedScopes": [
+              "payment"
+            ]
+          }
+        },
+        {
           "DownstreamPathTemplate": "/subscription/success",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "localhost",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/subscription/success"
+        },
+        {
+          "DownstreamPathTemplate": "/subscription/cancel",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "localhost",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/subscription/cancel"
+        },
+        {
+          "DownstreamPathTemplate": "/stripe/webhook",
           "DownstreamScheme": "http",
           "DownstreamHostAndPorts": [
             {
@@ -98,13 +146,7 @@ data:
           "UpstreamHttpMethod": [
             "POST"
           ],
-          "UpstreamPathTemplate": "/payment/success",
-          "AuthenticationOptions": {
-            "AuthenticationProviderKey": "IdentityApiKey",
-            "AllowedScopes": [
-              "payment"
-            ]
-          }
+          "UpstreamPathTemplate": "/webhook"
         },
          {
           "DownstreamPathTemplate": "/api/tag/{everything}",
