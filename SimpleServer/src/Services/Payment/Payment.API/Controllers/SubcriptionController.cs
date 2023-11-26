@@ -132,7 +132,7 @@ namespace Payment.API.Controllers
             var sessionServiceOptions = new Stripe.BillingPortal.SessionCreateOptions
             {
                 Customer = customer.Id,
-                ReturnUrl = $"{_config["ClientUrl"]}/account",
+                ReturnUrl = $"{_config["ClientUrl"]}",
                 Configuration = billingPortalConfiguration.Id
             };
             var sessionService = new Stripe.BillingPortal.SessionService();
