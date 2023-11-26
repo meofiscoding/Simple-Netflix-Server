@@ -39,7 +39,7 @@ namespace Payment.API.Service.Stripe
                     {
                         new SessionLineItemOptions
                         {
-                            Price = "price_1OGGiEHlvWn5zVy0jA2kj4bC",
+                            Price = product.StripePriceId,
                             Quantity = 1
                         }
                     },
