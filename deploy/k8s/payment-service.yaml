@@ -33,6 +33,11 @@ spec:
                 secretKeyRef:
                   name: stripe-secret
                   key: secret_key
+            - name: Stripe__WebhookSecret
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: webhook_secret
             - name: ConnectionStrings__PaymentDB
               valueFrom:
                 configMapKeyRef:
