@@ -201,6 +201,8 @@ namespace Payment.API.Controllers
                     UserId = response.UserId,
                 };
 
+                _logger.LogInformation($"Redirecting to {_config["ClientUrl"]}/subscription/success");
+
                 // TODO: Uncomment when need to serve explicit service based on user subscription
                 // _context.UserPayments.Add(userPayment);
                 // await _context.SaveChangesAsync();
@@ -209,7 +211,7 @@ namespace Payment.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("error into order Controller on route /canceled " + ex.Message);
+                _logger.LogError("error into order Controller on route / canceled " + ex.Message);
                 return TypedResults.BadRequest();
             }
         }
