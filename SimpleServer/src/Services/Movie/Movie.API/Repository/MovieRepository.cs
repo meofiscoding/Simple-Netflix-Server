@@ -38,11 +38,14 @@ namespace Movie.API.Repository
             return result;
         }
 
-        public Task UpsertMovieAsync(MovieInformation movie)
+        public async Task UpsertMovieAsync(MovieInformation movie)
         {
-            // filter by name
-            var filter = Builders<MovieInformation>.Filter.Eq(movie.MovieName, movie.MovieName);
-            return _context.Movies.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
+            //// filter by name
+            //var filter = Builders<MovieInformation>.Filter.Eq(movie.MovieName, movie.MovieName);
+            //return _context.Movies.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
+            movie.Id ??= ObjectId.GenerateNewId().ToString();
+            var filter = Builders<MovieInformation>.Filter.Eq(x => x.Id, movie.Id);
+            await _context.Movies.ReplaceOneAsync(filter, movie, new ReplaceOptions { IsUpsert = true });
         }
 
         public Dictionary<int, string> GetAllCategories()
