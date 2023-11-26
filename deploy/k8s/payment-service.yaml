@@ -26,6 +26,8 @@ spec:
               value: https://netflix-identity.azurewebsites.net
             - name: ASPNETCORE_URLS
               value: "http://+:50051;http://+:80"
+            - name: ClientUrl
+              value: https://simplenetflix.vercel.app
             - name: Stripe__SecretKey
               valueFrom:
                 secretKeyRef:

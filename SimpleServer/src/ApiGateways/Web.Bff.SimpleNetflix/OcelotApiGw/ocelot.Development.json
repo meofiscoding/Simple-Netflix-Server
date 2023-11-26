@@ -115,6 +115,20 @@
       "UpstreamPathTemplate": "/subscription/success"
     },
     {
+      "DownstreamPathTemplate": "/subscription/cancel",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 80
+        }
+      ],
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/subscription/cancel"
+    },
+    {
       "DownstreamPathTemplate": "/stripe/webhook",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

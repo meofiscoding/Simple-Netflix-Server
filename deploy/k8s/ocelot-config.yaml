@@ -111,20 +111,28 @@ data:
           "DownstreamScheme": "http",
           "DownstreamHostAndPorts": [
             {
-              "Host": "payment-api-service",
+              "Host": "localhost",
               "Port": 80
             }
           ],
           "UpstreamHttpMethod": [
-            "POST"
+            "GET"
           ],
-          "UpstreamPathTemplate": "/payment/success",
-          "AuthenticationOptions": {
-            "AuthenticationProviderKey": "IdentityApiKey",
-            "AllowedScopes": [
-              "payment"
-            ]
-          }
+          "UpstreamPathTemplate": "/subscription/success"
+        },
+        {
+          "DownstreamPathTemplate": "/subscription/cancel",
+          "DownstreamScheme": "http",
+          "DownstreamHostAndPorts": [
+            {
+              "Host": "localhost",
+              "Port": 80
+            }
+          ],
+          "UpstreamHttpMethod": [
+            "GET"
+          ],
+          "UpstreamPathTemplate": "/subscription/cancel"
         },
         {
           "DownstreamPathTemplate": "/stripe/webhook",

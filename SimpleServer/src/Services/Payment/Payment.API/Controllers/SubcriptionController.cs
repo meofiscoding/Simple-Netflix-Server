@@ -132,7 +132,7 @@ namespace Payment.API.Controllers
             var sessionServiceOptions = new Stripe.BillingPortal.SessionCreateOptions
             {
                 Customer = customer.Id,
-                ReturnUrl = "http://localhost:4200/account",
+                ReturnUrl = $"{_config["ClientUrl"]}/account",
             };
             var sessionService = new Stripe.BillingPortal.SessionService();
             var session = await sessionService.CreateAsync(sessionServiceOptions);
@@ -177,7 +177,6 @@ namespace Payment.API.Controllers
         {
             try
             {
-                // Insert here failure data in data base
                 var service = new SessionService();
                 SessionGetOptions options = new SessionGetOptions
                 {
@@ -204,7 +203,7 @@ namespace Payment.API.Controllers
                 // _context.UserPayments.Add(userPayment);
                 // await _context.SaveChangesAsync();
                 // return a redirect to the front end success page
-                return TypedResults.Redirect("http://localhost:4200/subscription/success");
+                return TypedResults.Redirect($"{_config["ClientUrl"]}/subscription/success");
             }
             catch (Exception ex)
             {
@@ -237,7 +236,7 @@ namespace Payment.API.Controllers
                             // Communicate with IdentityGrpcService to update user membership
                             var response = await _paymentGrpcService.UpdateUserMembership(subscription.Customer.Email, false);
                             // redirect to the front end cancel page
-                            return TypedResults.Redirect("http://localhost:4200/subscription/cancel");
+                            return TypedResults.Redirect($"{_config["ClientUrl"]}/subscription/cancel");
                         }
                     }
                 }
@@ -263,24 +262,40 @@ namespace Payment.API.Controllers
             return TypedResults.BadRequest();
         }
 
+        [HttpGet("subscription/cancel")]
+        public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
+        {
+            try
+            {
+                var service = new SessionService();
+                SessionGetOptions options = new SessionGetOptions
+                {
+                    Expand = new List<string> { "line_items" }
+                };
+                var sessionInfo = service.Get(sessionId, options);
+                var priceId = sessionInfo.LineItems.Data.FirstOrDefault()?.Price.Id
+                    ?? throw new Exception("PriceId not found");
 
-        /// <summary>
-        /// this API is going to be hit when order is a failure
-        /// </summary>
-        /// <returns>A redirect to the front end success page</returns>
-        // [HttpGet("subscription/canceled")]
-        // public async Task<Results<RedirectHttpResult, BadRequest>> CheckoutCanceled([FromQuery] string sessionId)
-        // {
-        //     try
-        //     {
-        //         // Insert here failure data in data base
+                var subcription = _context.Subcriptions.FirstOrDefault(x => x.StripePriceId == priceId)
+                    ?? throw new Exception("Subscription not found");
 
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError("error into order Controller on route /canceled " + ex.Message);
-        //         return TypedResults.BadRequest();
-        //     }
-        // }
+                var userEmail = sessionInfo.CustomerEmail;
+
+                // Communicate with IdentityGrpcService to update user membership
+                var response = await _paymentGrpcService.UpdateUserMembership(userEmail, false);
+                var userPayment = new UserPayment()
+                {
+                    Subcription = subcription,
+                    UserId = response.UserId,
+                };
+
+                return TypedResults.Redirect($"{_config["ClientUrl"]}/payment/planform");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("error into order Controller on route /canceled " + ex.Message);
+                return TypedResults.BadRequest();
+            }
+        }
     }
 }
