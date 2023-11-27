@@ -23,7 +23,7 @@ namespace Payment.API.Service.Stripe
                 // Get the base URL for the subscription
                 // var request = _httpContextAccessor.HttpContext?.Request ?? throw new Exception("Could not get request to checkout");
                 // var baseUrl = $"{request.Scheme}://{request.Host}";
-                var baseUrl = "https://aks.20.44.235.37.nip.io";
+                var baseUrl = "https://aks.technology";
                 var options = new SessionCreateOptions
                 {
                     // Stripe calls these user defined endpoints

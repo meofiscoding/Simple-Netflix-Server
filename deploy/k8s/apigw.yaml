@@ -61,10 +61,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - aks.20.44.235.37.nip.io # update IP address here
+        - aks.technology # update IP address here
       secretName: app-web-cert
   rules:
-    - host: aks.20.44.235.37.nip.io
+    - host: aks.technology
       http:
         paths:
           - path: /(.*)
