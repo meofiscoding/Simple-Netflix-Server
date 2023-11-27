@@ -261,6 +261,28 @@
           "movies"
         ]
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/watchList/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5013
+        }
+      ],
+      "UpstreamPathTemplate": "/watchList/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "IdentityApiKey",
+        "AllowedScopes": [
+          "watchlist"
+        ]
+      }
     }
   ]
 }
